@@ -183,7 +183,7 @@ def rows() -> list[dict]:
         "Urbanomy InvestmentAttractivenessAnalyzer", "М: 150–200 млн ₽")
     add(g, "Инвестиции: кампус", "млн ₽", lambda t: z(t, lambda u: u["investment_by_project"]["campus"] / 1e6),
         "Urbanomy InvestmentAttractivenessAnalyzer", "К: в концепции не оценены")
-    add(g, "Инвестиции: детский сад (240 мест)", "млн ₽",
+    add(g, "Инвестиции: детский сад (160 мест)", "млн ₽",
         lambda t: z(t, lambda u: u["investment_by_project"].get("kindergarten", 0) / 1e6),
         "Urbanomy InvestmentAttractivenessAnalyzer", "мероприятие МП: дефицит детсадов")
     add(g, "Новые рабочие места: кампус", "мест", lambda t: z(t, lambda u: u["jobs_by_project"]["campus"]),

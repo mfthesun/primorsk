@@ -297,7 +297,7 @@ def map_provision() -> None:
                        f"Обеспеченность {what}: {how}, ≤ {acc[svc][mode]} мин",
                        "blocks_today.geojson (BlocksNet competitive_provision); вместимость — capacity",
                        mask=lambda b, c=f"{svc}_{mode}_demand": b[c] > 0, extra=objects_of(svc, legend_name, "today"))
-    # детские сады «сегодня / сценарий 2»: мероприятие — детский сад на 240 мест на востоке Приморска
+    # детские сады «сегодня / сценарий 2»: мероприятие — детский сад на 160 мест на востоке Приморска
     for mode, how in (("walk", "пешком"), ("drive", "с подвозом (транспорт)")):
         for tag in ("today", "s2"):
             for ext in ("settlement", "town"):
@@ -346,7 +346,7 @@ def map_scenario() -> None:
          Line2D([], [], color="#ffd43b", lw=3, label="причалы марины, 40 мест"),
          Line2D([], [], marker="o", ls="", mfc="white", mec="#1864ab", label="остановки шаттла"),
          Line2D([], [], marker="s", ls="", mfc="white", mec="black", label="ж/д станция (ТПУ)"),
-         Line2D([], [], marker="o", ls="", mfc="#c2255c", mec="white", label="детский сад, 240 мест (сценарий 2)")]
+         Line2D([], [], marker="o", ls="", mfc="#c2255c", mec="white", label="детский сад, 160 мест (сценарий 2)")]
     finish(fig, ax, "scenario_projects", h, "Сценарий",
            "Проектные предложения: кампус ИНТЦ, марина, транспортный каркас, детский сад",
            "data/processed/scenario (проектные решения команды)", style=IMAGERY)

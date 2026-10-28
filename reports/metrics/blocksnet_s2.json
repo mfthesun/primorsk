@@ -3,7 +3,7 @@
  "name": "Сценарий 2 — полная реализация (до 2031)",
  "population": 13734,
  "buildings": 9181,
- "build_floor_area_m2": 1870070.98,
+ "build_floor_area_m2": 1868594.98,
  "living_area_m2": 472063.21,
  "living_area_per_capita": 34.37186617154507,
  "median_acc_drive": 40.681352816868234,
@@ -68,21 +68,21 @@
   },
   "kindergarten_walk": {
    "need": 686,
-   "capacity": 710,
+   "capacity": 630,
    "within": 211,
    "deficit": 475,
-   "excess": 296,
+   "excess": 216,
    "strong": 0.308,
    "weak": 0.603
   },
   "kindergarten_drive": {
    "need": 686,
-   "capacity": 710,
-   "within": 611,
-   "deficit": 75,
-   "excess": 60,
-   "strong": 0.891,
-   "weak": 0.948
+   "capacity": 630,
+   "within": 579,
+   "deficit": 107,
+   "excess": 0,
+   "strong": 0.844,
+   "weak": 0.918
   },
   "college_drive": {
    "need": 110,
@@ -199,7 +199,7 @@
    "catering": 8.0
   },
   "provision": {
-   "kindergarten": 0.6491978609625668,
+   "kindergarten": 0.6331550802139038,
    "school": 0.8668587896253602,
    "college": 0.9456066945606695,
    "university": 0.0,
