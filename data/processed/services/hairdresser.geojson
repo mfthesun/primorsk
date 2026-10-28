@@ -1,0 +1,11 @@
+{
+"type": "FeatureCollection",
+"name": "hairdresser",
+"crs": { "type": "name", "properties": { "name": "urn:ogc:def:crs:OGC:1.3:CRS84" } },
+"features": [
+{ "type": "Feature", "properties": { "service_id": 104, "service_name": "Парикмахерская", "capacity": 0 }, "geometry": { "type": "Point", "coordinates": [ 28.6073153, 60.3678606 ] } },
+{ "type": "Feature", "properties": { "service_id": 104, "service_name": "Парикмахерская", "capacity": 0 }, "geometry": { "type": "Point", "coordinates": [ 28.718409538397861, 60.453019643954661 ] } },
+{ "type": "Feature", "properties": { "service_id": 104, "service_name": "Парикмахерская", "capacity": 0 }, "geometry": { "type": "Point", "coordinates": [ 28.992945768233149, 60.336617100261101 ] } },
+{ "type": "Feature", "properties": { "service_id": 104, "service_name": "Парикмахерская", "capacity": 0 }, "geometry": { "type": "Point", "coordinates": [ 28.989649186863996, 60.359675746053561 ] } }
+]
+}

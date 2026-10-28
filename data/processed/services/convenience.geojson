@@ -1,0 +1,21 @@
+{
+"type": "FeatureCollection",
+"name": "convenience",
+"crs": { "type": "name", "properties": { "name": "urn:ogc:def:crs:OGC:1.3:CRS84" } },
+"features": [
+{ "type": "Feature", "properties": { "service_id": 90, "service_name": "Продукты (магазин у дома)", "capacity": 0, "name": null }, "geometry": { "type": "Point", "coordinates": [ 28.5804924, 60.4101871 ] } },
+{ "type": "Feature", "properties": { "service_id": 90, "service_name": "Продукты (магазин у дома)", "capacity": 0, "name": null }, "geometry": { "type": "Point", "coordinates": [ 28.6842592, 60.42728910000001 ] } },
+{ "type": "Feature", "properties": { "service_id": 90, "service_name": "Продукты (магазин у дома)", "capacity": 0, "name": null }, "geometry": { "type": "Point", "coordinates": [ 28.9917281, 60.3373211 ] } },
+{ "type": "Feature", "properties": { "service_id": 90, "service_name": "Продукты (магазин у дома)", "capacity": 0, "name": null }, "geometry": { "type": "Point", "coordinates": [ 28.7867636, 60.3629289 ] } },
+{ "type": "Feature", "properties": { "service_id": 90, "service_name": "Продукты (магазин у дома)", "capacity": 0, "name": null }, "geometry": { "type": "Point", "coordinates": [ 29.132868844652627, 60.245255164571937 ] } },
+{ "type": "Feature", "properties": { "service_id": 90, "service_name": "Продукты (магазин у дома)", "capacity": 0, "name": null }, "geometry": { "type": "Point", "coordinates": [ 28.9929109, 60.3375388 ] } },
+{ "type": "Feature", "properties": { "service_id": 90, "service_name": "Продукты (магазин у дома)", "capacity": 0, "name": null }, "geometry": { "type": "Point", "coordinates": [ 29.1309681, 60.2452682 ] } },
+{ "type": "Feature", "properties": { "service_id": 90, "service_name": "Продукты (магазин у дома)", "capacity": 0, "name": null }, "geometry": { "type": "Point", "coordinates": [ 28.6056909, 60.367498099999985 ] } },
+{ "type": "Feature", "properties": { "service_id": 90, "service_name": "Продукты (магазин у дома)", "capacity": 0, "name": "Ермолино" }, "geometry": { "type": "Point", "coordinates": [ 28.6071808, 60.3679969 ] } },
+{ "type": "Feature", "properties": { "service_id": 90, "service_name": "Продукты (магазин у дома)", "capacity": 0, "name": null }, "geometry": { "type": "Point", "coordinates": [ 28.7561204, 60.3599507 ] } },
+{ "type": "Feature", "properties": { "service_id": 90, "service_name": "Продукты (магазин у дома)", "capacity": 0, "name": null }, "geometry": { "type": "Point", "coordinates": [ 28.6118577, 60.373602 ] } },
+{ "type": "Feature", "properties": { "service_id": 90, "service_name": "Продукты (магазин у дома)", "capacity": 0, "name": null }, "geometry": { "type": "Point", "coordinates": [ 28.6226446, 60.3580895 ] } },
+{ "type": "Feature", "properties": { "service_id": 90, "service_name": "Продукты (магазин у дома)", "capacity": 0, "name": null }, "geometry": { "type": "Point", "coordinates": [ 29.056684537455553, 60.433088704612288 ] } },
+{ "type": "Feature", "properties": { "service_id": 90, "service_name": "Продукты (магазин у дома)", "capacity": 0, "name": null }, "geometry": { "type": "Point", "coordinates": [ 29.063502, 60.4332012 ] } }
+]
+}

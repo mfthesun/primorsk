@@ -1,0 +1,16 @@
+{
+"type": "FeatureCollection",
+"name": "pitch",
+"crs": { "type": "name", "properties": { "name": "urn:ogc:def:crs:OGC:1.3:CRS84" } },
+"features": [
+{ "type": "Feature", "properties": { "service_id": null, "service_name": "Спортивная площадка", "capacity": 0 }, "geometry": { "type": "Point", "coordinates": [ 28.9938634, 60.3371937 ] } },
+{ "type": "Feature", "properties": { "service_id": null, "service_name": "Спортивная площадка", "capacity": 0 }, "geometry": { "type": "Point", "coordinates": [ 28.993517983955446, 60.360725145347672 ] } },
+{ "type": "Feature", "properties": { "service_id": null, "service_name": "Спортивная площадка", "capacity": 0 }, "geometry": { "type": "Point", "coordinates": [ 28.98828718107977, 60.337762935146898 ] } },
+{ "type": "Feature", "properties": { "service_id": null, "service_name": "Спортивная площадка", "capacity": 0 }, "geometry": { "type": "Point", "coordinates": [ 28.722416874222613, 60.451268327400037 ] } },
+{ "type": "Feature", "properties": { "service_id": null, "service_name": "Спортивная площадка", "capacity": 0 }, "geometry": { "type": "Point", "coordinates": [ 28.721527602672108, 60.448654758360597 ] } },
+{ "type": "Feature", "properties": { "service_id": null, "service_name": "Спортивная площадка", "capacity": 0 }, "geometry": { "type": "Point", "coordinates": [ 28.758384813209826, 60.358223407707435 ] } },
+{ "type": "Feature", "properties": { "service_id": null, "service_name": "Спортивная площадка", "capacity": 0 }, "geometry": { "type": "Point", "coordinates": [ 28.678844964616708, 60.423660196942926 ] } },
+{ "type": "Feature", "properties": { "service_id": null, "service_name": "Спортивная площадка", "capacity": 0 }, "geometry": { "type": "Point", "coordinates": [ 28.60915509878291, 60.366478748709319 ] } },
+{ "type": "Feature", "properties": { "service_id": null, "service_name": "Спортивная площадка", "capacity": 0 }, "geometry": { "type": "Point", "coordinates": [ 28.611618035671196, 60.37039491155344 ] } }
+]
+}

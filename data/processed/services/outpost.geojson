@@ -1,0 +1,31 @@
+{
+"type": "FeatureCollection",
+"name": "outpost",
+"crs": { "type": "name", "properties": { "name": "urn:ogc:def:crs:OGC:1.3:CRS84" } },
+"features": [
+{ "type": "Feature", "properties": { "service_id": 99, "service_name": "Пункт выдачи", "capacity": 0 }, "geometry": { "type": "Point", "coordinates": [ 28.606287304063891, 60.367680819707445 ] } },
+{ "type": "Feature", "properties": { "service_id": 99, "service_name": "Пункт выдачи", "capacity": 0 }, "geometry": { "type": "Point", "coordinates": [ 28.60691543206709, 60.367667957895421 ] } },
+{ "type": "Feature", "properties": { "service_id": 99, "service_name": "Пункт выдачи", "capacity": 0 }, "geometry": { "type": "Point", "coordinates": [ 28.608373463279207, 60.369574112379802 ] } },
+{ "type": "Feature", "properties": { "service_id": 99, "service_name": "Пункт выдачи", "capacity": 0 }, "geometry": { "type": "Point", "coordinates": [ 28.612163334550154, 60.366791691837719 ] } },
+{ "type": "Feature", "properties": { "service_id": 99, "service_name": "Пункт выдачи", "capacity": 0 }, "geometry": { "type": "Point", "coordinates": [ 28.622296442986492, 60.358187018482994 ] } },
+{ "type": "Feature", "properties": { "service_id": 99, "service_name": "Пункт выдачи", "capacity": 0 }, "geometry": { "type": "Point", "coordinates": [ 28.628215247756447, 60.356275373709195 ] } },
+{ "type": "Feature", "properties": { "service_id": 99, "service_name": "Пункт выдачи", "capacity": 0 }, "geometry": { "type": "Point", "coordinates": [ 28.718899912794392, 60.451391285055237 ] } },
+{ "type": "Feature", "properties": { "service_id": 99, "service_name": "Пункт выдачи", "capacity": 0 }, "geometry": { "type": "Point", "coordinates": [ 28.718349509495877, 60.45320870918237 ] } },
+{ "type": "Feature", "properties": { "service_id": 99, "service_name": "Пункт выдачи", "capacity": 0 }, "geometry": { "type": "Point", "coordinates": [ 28.720273378941851, 60.452814439679145 ] } },
+{ "type": "Feature", "properties": { "service_id": 99, "service_name": "Пункт выдачи", "capacity": 0 }, "geometry": { "type": "Point", "coordinates": [ 28.716865068370435, 60.45362895893529 ] } },
+{ "type": "Feature", "properties": { "service_id": 99, "service_name": "Пункт выдачи", "capacity": 0 }, "geometry": { "type": "Point", "coordinates": [ 28.72045285287934, 60.453783261465283 ] } },
+{ "type": "Feature", "properties": { "service_id": 99, "service_name": "Пункт выдачи", "capacity": 0 }, "geometry": { "type": "Point", "coordinates": [ 28.718811347041676, 60.454163336584863 ] } },
+{ "type": "Feature", "properties": { "service_id": 99, "service_name": "Пункт выдачи", "capacity": 0 }, "geometry": { "type": "Point", "coordinates": [ 28.760394298728933, 60.359360571137458 ] } },
+{ "type": "Feature", "properties": { "service_id": 99, "service_name": "Пункт выдачи", "capacity": 0 }, "geometry": { "type": "Point", "coordinates": [ 28.755486666856676, 60.359834470137869 ] } },
+{ "type": "Feature", "properties": { "service_id": 99, "service_name": "Пункт выдачи", "capacity": 0 }, "geometry": { "type": "Point", "coordinates": [ 28.987322723875327, 60.3596713966121 ] } },
+{ "type": "Feature", "properties": { "service_id": 99, "service_name": "Пункт выдачи", "capacity": 0 }, "geometry": { "type": "Point", "coordinates": [ 28.987445250753542, 60.359321191667831 ] } },
+{ "type": "Feature", "properties": { "service_id": 99, "service_name": "Пункт выдачи", "capacity": 0 }, "geometry": { "type": "Point", "coordinates": [ 28.989483722495152, 60.360074562554324 ] } },
+{ "type": "Feature", "properties": { "service_id": 99, "service_name": "Пункт выдачи", "capacity": 0 }, "geometry": { "type": "Point", "coordinates": [ 28.989494811507548, 60.36025650159268 ] } },
+{ "type": "Feature", "properties": { "service_id": 99, "service_name": "Пункт выдачи", "capacity": 0 }, "geometry": { "type": "Point", "coordinates": [ 28.991703089631805, 60.337243880727513 ] } },
+{ "type": "Feature", "properties": { "service_id": 99, "service_name": "Пункт выдачи", "capacity": 0 }, "geometry": { "type": "Point", "coordinates": [ 28.990391288810418, 60.337472022169337 ] } },
+{ "type": "Feature", "properties": { "service_id": 99, "service_name": "Пункт выдачи", "capacity": 0 }, "geometry": { "type": "Point", "coordinates": [ 28.99048882094316, 60.33741249948433 ] } },
+{ "type": "Feature", "properties": { "service_id": 99, "service_name": "Пункт выдачи", "capacity": 0 }, "geometry": { "type": "Point", "coordinates": [ 29.008717020065159, 60.215294909523983 ] } },
+{ "type": "Feature", "properties": { "service_id": 99, "service_name": "Пункт выдачи", "capacity": 0 }, "geometry": { "type": "Point", "coordinates": [ 29.132862744164971, 60.245269009961831 ] } },
+{ "type": "Feature", "properties": { "service_id": 99, "service_name": "Пункт выдачи", "capacity": 0 }, "geometry": { "type": "Point", "coordinates": [ 29.063680186109206, 60.433286576707374 ] } }
+]
+}

@@ -1,0 +1,10 @@
+{
+"type": "FeatureCollection",
+"name": "cafe",
+"crs": { "type": "name", "properties": { "name": "urn:ogc:def:crs:OGC:1.3:CRS84" } },
+"features": [
+{ "type": "Feature", "properties": { "service_id": 61, "service_name": "Кафе", "capacity": 0 }, "geometry": { "type": "Point", "coordinates": [ 28.606413, 60.3678696 ] } },
+{ "type": "Feature", "properties": { "service_id": 61, "service_name": "Кафе", "capacity": 0 }, "geometry": { "type": "Point", "coordinates": [ 28.6057377, 60.367447 ] } },
+{ "type": "Feature", "properties": { "service_id": 61, "service_name": "Кафе", "capacity": 0 }, "geometry": { "type": "Point", "coordinates": [ 28.6066618, 60.3657587 ] } }
+]
+}

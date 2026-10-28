@@ -1,0 +1,16 @@
+{
+"type": "FeatureCollection",
+"name": "boilerhouse",
+"crs": { "type": "name", "properties": { "name": "urn:ogc:def:crs:OGC:1.3:CRS84" } },
+"features": [
+{ "type": "Feature", "properties": { "service_id": null, "service_name": "Котельная", "capacity": 0, "name": "Источник тепловой энергии", "address": "п. Емилово, пер. Заречный" }, "geometry": { "type": "Point", "coordinates": [ 28.784352969892051, 60.364858600129367 ] } },
+{ "type": "Feature", "properties": { "service_id": null, "service_name": "Котельная", "capacity": 0, "name": "Источник тепловой энергии", "address": "г. Приморск, набережная Гагарина" }, "geometry": { "type": "Point", "coordinates": [ 28.621258310611573, 60.356241813191303 ] } },
+{ "type": "Feature", "properties": { "service_id": null, "service_name": "Котельная", "capacity": 0, "name": "Источник тепловой энергии", "address": "г. Приморск, ул. Школьная" }, "geometry": { "type": "Point", "coordinates": [ 28.615295197627702, 60.370466649728641 ] } },
+{ "type": "Feature", "properties": { "service_id": null, "service_name": "Котельная", "capacity": 0, "name": "Источник тепловой энергии", "address": "п. Глебычево, ул. Заводская" }, "geometry": { "type": "Point", "coordinates": [ 28.716622249987605, 60.443010050034339 ] } },
+{ "type": "Feature", "properties": { "service_id": null, "service_name": "Котельная", "capacity": 0, "name": "Источник тепловой энергии", "address": "п. Красная Долина" }, "geometry": { "type": "Point", "coordinates": [ 28.989034331343998, 60.357754675456277 ] } },
+{ "type": "Feature", "properties": { "service_id": null, "service_name": "Котельная", "capacity": 0, "name": "Источник тепловой энергии", "address": "п. Глебычево, ул. Офицерская" }, "geometry": { "type": "Point", "coordinates": [ 28.725935326780967, 60.454383903013351 ] } },
+{ "type": "Feature", "properties": { "service_id": null, "service_name": "Котельная", "capacity": 0, "name": "Источник тепловой энергии", "address": "п. Рябово " }, "geometry": { "type": "Point", "coordinates": [ 28.992544636699613, 60.339500130203177 ] } },
+{ "type": "Feature", "properties": { "service_id": null, "service_name": "Котельная", "capacity": 0, "name": "Источник тепловой энергии", "address": "п. Зеркальный, ул. Зеркальная " }, "geometry": { "type": "Point", "coordinates": [ 29.131379461555831, 60.243643262974302 ] } },
+{ "type": "Feature", "properties": { "service_id": null, "service_name": "Котельная", "capacity": 0, "name": "Источник тепловой энергии", "address": "п. Глебычево, в/ч коттеджи " }, "geometry": { "type": "Point", "coordinates": [ 28.729660749992146, 60.450156900012864 ] } }
+]
+}

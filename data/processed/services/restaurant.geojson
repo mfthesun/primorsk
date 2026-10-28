@@ -1,0 +1,11 @@
+{
+"type": "FeatureCollection",
+"name": "restaurant",
+"crs": { "type": "name", "properties": { "name": "urn:ogc:def:crs:OGC:1.3:CRS84" } },
+"features": [
+{ "type": "Feature", "properties": { "service_id": 62, "service_name": "Ресторан", "capacity": 0 }, "geometry": { "type": "Point", "coordinates": [ 28.610486605626203, 60.370315619098449 ] } },
+{ "type": "Feature", "properties": { "service_id": 62, "service_name": "Ресторан", "capacity": 0 }, "geometry": { "type": "Point", "coordinates": [ 29.001218096162727, 60.231033715239235 ] } },
+{ "type": "Feature", "properties": { "service_id": 62, "service_name": "Ресторан", "capacity": 0 }, "geometry": { "type": "Point", "coordinates": [ 28.998059767307673, 60.231751370597706 ] } },
+{ "type": "Feature", "properties": { "service_id": 62, "service_name": "Ресторан", "capacity": 0 }, "geometry": { "type": "Point", "coordinates": [ 28.998205635457825, 60.234002982536879 ] } }
+]
+}

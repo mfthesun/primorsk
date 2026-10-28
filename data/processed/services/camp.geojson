@@ -1,0 +1,20 @@
+{
+"type": "FeatureCollection",
+"name": "camp",
+"crs": { "type": "name", "properties": { "name": "urn:ogc:def:crs:OGC:1.3:CRS84" } },
+"features": [
+{ "type": "Feature", "properties": { "service_id": 112, "service_name": "База отдыха", "capacity": 0, "address": "Город Приморск, Пляжная улица, д. 5" }, "geometry": { "type": "Point", "coordinates": [ 28.587877537486129, 60.377439598246383 ] } },
+{ "type": "Feature", "properties": { "service_id": 112, "service_name": "База отдыха", "capacity": 0, "address": "Город Приморск, ул. Береговая, д. 24" }, "geometry": { "type": "Point", "coordinates": [ 28.580061222364769, 60.403612344956372 ] } },
+{ "type": "Feature", "properties": { "service_id": 112, "service_name": "База отдыха", "capacity": 0, "address": "В районе пос. Озерки, Окунёвый пр. д. 4" }, "geometry": { "type": "Point", "coordinates": [ 28.999157148901137, 60.232009091428679 ] } },
+{ "type": "Feature", "properties": { "service_id": 112, "service_name": "База отдыха", "capacity": 0, "address": "Пос. Мысовое" }, "geometry": { "type": "Point", "coordinates": [ 28.931992888087215, 60.388361129845244 ] } },
+{ "type": "Feature", "properties": { "service_id": 112, "service_name": "База отдыха", "capacity": 0, "address": "Пос. Пионерское" }, "geometry": { "type": "Point", "coordinates": [ 28.974399261655552, 60.380801860596584 ] } },
+{ "type": "Feature", "properties": { "service_id": 112, "service_name": "База отдыха", "capacity": 0, "address": "Александровка" }, "geometry": { "type": "Point", "coordinates": [ 28.988597916013664, 60.423018663980642 ] } },
+{ "type": "Feature", "properties": { "service_id": 112, "service_name": "База отдыха", "capacity": 0, "address": "Пос. Прибылово" }, "geometry": { "type": "Point", "coordinates": [ 28.606537865775998, 60.464810643512372 ] } },
+{ "type": "Feature", "properties": { "service_id": 112, "service_name": "База отдыха", "capacity": 0, "address": "Пос. Краснофлотское, ул. Летняя, д. 5" }, "geometry": { "type": "Point", "coordinates": [ 29.104657266711722, 60.343876793724874 ] } },
+{ "type": "Feature", "properties": { "service_id": 112, "service_name": "База отдыха", "capacity": 0, "address": "Пос. Глебычево, ул. Заводская, д. 2" }, "geometry": { "type": "Point", "coordinates": [ 28.716232534671523, 60.442254712269829 ] } },
+{ "type": "Feature", "properties": { "service_id": 112, "service_name": "База отдыха", "capacity": 0, "address": "Пос. Озерки" }, "geometry": { "type": "Point", "coordinates": [ 29.000809493789088, 60.229998641739897 ] } },
+{ "type": "Feature", "properties": { "service_id": 112, "service_name": "База отдыха", "capacity": 0, "address": "Пос. Зеркальный, д. 2" }, "geometry": { "type": "Point", "coordinates": [ 29.127702940583418, 60.242668763275027 ] } },
+{ "type": "Feature", "properties": { "service_id": 112, "service_name": "База отдыха", "capacity": 0, "address": "Пос. Прибылово, Ильиный пр., д. 2" }, "geometry": { "type": "Point", "coordinates": [ 28.641314202078387, 60.444972771192198 ] } },
+{ "type": "Feature", "properties": { "service_id": 112, "service_name": "База отдыха", "capacity": 0, "address": "Пос. Пионерское" }, "geometry": { "type": "Point", "coordinates": [ 28.985350485960126, 60.380303053365637 ] } }
+]
+}

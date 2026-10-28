@@ -1,0 +1,12 @@
+{
+"type": "FeatureCollection",
+"name": "clothes",
+"crs": { "type": "name", "properties": { "name": "urn:ogc:def:crs:OGC:1.3:CRS84" } },
+"features": [
+{ "type": "Feature", "properties": { "service_id": 93, "service_name": "Одежда и обувь", "capacity": 0 }, "geometry": { "type": "Point", "coordinates": [ 28.6062141, 60.36779 ] } },
+{ "type": "Feature", "properties": { "service_id": 93, "service_name": "Одежда и обувь", "capacity": 0 }, "geometry": { "type": "Point", "coordinates": [ 28.607193547715458, 60.367926667123093 ] } },
+{ "type": "Feature", "properties": { "service_id": 93, "service_name": "Одежда и обувь", "capacity": 0 }, "geometry": { "type": "Point", "coordinates": [ 28.611535576105208, 60.366266731023948 ] } },
+{ "type": "Feature", "properties": { "service_id": 93, "service_name": "Одежда и обувь", "capacity": 0 }, "geometry": { "type": "Point", "coordinates": [ 28.718728156313151, 60.454166469022752 ] } },
+{ "type": "Feature", "properties": { "service_id": 93, "service_name": "Одежда и обувь", "capacity": 0 }, "geometry": { "type": "Point", "coordinates": [ 28.719394408538207, 60.454619178867986 ] } }
+]
+}

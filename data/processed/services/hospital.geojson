@@ -1,0 +1,8 @@
+{
+"type": "FeatureCollection",
+"name": "hospital",
+"crs": { "type": "name", "properties": { "name": "urn:ogc:def:crs:OGC:1.3:CRS84" } },
+"features": [
+{ "type": "Feature", "properties": { "service_id": 35, "service_name": "Больница (+ детская)", "capacity": 0, "address": "Приморск" }, "geometry": { "type": "Point", "coordinates": [ 28.620602474672772, 60.367715877377201 ] } }
+]
+}

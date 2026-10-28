@@ -1,0 +1,13 @@
+{
+"type": "FeatureCollection",
+"name": "school",
+"crs": { "type": "name", "properties": { "name": "urn:ogc:def:crs:OGC:1.3:CRS84" } },
+"features": [
+{ "type": "Feature", "properties": { "service_id": 22, "service_name": "Школа", "capacity": 580, "address": "Глебычево" }, "geometry": { "type": "Point", "coordinates": [ 28.721913401082489, 60.449755228331924 ] } },
+{ "type": "Feature", "properties": { "service_id": 22, "service_name": "Школа", "capacity": 204, "address": "Ермилово" }, "geometry": { "type": "Point", "coordinates": [ 28.75684409075172, 60.357221003500435 ] } },
+{ "type": "Feature", "properties": { "service_id": 22, "service_name": "Школа", "capacity": 600, "address": "Приморск" }, "geometry": { "type": "Point", "coordinates": [ 28.616108906880555, 60.368458214417117 ] } },
+{ "type": "Feature", "properties": { "service_id": 22, "service_name": "Школа", "capacity": 300, "address": "Красная Долина" }, "geometry": { "type": "Point", "coordinates": [ 28.992093181001508, 60.360119086635251 ] } },
+{ "type": "Feature", "properties": { "service_id": 22, "service_name": "Школа", "capacity": 93, "address": "Приморск" }, "geometry": { "type": "Point", "coordinates": [ 28.619584727870116, 60.365027390580465 ] } },
+{ "type": "Feature", "properties": { "service_id": 22, "service_name": "Школа", "capacity": 70, "address": "п. Лужки" }, "geometry": { "type": "Point", "coordinates": [ 29.003765972050523, 60.245670879367225 ] } }
+]
+}

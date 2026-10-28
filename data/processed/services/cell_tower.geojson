@@ -1,0 +1,19 @@
+{
+"type": "FeatureCollection",
+"name": "cell_tower",
+"crs": { "type": "name", "properties": { "name": "urn:ogc:def:crs:OGC:1.3:CRS84" } },
+"features": [
+{ "type": "Feature", "properties": { "service_id": null, "service_name": "Вышка связи", "capacity": 0, "address": "Вязы" }, "geometry": { "type": "Point", "coordinates": [ 28.554496679378534, 60.433932262477597 ] } },
+{ "type": "Feature", "properties": { "service_id": null, "service_name": "Вышка связи", "capacity": 0, "address": "Приморск" }, "geometry": { "type": "Point", "coordinates": [ 28.626407056528176, 60.355038905674938 ] } },
+{ "type": "Feature", "properties": { "service_id": null, "service_name": "Вышка связи", "capacity": 0, "address": "Ермилово" }, "geometry": { "type": "Point", "coordinates": [ 28.790006746720707, 60.36638819018556 ] } },
+{ "type": "Feature", "properties": { "service_id": null, "service_name": "Вышка связи", "capacity": 0, "address": null }, "geometry": { "type": "Point", "coordinates": [ 28.860229782439017, 60.301064643429619 ] } },
+{ "type": "Feature", "properties": { "service_id": null, "service_name": "Вышка связи", "capacity": 0, "address": "Малышево" }, "geometry": { "type": "Point", "coordinates": [ 28.862664492045383, 60.398527338527131 ] } },
+{ "type": "Feature", "properties": { "service_id": null, "service_name": "Вышка связи", "capacity": 0, "address": "Лужки" }, "geometry": { "type": "Point", "coordinates": [ 28.994588913479383, 60.275438074829374 ] } },
+{ "type": "Feature", "properties": { "service_id": null, "service_name": "Вышка связи", "capacity": 0, "address": "Лужки" }, "geometry": { "type": "Point", "coordinates": [ 28.997760378475256, 60.27592133370117 ] } },
+{ "type": "Feature", "properties": { "service_id": null, "service_name": "Вышка связи", "capacity": 0, "address": "Озерки" }, "geometry": { "type": "Point", "coordinates": [ 29.014404214156929, 60.215866891388551 ] } },
+{ "type": "Feature", "properties": { "service_id": null, "service_name": "Вышка связи", "capacity": 0, "address": "Озерки" }, "geometry": { "type": "Point", "coordinates": [ 29.015940045193357, 60.217008784454521 ] } },
+{ "type": "Feature", "properties": { "service_id": null, "service_name": "Вышка связи", "capacity": 0, "address": "Рябово" }, "geometry": { "type": "Point", "coordinates": [ 28.987381230679425, 60.334335022487288 ] } },
+{ "type": "Feature", "properties": { "service_id": null, "service_name": "Вышка связи", "capacity": 0, "address": "Рябово" }, "geometry": { "type": "Point", "coordinates": [ 28.992817595078577, 60.341668921953563 ] } },
+{ "type": "Feature", "properties": { "service_id": null, "service_name": "Вышка связи", "capacity": 0, "address": "Вязы" }, "geometry": { "type": "Point", "coordinates": [ 28.549200568311026, 60.435303823000503 ] } }
+]
+}

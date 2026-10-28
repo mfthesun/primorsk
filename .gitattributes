@@ -1,0 +1,2 @@
+*.geojson linguist-generated=true -diff
+*.gpkg binary

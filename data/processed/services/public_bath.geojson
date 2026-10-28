@@ -1,0 +1,10 @@
+{
+"type": "FeatureCollection",
+"name": "public_bath",
+"crs": { "type": "name", "properties": { "name": "urn:ogc:def:crs:OGC:1.3:CRS84" } },
+"features": [
+{ "type": "Feature", "properties": { "service_id": 106, "service_name": "Общественная баня", "capacity": 0, "name": "Банно-оздоровительный комплекс " }, "geometry": { "type": "Point", "coordinates": [ 28.987309056962701, 60.361890339165299 ] } },
+{ "type": "Feature", "properties": { "service_id": 106, "service_name": "Общественная баня", "capacity": 0, "name": "Банно-оздоровительный комплекс " }, "geometry": { "type": "Point", "coordinates": [ 28.612975183632653, 60.371418700115967 ] } },
+{ "type": "Feature", "properties": { "service_id": 106, "service_name": "Общественная баня", "capacity": 0, "name": "баня" }, "geometry": { "type": "Point", "coordinates": [ 28.990626376836314, 60.358237818402394 ] } }
+]
+}

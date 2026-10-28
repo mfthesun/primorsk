@@ -1,0 +1,12 @@
+{
+"type": "FeatureCollection",
+"name": "polyclinic",
+"crs": { "type": "name", "properties": { "name": "urn:ogc:def:crs:OGC:1.3:CRS84" } },
+"features": [
+{ "type": "Feature", "properties": { "service_id": 28, "service_name": "Поликлиника (+ ФАП, детская)", "capacity": 0, "address": "Красная долина" }, "geometry": { "type": "Point", "coordinates": [ 28.986837069371941, 60.358497867172801 ] } },
+{ "type": "Feature", "properties": { "service_id": 28, "service_name": "Поликлиника (+ ФАП, детская)", "capacity": 0, "address": "Рябово" }, "geometry": { "type": "Point", "coordinates": [ 28.991736150086791, 60.338231881614533 ] } },
+{ "type": "Feature", "properties": { "service_id": 28, "service_name": "Поликлиника (+ ФАП, детская)", "capacity": 0, "address": null }, "geometry": { "type": "Point", "coordinates": [ 28.718894132406508, 60.451345346633815 ] } },
+{ "type": "Feature", "properties": { "service_id": 28, "service_name": "Поликлиника (+ ФАП, детская)", "capacity": 0, "address": null }, "geometry": { "type": "Point", "coordinates": [ 29.0633118441725, 60.432218461100469 ] } },
+{ "type": "Feature", "properties": { "service_id": 28, "service_name": "Поликлиника (+ ФАП, детская)", "capacity": 0, "address": null }, "geometry": { "type": "Point", "coordinates": [ 28.616093429662314, 60.366828399602191 ] } }
+]
+}

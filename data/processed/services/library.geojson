@@ -1,0 +1,11 @@
+{
+"type": "FeatureCollection",
+"name": "library",
+"crs": { "type": "name", "properties": { "name": "urn:ogc:def:crs:OGC:1.3:CRS84" } },
+"features": [
+{ "type": "Feature", "properties": { "service_id": 48, "service_name": "Библиотека", "capacity": 0 }, "geometry": { "type": "Point", "coordinates": [ 28.6092832, 60.366034099999986 ] } },
+{ "type": "Feature", "properties": { "service_id": 48, "service_name": "Библиотека", "capacity": 0 }, "geometry": { "type": "Point", "coordinates": [ 28.6125679, 60.3667942 ] } },
+{ "type": "Feature", "properties": { "service_id": 48, "service_name": "Библиотека", "capacity": 0 }, "geometry": { "type": "Point", "coordinates": [ 28.757225106210342, 60.359811175562207 ] } },
+{ "type": "Feature", "properties": { "service_id": 48, "service_name": "Библиотека", "capacity": 0 }, "geometry": { "type": "Point", "coordinates": [ 28.718841580381522, 60.451354573153921 ] } }
+]
+}

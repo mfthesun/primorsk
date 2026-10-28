@@ -1,0 +1,8 @@
+{
+"type": "FeatureCollection",
+"name": "convenience",
+"crs": { "type": "name", "properties": { "name": "urn:ogc:def:crs:OGC:1.3:CRS84" } },
+"features": [
+{ "type": "Feature", "properties": { "service_id": 90, "service_name": "Продукты (магазин у дома)", "capacity": 0 }, "geometry": { "type": "Point", "coordinates": [ 28.683295777113376, 60.34594169149959 ] } }
+]
+}
