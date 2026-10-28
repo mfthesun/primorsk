@@ -4,3 +4,5 @@ shapely>=2.0
 pandas>=2.2
 numpy>=1.26
 matplotlib>=3.8
+contextily>=1.6      # подложки Esri/OSM для scripts/maps.py
+networkx>=3.2

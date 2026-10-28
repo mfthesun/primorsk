@@ -31,8 +31,13 @@ data/
   raw/                слои в сданном виде (не редактировать)
   processed/          итоговые GeoJSON, EPSG:4326: территория, services/, scenario/
 scripts/
+  setup.sh            окружения: .venv и .venv-blocksnet (Python 3.12, uv)
   process.py          raw → processed (все исправления)
   validate.py         проверка на соответствие требованиям
+  roadgraph.py        дорожный граф по roads.geojson (+ разрывы из OSM), формат BlocksNet/IduEdu
+  scenario_design.py  трассировка транспортных слоёв сценария и причалов → data/raw/scenario_design
+  analysis.py         BlocksNet: кварталы, доступность, обеспеченность «было» → reports/analysis_before.md
+  maps.py             карты для презентации → reports/maps/
 reports/              отчёт валидации и журналы изменений
 CLAUDE.md             инструкции для Claude Code
 ```
@@ -40,21 +45,23 @@ CLAUDE.md             инструкции для Claude Code
 ## Быстрый старт
 
 ```bash
-python -m venv .venv && source .venv/bin/activate
-pip install -r requirements.txt
-python scripts/process.py     # пересобрать data/processed из data/raw
-python scripts/validate.py    # проверить; код выхода 1 при ошибках
+bash scripts/setup.sh                              # окружения .venv и .venv-blocksnet
+.venv/bin/python scripts/process.py                # пересобрать data/processed из data/raw
+.venv/bin/python scripts/validate.py               # проверить; код выхода 1 при ошибках
+.venv-blocksnet/bin/python scripts/analysis.py     # анализ «было»
+.venv/bin/python scripts/maps.py                   # карты
 ```
 
 ## Ключевые цифры
 
 | Показатель | Значение |
 |---|---|
-| Население города / поселения | 6 271 / 13 593 (по презентациям); в слое `boundary` — 13 659 |
-| Здания | 9 151, из них жилых 3 876 |
+| Население города / поселения | 6 271 / 13 593 (Росстат на 01.01.2025, презентации); в слое `boundary` — 13 659 (на 01.01.2024) |
+| Здания | 9 156, из них жилых 3 859 |
 | Кварталы | 526 |
 | Сервисы | 45 слоёв |
-| Сценарий | 3 проектные территории, 24 здания (59 тыс. м²), 11 слоёв сервисов |
+| Сценарий | 3 проектные территории, 24 здания (59 тыс. м²), общежитие 75 чел., сервисы + транспортные слои и причалы |
+| Обеспеченность «было» | школы 97 % с подвозом (52 % пешком); детсады — дефицит 363 места |
 
 ## Данные
 

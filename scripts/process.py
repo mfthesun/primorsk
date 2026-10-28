@@ -53,8 +53,15 @@ AUX_MAX = 70.0        # м², постройка до этой площади р
 AUX_RADIUS = 12.0     # м
 LIVING_COEF = 0.7     # доля жилой площади в общей площади для домов без данных реестра
 
+# Независимая проверка is_living по тегам building=* OpenStreetMap (data/raw/osm_building_tags.geojson) —
+# замена ручной сверки по 2ГИС для зданий, где OSM даёт однозначный тип.
+OSM_NON_LIVING = {"garage", "garages", "shed", "industrial", "greenhouse", "service", "storage_tank", "ruins",
+                  "hangar", "warehouse", "kiosk", "school", "kindergarten", "church", "hospital", "roof",
+                  "bunker", "pavilion", "collapsed", "construction"}
+OSM_LIVING = {"house", "detached", "apartments", "residential", "semidetached_house", "terrace", "dormitory"}
+
 # Сервисы, которые по смыслу должны стоять на здании (точка на полигоне building)
-NOT_IN_BUILDING = {"bus_stop", "playground", "pitch", "cell_tower"}
+NOT_IN_BUILDING = {"bus_stop", "playground", "pitch", "cell_tower", "pier", "ice_rink"}
 SNAP_DIST = 60.0      # м — максимальное расстояние переноса точки на здание
 LOG_COLS = ["service", "row", "action", "distance_m"]
 CAPACITY_SERVICES = {"school", "kindergarten", "extra_education", "fuel", "college"}
@@ -123,8 +130,63 @@ def boundary() -> gpd.GeoDataFrame:
 
 
 # =============================================================================
+CENSUS = RAW / "population_census.csv"      # численность по населённым пунктам (ВПН-2020, Росстат)
+PLACES = RAW / "osm_places.geojson"         # точки населённых пунктов OSM (place=*)
+
+
+def distribute(w: pd.Series, total: int) -> np.ndarray:
+    """total жителей по домам: минимум 1 на дом, остальное — пропорционально весу (наибольшие остатки)."""
+    n = len(w)
+    rest = total - n
+    if rest < 0:
+        raise ValueError("жилых домов больше, чем жителей — проверить is_living")
+    share = w.values / w.values.sum() * rest if w.values.sum() > 0 else np.full(n, rest / max(n, 1))
+    fl = np.floor(share).astype(np.int64)
+    fl[np.argsort(-(share - fl))[:rest - fl.sum()]] += 1
+    return 1 + fl
+
+
+def locality_of(gm: gpd.GeoDataFrame) -> pd.Series:
+    """Населённый пункт здания — ближайшая точка place из переписи (диаграмма Вороного по точкам OSM)."""
+    names = set(pd.read_csv(CENSUS)["name"])
+    pl = read(PLACES).to_crs(MCRS)
+    pl = pl[pl["name"].isin(names)][["name", "geometry"]]
+    pts = gpd.GeoDataFrame(geometry=gm.representative_point(), index=gm.index, crs=MCRS)
+    j = gpd.sjoin_nearest(pts, pl, how="left")
+    return j[~j.index.duplicated()]["name"]
+
+
+def census_targets(loc: pd.Series, total: int) -> pd.Series:
+    """Численность пунктов по переписи, приведённая к total; пункт не меньше числа своих жилых домов
+    (лишние дома — дачи, учтённые жилыми; им по 1 жителю), излишек снимается с остальных пропорционально."""
+    c = pd.read_csv(CENSUS).set_index("name")["population"].astype(float)
+    houses = loc.value_counts().reindex(c.index, fill_value=0)
+    c = c[houses > 0]
+    houses = houses[c.index]
+    fixed = pd.Series(False, index=c.index)
+    for _ in range(len(c)):
+        t = c.where(~fixed, 0) / c.where(~fixed, 0).sum() * (total - houses[fixed].sum())
+        t[fixed] = houses[fixed]
+        low = (~fixed) & (t < houses)
+        if not low.any():
+            break
+        fixed |= low
+    fl = np.floor(t).astype(int)
+    fl.iloc[np.argsort(-(t - fl).values)[:total - fl.sum()]] += 1
+    return fl
+
+
 def building(bnd: gpd.GeoDataFrame) -> gpd.GeoDataFrame:
     g = fix_geom(read(RAW / "building.geojson"))
+    # здания, которых нет в исходном слое, но есть в OSM (база отдыха в Прибылово) — нежилые
+    extra = fix_geom(read(RAW / "osm_extra_buildings.geojson"))
+    extra = extra[~extra.intersects(g.union_all())]
+    extra = gpd.GeoDataFrame({"number_of_floors": 1, "is_living": False}, index=range(len(extra)),
+                             geometry=[shapely.MultiPolygon([p]) if p.geom_type == "Polygon" else p
+                                       for p in extra.geometry], crs=CRS)
+    g = pd.concat([g, extra], ignore_index=True)
+    g = gpd.GeoDataFrame(g, geometry="geometry", crs=CRS)
+    g["is_living"] = g["is_living"].fillna(False)
     g = g.reset_index(drop=True)
     g["id"] = np.arange(1, len(g) + 1, dtype="int32")
     gm = g.to_crs(MCRS)
@@ -180,7 +242,21 @@ def building(bnd: gpd.GeoDataFrame) -> gpd.GeoDataFrame:
                 new[s_id] = False
                 rule[s_id] = "хозпостройка у жилого дома"
 
-    # 6. ручные исправления по 2ГИС: data/raw/is_living_overrides.csv (id,is_living[,comment])
+    # 6. теги OSM: однозначно нежилой тип (гаражи, сараи, промышленные…) — нежилое, даже если сопоставлен
+    #    с реестром (ошибка сопоставления по адресу); дом по OSM вне садоводства — жилой
+    osm = fix_geom(read(RAW / "osm_building_tags.geojson"))[["building", "geometry"]].to_crs(MCRS)
+    jo = gpd.sjoin(pts, osm, how="left", predicate="within")
+    jo = jo[~jo.index.duplicated(keep="first")]
+    g["osm_building"] = jo["building"].values
+    osm_non = g["osm_building"].isin(OSM_NON_LIVING) & new
+    new[osm_non] = False
+    rule[osm_non] = "OSM: нежилой тип building=*"
+    osm_liv = g["osm_building"].isin(OSM_LIVING) & ~new & (g["zone"] != GARDEN_ZONE) & (fa >= MIN_HOUSE)
+    new[osm_liv] = True
+    rule[osm_liv] = "OSM: жилой тип building=*"
+    registry = registry & ~osm_non       # площади реестра у таких зданий не используем
+
+    # 7. ручные исправления по 2ГИС: data/raw/is_living_overrides.csv (id,is_living[,comment])
     ov_path = RAW / "is_living_overrides.csv"
     if ov_path.exists():
         ov = pd.read_csv(ov_path)
@@ -212,24 +288,30 @@ def building(bnd: gpd.GeoDataFrame) -> gpd.GeoDataFrame:
     for c in ("build_floor_area", "living_area", "non_living_area", "footprint_area"):
         g[c] = g[c].astype(float).fillna(0.0).round(2)
 
-    # --- восполнение населения: пропорционально жилой площади, сумма = население границы ---
-    pop = np.zeros(len(g), dtype=np.int64)
-    w = g["living_area"].where(living, 0.0).values
+    # --- восполнение населения: сумма = население границы; внутри населённого пункта — пропорционально
+    #     жилой площади (минимум 1 житель на дом), между пунктами — по переписи (data/raw/population_census.csv) ---
     idx = np.where(living.values)[0]
-    target = TERRITORY_POPULATION
-    base = np.ones(len(idx), dtype=np.int64)            # минимум 1 житель на жилой дом
-    rest = target - base.sum()
-    if rest < 0:
-        raise ValueError("жилых домов больше, чем жителей — проверить is_living")
-    share = w[idx] / w[idx].sum() * rest
-    fl = np.floor(share).astype(np.int64)
-    rem = rest - fl.sum()
-    order = np.argsort(-(share - fl))[:rem]
-    fl[order] += 1
-    pop[idx] = base + fl
+    w = pd.Series(g["living_area"].values[idx], index=idx)
+    pop = np.zeros(len(g), dtype=np.int64)
+    if CENSUS.exists():
+        loc = locality_of(gm.iloc[idx])
+        g["locality"] = None
+        g.loc[idx, "locality"] = loc.values
+        targets = census_targets(loc, TERRITORY_POPULATION)
+        for name, t in targets.items():
+            sel = loc.index[loc.values == name]
+            pop[sel] = distribute(w.loc[sel], int(t))
+        pd.DataFrame({"census": pd.read_csv(CENSUS).set_index("name")["population"],
+                      "houses": loc.value_counts(),
+                      "proportional": pd.Series(distribute(w, TERRITORY_POPULATION), index=idx).groupby(loc).sum(),
+                      "population": pd.Series(pop[idx], index=idx).groupby(loc).sum()}) \
+            .fillna(0).astype(int).rename_axis("locality").sort_values("census", ascending=False) \
+            .to_csv(REP / "population_by_locality.csv", encoding="utf-8-sig")
+    else:
+        pop[idx] = distribute(w, TERRITORY_POPULATION)
     g["population"] = pop.astype("int32")
 
-    log = pd.DataFrame({"id": g["id"], "zone": g["zone"], "footprint_area": fa,
+    log = pd.DataFrame({"id": g["id"], "zone": g["zone"], "osm_building": g["osm_building"], "footprint_area": fa,
                         "registry": registry, "is_living_old": old, "is_living_new": g["is_living"],
                         "rule": rule})
     log["changed"] = log.is_living_old != log.is_living_new
@@ -375,16 +457,79 @@ def snap_to_buildings(s: gpd.GeoDataFrame, bld: gpd.GeoDataFrame, svc: str, log:
     return sm.to_crs(CRS)
 
 
+# Дополнение сервисов точками OSM (data/raw/osm_pois.geojson, kind = amenity/tourism):
+# добавляются объекты, у которых в слое нет точки ближе OSM_DEDUP_DIST
+OSM_SUPPLEMENT = {"post_office": "post_office"}
+OSM_DEDUP_DIST = 300.0   # м
+
+
+def osm_supplement(s: gpd.GeoDataFrame, svc: str, log: list) -> gpd.GeoDataFrame:
+    if svc not in OSM_SUPPLEMENT:
+        return s
+    o = read(RAW / "osm_pois.geojson")
+    o = o[o["kind"] == OSM_SUPPLEMENT[svc]]
+    sm, om = s.to_crs(MCRS), o.to_crs(MCRS)
+    far = [sm.distance(p).min() > OSM_DEDUP_DIST if len(sm) else True for p in om.geometry]
+    add = o[far]
+    if add.empty:
+        return s
+    new = gpd.GeoDataFrame({"service_id": pd.array([s["service_id"].dropna().iloc[0]] * len(add), dtype="Int32"),
+                            "service_name": s["service_name"].iloc[0],
+                            "capacity": pd.array([0] * len(add), dtype="Int32"),
+                            "name": add["name"].astype("string").values},
+                           geometry=add.geometry.values, crs=CRS)
+    for i, n in enumerate(add["name"]):
+        log.append({"service": svc, "row": len(s) + i, "action": f"добавлена из OSM ({n})", "distance_m": None})
+    return pd.concat([s, new], ignore_index=True)
+
+
 def services(bld: gpd.GeoDataFrame, bnd: gpd.GeoDataFrame) -> None:
     log: list = []
     for f in sorted((RAW / "services_gpkg").glob("*.gpkg")):
         svc = f.stem.lower()
         g = read(f)
         s = normalize_service(g, svc)
+        s = osm_supplement(s, svc, log)
         s = s[s.intersects(bnd.union_all())]
         s = snap_to_buildings(s, bld, svc, log)
         write(s, OUT / "services" / f"{svc}.geojson")
     pd.DataFrame(log, columns=LOG_COLS).to_csv(REP / "services_snap.csv", index=False, encoding="utf-8-sig")
+
+
+# ---- параметры сценария по концепции (docs/concept.md, docs/scenario.md) -------------------------
+DORM_BUILDING_ID = 16        # корпус кампуса без сервисов: в нём общежитие (2 500 м², 70–80 мест)
+DORM_AREA = 2500.0
+DORM_POPULATION = 75
+SCENARIO_CAPACITY = {"college": 300, "extra_education": 60}   # студентов/год: колледж 250–300, парусная школа 50–60
+# service_id, которых нет в таблице курса или которые заняты другим сервисом (99 — «Пункт выдачи», outpost)
+SCENARIO_NO_ID = {"marketplace"}
+# новые сервисы марины: (слой, service_id, service_name, name, id здания сценария | None — точка у парусной школы)
+MARINA_SERVICES = [
+    ("hotel", 110, "Гостиница", "Гостинично-досуговый комплекс (ф. 2 марины)", 7),
+    ("yacht_club", None, "Яхт-клуб", "Клубный дом марины", 6),
+    ("rental", None, "Прокат", "Прокат буеров, снегоходов, сапов", None),
+    ("ice_rink", None, "Каток", "Сезонный каток", None),
+]
+DESIGN = RAW / "scenario_design"     # трассировка транспортных слоёв и причалов (scripts/scenario_design.py)
+
+
+def scenario_design(dst: Path, sb: gpd.GeoDataFrame) -> None:
+    """Слои транспортного проекта и причалы — из data/raw/scenario_design."""
+    for name in ("shuttle_route", "cycleway", "footway"):
+        x = read(DESIGN / f"{name}.geojson")
+        x["highway_type_id"] = x["highway_type_id"].astype("int32")
+        x["length_m"] = x["length_m"].round().astype("int32")
+        write(x, dst / f"{name}.geojson")
+    pk = read(DESIGN / "parking.geojson")
+    pk = gpd.GeoDataFrame({"service_id": pd.array([None], dtype="Int32"), "service_name": "Парковка",
+                           "capacity": pd.array([0], dtype="Int32"), "name": pk["name"].values,
+                           "places": pk["places"].astype("int32").values}, geometry=pk.geometry.values, crs=CRS)
+    write(pk, dst / "parking.geojson")
+    pr = read(DESIGN / "pier.geojson")
+    pr = gpd.GeoDataFrame({"service_id": pd.array([None] * len(pr), dtype="Int32"), "service_name": "Причал",
+                           "capacity": pd.array([0] * len(pr), dtype="Int32"), "name": pr["name"].values,
+                           "berths": pr["berths"].astype("int32").values}, geometry=pr.geometry.values, crs=CRS)
+    write(pr, dst / "pier.geojson")
 
 
 def scenario(bld: gpd.GeoDataFrame) -> None:
@@ -399,6 +544,15 @@ def scenario(bld: gpd.GeoDataFrame) -> None:
         sb[c] = sb[c].fillna(0).astype("int32")
     for c in ("build_floor_area", "living_area", "non_living_area"):
         sb[c] = sb[c].astype(float).fillna(0.0).round(2)
+    # в исходнике два здания с id = 23 — второму даём следующий свободный номер
+    dup = sb["id"].duplicated()
+    sb.loc[dup, "id"] = np.arange(sb["id"].max() + 1, sb["id"].max() + 1 + dup.sum(), dtype="int32")
+    # общежитие кампуса: часть корпуса DORM_BUILDING_ID
+    d = sb["id"] == DORM_BUILDING_ID
+    sb.loc[d, "is_living"] = True
+    sb.loc[d, "living_area"] = round(DORM_AREA * LIVING_COEF, 2)
+    sb.loc[d, "non_living_area"] = (sb.loc[d, "build_floor_area"] - sb.loc[d, "living_area"]).round(2)
+    sb.loc[d, "population"] = DORM_POPULATION
     sb = sb[["id", "build_floor_area", "living_area", "non_living_area", "footprint_area",
              "number_of_floors", "population", "is_living", "geometry"]]
     write(sb, dst / "building.geojson")
@@ -408,6 +562,14 @@ def scenario(bld: gpd.GeoDataFrame) -> None:
     for name in ("boundary", "landuse"):
         x = fix_geom(read(src / f"{name}.gpkg"))
         x = x.rename(columns=lambda c: c.strip().lower().replace(" ", "_") if c != "geometry" else c)
+        if name == "boundary":
+            # предполагаемое население территории = жители зданий сценария внутри неё
+            xm = x.to_crs(MCRS)
+            sbp = sb.to_crs(MCRS).representative_point()
+            x["population"] = pd.array([int(sb.loc[sbp.within(t.buffer(1)), "population"].sum())
+                                        for t in xm.geometry], dtype="int32")
+            x["name"] = ["Кампус ИНТЦ «Приморская долина»", "Марина, рыбный рынок, клубный дом",
+                         "Парусная школа, прокат"]
         write(x, dst / f"{name}.geojson")
     r = lower_cols(fix_geom(read(src / "roads.gpkg")))
     r["highway_type_id"] = r["highway_type_id"].astype("int32")
@@ -419,8 +581,38 @@ def scenario(bld: gpd.GeoDataFrame) -> None:
             continue
         svc = f.stem.lower()
         s = normalize_service(read(f), svc)
+        if svc in SCENARIO_CAPACITY:
+            n = len(s)
+            cap = SCENARIO_CAPACITY[svc]
+            s["capacity"] = pd.array([cap // n + (1 if i < cap % n else 0) for i in range(n)], dtype="Int32")
+        if svc in SCENARIO_NO_ID:
+            s["service_id"] = pd.array([None] * len(s), dtype="Int32")
+        if svc == "bus_stop":
+            st = read(DESIGN / "shuttle_stop.geojson")
+            st = st[st.to_crs(MCRS).geometry.apply(lambda p: s.to_crs(MCRS).distance(p).min() > 30)]
+            s = pd.concat([s, gpd.GeoDataFrame({"service_id": pd.array([None] * len(st), dtype="Int32"),
+                                                "service_name": s["service_name"].iloc[0],
+                                                "capacity": pd.array([0] * len(st), dtype="Int32"),
+                                                "name": st["name"].values}, geometry=st.geometry.values, crs=CRS)],
+                          ignore_index=True)
         s = snap_to_buildings(s, all_bld, svc, log)
         write(s, dst / f"{svc}.geojson")
+        if svc == "extra_education":
+            sail = s.geometry.iloc[0]
+
+    # новые сервисы марины
+    sbm = sb.set_index("id")
+    for svc, sid, sname, name, bid in MARINA_SERVICES:
+        if bid is not None:
+            geom = sbm.loc[[bid]].to_crs(MCRS).representative_point().to_crs(CRS).iloc[0]
+        else:
+            # рядом с парусной школой: прокат — в том же здании, каток — на берегу в 40 м
+            geom = sail if svc != "ice_rink" else \
+                gpd.GeoSeries([sail], crs=CRS).to_crs(MCRS).translate(0, -40).to_crs(CRS).iloc[0]
+        x = gpd.GeoDataFrame({"service_id": pd.array([sid], dtype="Int32"), "service_name": [sname],
+                              "capacity": pd.array([0], dtype="Int32"), "name": [name]}, geometry=[geom], crs=CRS)
+        write(x, dst / f"{svc}.geojson")
+    scenario_design(dst, sb)
     pd.DataFrame(log, columns=LOG_COLS).to_csv(REP / "scenario_snap.csv", index=False, encoding="utf-8-sig")
 
 

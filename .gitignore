@@ -5,3 +5,6 @@ __pycache__/
 *.qgz~
 *.aux.xml
 .DS_Store
+.venv-blocksnet/
+data/cache/
+data/processed/analysis/graph_*.geojson

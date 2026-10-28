@@ -3,7 +3,9 @@
 "name": "post_office",
 "crs": { "type": "name", "properties": { "name": "urn:ogc:def:crs:OGC:1.3:CRS84" } },
 "features": [
-{ "type": "Feature", "properties": { "service_id": 98, "service_name": "Почтовое отделение", "capacity": 0 }, "geometry": { "type": "Point", "coordinates": [ 28.718890830254189, 60.451298164322608 ] } },
-{ "type": "Feature", "properties": { "service_id": 98, "service_name": "Почтовое отделение", "capacity": 0 }, "geometry": { "type": "Point", "coordinates": [ 28.609569561312142, 60.366127177728288 ] } }
+{ "type": "Feature", "properties": { "service_id": 98, "service_name": "Почтовое отделение", "capacity": 0, "name": null }, "geometry": { "type": "Point", "coordinates": [ 28.718890830254189, 60.451298164322608 ] } },
+{ "type": "Feature", "properties": { "service_id": 98, "service_name": "Почтовое отделение", "capacity": 0, "name": null }, "geometry": { "type": "Point", "coordinates": [ 28.609569561312142, 60.366127177728288 ] } },
+{ "type": "Feature", "properties": { "service_id": 98, "service_name": "Почтовое отделение", "capacity": 0, "name": "Камышовка 188843" }, "geometry": { "type": "Point", "coordinates": [ 29.0648879, 60.4329401 ] } },
+{ "type": "Feature", "properties": { "service_id": 98, "service_name": "Почтовое отделение", "capacity": 0, "name": "Красная Долина 188840" }, "geometry": { "type": "Point", "coordinates": [ 28.9895317, 60.35981 ] } }
 ]
 }
