@@ -212,9 +212,9 @@ def rows() -> list[dict]:
 
 
 NOT_COUNTED = [
-    ("Возрастная структура (дети 1–6 лет), СКР", "в прогнозе СЭР поселения строки по возрастам пустые; нужна БД ПМО "
-     "Росстата или данные комитета образования (очередь в детсады)",
-     "проверка норматива 61 место/1000 жит.; Нацель «Сохранение населения» (СКР 1,6 к 2030)"),
+    ("Возрастная структура поселения, очередь в детсады, СКР", "Росстат публикует возраст только по районам (взята "
+     "доля детей Выборгского р-на); данных об очереди нет", "проверка норматива; Нацель «Сохранение населения» "
+     "(СКР 1,6 к 2030)"),
     ("Стоимость земли «до / после»", "нет обученной модели CatBoost для Urbanomy LandPriceEstimator",
      "KPI ТЭП «было / стало»; нужны модель курса или кадастровые цены"),
     ("ВГП / ВРП «стало» в абсолютных значениях", "нет базового ВРП поселения; SEREstimator даёт только приросты",
@@ -228,6 +228,7 @@ NOT_COUNTED = [
 
 
 SER_CSV = ROOT / "data" / "raw" / "ser_forecast_2030.csv"
+AGE_CSV = ROOT / "data" / "raw" / "rosstat_age_vyborg_2024.csv"   # возрастной состав Выборгского р-на
 
 
 def ser_section(R: list[dict]) -> list[str]:
@@ -240,6 +241,14 @@ def ser_section(R: list[dict]) -> list[str]:
     jobs = sum(x or 0 for x in (val("Новые рабочие места: кампус"), val("Новые рабочие места: марина")))
     inv = val("Инвестиции в проекты, всего")
     births = (v("births", 2023) + v("births", 2024)) / 2
+    age = pd.read_csv(AGE_CSV).set_index("area")
+    share = age["age_1_6"] / age["population"]
+    town_pop = json.loads((MET / "blocksnet_today.json").read_text(encoding="utf-8"))["town_population"]
+    kids_town = town_pop * share["urban"]
+    kids = kids_town + (next(r["today"] for r in R if r["indicator"] == "Постоянное население") - town_pop) * share["rural"]
+    pt = pd.read_csv(REP / "provision_today.csv")
+    kg = pt[pt["service"] == "kindergarten"].iloc[0]
+    kg_need, kg_cap = kg["Норматив, мест"], kg["Вместимость (факт)"]
     n = lambda x, d=0: "—" if x is None or x != x else f"{x:,.{d}f}".replace(",", " ").replace(".", ",")  # noqa: E731
     rows_ = [
         ("Численность населения на 1 января", "чел.", n(v("population_jan1", 2024)), n(v("population_jan1", 2030)),
@@ -248,9 +257,9 @@ def ser_section(R: list[dict]) -> list[str]:
          f"{n(v('births', 2030))} / {n(v('deaths', 2030))}", "—", "естественная убыль сохраняется (−27 в 2030)"),
         ("Миграционный прирост", "чел./год", n(v("migration_increase", 2024)), n(v("migration_increase", 2030)), "—",
          "сценарии миграцию не моделируют"),
-        ("Оценка детей 1–6 лет (6 когорт × рождаемость 2023–2024)", "чел.", n(6 * births), n(6 * v("births", 2030)),
-         "—", "норматив 61 место/1000 жит. даёт 833 места при 470 существующих — спрос по нормативу в 2,5 раза выше "
-              "демографической оценки без учёта миграции; нужна очередь в детсады"),
+        ("Дети 1–6 лет (оценка по структуре Выборгского р-на, Росстат 01.01.2024)", "чел.", n(kids), "—", "—",
+         f"город {kids_town:.0f} (4,4 % жителей) + сёла {kids - kids_town:.0f} (3,8 %); по рождаемости 2023–2024 — "
+         f"≈ {6 * births:.0f}; мест в детсадах {kg_cap:.0f}, норматив МНГП ЛО (зона Б) — {kg_need:.0f}"),
         ("Инвестиции в основной капитал", "млн ₽/год", n(v("investment_fixed_capital", 2024), 1),
          n(v("investment_fixed_capital", 2030), 1), n(None if inv is None else inv / 5, 1),
          "сценарий 2: проекты за 2027–2031, в среднем за год (Urbanomy)"),

@@ -49,40 +49,40 @@
  "town_t_drive_marina": 8.876618760624325,
  "provision": {
   "school_walk": {
-   "need": 1648,
+   "need": 1032,
    "capacity": 1847,
-   "within": 933,
-   "deficit": 715,
-   "excess": 588,
-   "strong": 0.566,
-   "weak": 0.764
+   "within": 590,
+   "deficit": 442,
+   "excess": 1039,
+   "strong": 0.572,
+   "weak": 0.783
   },
   "school_drive": {
-   "need": 1648,
+   "need": 1032,
    "capacity": 1847,
-   "within": 1593,
-   "deficit": 55,
-   "excess": 201,
-   "strong": 0.967,
-   "weak": 0.999
+   "within": 990,
+   "deficit": 42,
+   "excess": 815,
+   "strong": 0.959,
+   "weak": 1.0
   },
   "kindergarten_walk": {
-   "need": 838,
+   "need": 686,
    "capacity": 710,
-   "within": 243,
-   "deficit": 595,
-   "excess": 227,
-   "strong": 0.29,
-   "weak": 0.576
+   "within": 211,
+   "deficit": 475,
+   "excess": 296,
+   "strong": 0.308,
+   "weak": 0.603
   },
   "kindergarten_drive": {
-   "need": 838,
+   "need": 686,
    "capacity": 710,
-   "within": 684,
-   "deficit": 154,
-   "excess": 0,
-   "strong": 0.816,
-   "weak": 0.847
+   "within": 611,
+   "deficit": 75,
+   "excess": 60,
+   "strong": 0.891,
+   "weak": 0.948
   },
   "college_drive": {
    "need": 110,

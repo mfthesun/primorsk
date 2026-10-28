@@ -46,7 +46,9 @@ REP = ROOT / "reports"
 ORIGINS = {"станция": (589964, 6693001), "центр": (588638, 6693428), "марина": (588694, 6693041),
            "кампус": (593014, 6691007), "порт": (594950, 6690540)}
 ISO = [("walk", 15), ("transit", 30)]
-PROVISION = {"kindergarten": (61, 7), "school": (120, 15)}      # мест на 1000 жит., мин пешком
+# мест на 1000 жит. по МНГП ЛО для зоны Б (г. Приморск, сельские НП) — как в analysis.py; мин пешком
+PROVISION = {"kindergarten": ((61, 40), 7), "school": ((91, 61), 15)}
+TOWN = "Приморск"
 # источники шума: эквивалентный уровень Lэкв на 7,5 м (дБА; типовые значения для ж/д, магистральных и
 # местных улиц, границы порта) → уровень на 1 м от источника, как ждёт ObjectNat: +20·lg(7,5) ≈ +17,5 дБ
 L75 = {"railway": 80, "regional_road": 75, "main_street": 70, "port": 68}
@@ -126,10 +128,13 @@ def provision(G: dict, b: gpd.GeoDataFrame, phase: int, tag: str) -> dict:
     liv = b[b["population"] > 0].copy()
     liv["geometry"] = liv.representative_point()
     liv = liv.reset_index(drop=True)
+    bl = read(PROC / "analysis" / f"blocks_{tag}.geojson")[["locality", "geometry"]]
+    j = gpd.sjoin(liv[["geometry"]], bl, how="left", predicate="within")
+    town = (j[~j.index.duplicated()]["locality"] == TOWN).reindex(liv.index, fill_value=False)
     ug = urban_graph(G["walk"])
-    for svc, (norm, t) in PROVISION.items():
+    for svc, ((k_town, k_rural), t) in PROVISION.items():
         s = services(svc, phase)
-        liv["demand"] = (liv["population"] * norm / 1000).round(3)
+        liv["demand"] = (liv["population"] * np.where(town, k_town, k_rural) / 1000).round(3)
         mx = ug.od_matrix(gdf_origins=liv, gdf_destinations=s, weight="time_min")
         pr = get_service_provision(buildings=liv, distance_matrix=mx, services=s, threshold=t)
         d = pr.demand_rows

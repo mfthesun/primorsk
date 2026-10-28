@@ -75,9 +75,9 @@
  ],
  "provision": {
   "kindergarten": {
-   "demand": 837.8,
-   "supplied_within": 257.0,
-   "share_within": 0.307,
+   "demand": 685.3,
+   "supplied_within": 202.0,
+   "share_within": 0.295,
    "columns": [
     "demand",
     "demand_left",
@@ -89,9 +89,9 @@
    ]
   },
   "school": {
-   "demand": 1648.1,
-   "supplied_within": 659.0,
-   "share_within": 0.4,
+   "demand": 1031.9,
+   "supplied_within": 384.0,
+   "share_within": 0.372,
    "columns": [
     "demand",
     "demand_left",
