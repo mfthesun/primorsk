@@ -1,0 +1,213 @@
+{
+ "tag": "s2",
+ "name": "Сценарий 2 — полная реализация (до 2031)",
+ "projects": {
+  "campus": {
+   "by_use": [
+    {
+     "land_use": "BUSINESS",
+     "land_area": 4423.65,
+     "built_area": 2340.54,
+     "land_cost": 707784.4,
+     "construction_cost": 128729700.0,
+     "investment_need": 129437484.4,
+     "NPV": 152668610.2,
+     "IRR": 0.4,
+     "ROI": 19.09,
+     "PP_years": 5.74,
+     "EI": 100.0,
+     "spatial_potential": 0.0,
+     "INV": 57.27
+    },
+    {
+     "land_use": "RECREATION",
+     "land_area": 5160.74,
+     "built_area": 2730.53,
+     "land_cost": 825718.23,
+     "construction_cost": 54610600.0,
+     "investment_need": 55436318.23,
+     "NPV": 27355829.51,
+     "IRR": 0.28,
+     "ROI": 14.23,
+     "PP_years": 8.28,
+     "EI": 46.62,
+     "spatial_potential": 0.0,
+     "INV": 26.7
+    },
+    {
+     "land_use": "RESIDENTIAL",
+     "land_area": 17336.53,
+     "built_area": 9172.7,
+     "land_cost": 2773844.48,
+     "construction_cost": 412771500.0,
+     "investment_need": 415545344.48,
+     "NPV": -80739581.12,
+     "IRR": 0.13,
+     "ROI": 6.08,
+     "PP_years": NaN,
+     "EI": 0.0,
+     "spatial_potential": 0.0,
+     "INV": 0.0
+    },
+    {
+     "land_use": "SPECIAL",
+     "land_area": 72127.06,
+     "built_area": 38162.19,
+     "land_cost": 11540329.46,
+     "construction_cost": 1335676650.0,
+     "investment_need": 1347216979.46,
+     "NPV": 171870236.56,
+     "IRR": 0.21,
+     "ROI": 9.96,
+     "PP_years": 12.67,
+     "EI": 46.0,
+     "spatial_potential": 0.0,
+     "INV": 26.35
+    }
+   ],
+   "total": {
+    "land_use": "project",
+    "land_area": 99047.98,
+    "built_area": 52405.96,
+    "land_cost": 15847676.57,
+    "construction_cost": 1931788450.0,
+    "investment_need": 1947636126.57,
+    "NPV": 271155095.14,
+    "IRR": 0.21,
+    "ROI": 9.86,
+    "PP_years": 12.21,
+    "EI": 56.11,
+    "spatial_potential": 0.0,
+    "INV": 32.13
+   }
+  },
+  "kindergarten": {
+   "by_use": [
+    {
+     "land_use": "SPECIAL",
+     "land_area": 6240.0,
+     "built_area": 2880.0,
+     "land_cost": 0.0,
+     "construction_cost": 100800000.0,
+     "investment_need": 100800000.0,
+     "NPV": 13841512.51,
+     "IRR": 0.21,
+     "ROI": 10.21,
+     "PP_years": 12.44,
+     "EI": 15.52,
+     "spatial_potential": 0.0,
+     "INV": 8.89
+    }
+   ],
+   "total": {
+    "land_use": "project",
+    "land_area": 6240.0,
+    "built_area": 2880.0,
+    "land_cost": 0.0,
+    "construction_cost": 100800000.0,
+    "investment_need": 100800000.0,
+    "NPV": 13841512.51,
+    "IRR": 0.21,
+    "ROI": 10.21,
+    "PP_years": 12.44,
+    "EI": 15.52,
+    "spatial_potential": 0.0,
+    "INV": 8.89
+   }
+  },
+  "marina": {
+   "by_use": [
+    {
+     "land_use": "BUSINESS",
+     "land_area": 5438.72,
+     "built_area": 855.9,
+     "land_cost": 5726915.53,
+     "construction_cost": 47074500.0,
+     "investment_need": 52801415.53,
+     "NPV": 50360507.09,
+     "IRR": 0.36,
+     "ROI": 14.22,
+     "PP_years": 6.22,
+     "EI": 86.02,
+     "spatial_potential": 0.0,
+     "INV": 49.27
+    },
+    {
+     "land_use": "RECREATION",
+     "land_area": 39215.24,
+     "built_area": 6171.37,
+     "land_cost": 41293275.7,
+     "construction_cost": 123427400.0,
+     "investment_need": 164720675.7,
+     "NPV": 22400863.61,
+     "IRR": 0.21,
+     "ROI": 7.42,
+     "PP_years": 12.6,
+     "EI": 16.6,
+     "spatial_potential": 0.0,
+     "INV": 9.51
+    }
+   ],
+   "total": {
+    "land_use": "project",
+    "land_area": 44653.96,
+    "built_area": 7027.27,
+    "land_cost": 47020191.23,
+    "construction_cost": 170501900.0,
+    "investment_need": 217522091.23,
+    "NPV": 72761370.7,
+    "IRR": 0.24,
+    "ROI": 8.82,
+    "PP_years": 9.37,
+    "EI": 44.29,
+    "spatial_potential": 0.0,
+    "INV": 25.37
+   }
+  }
+ },
+ "ser": [
+  {
+   "indicator": "Объём инвестиций в основной капитал на душу населения",
+   "delta_build_year": 165894.8837982283,
+   "delta_ops_year": NaN
+  },
+  {
+   "indicator": "Валовый региональный продукт на душу населения",
+   "delta_build_year": 27142.10024345365,
+   "delta_ops_year": 25184.714107914195
+  },
+  {
+   "indicator": "Доходы бюджета территории",
+   "delta_build_year": 300994783.2644333,
+   "delta_ops_year": 235164618.8212
+  },
+  {
+   "indicator": "Средний уровень заработной платы",
+   "delta_build_year": NaN,
+   "delta_ops_year": -8561.234040875803
+  },
+  {
+   "indicator": "Износ основного фонда (тыс. руб.)",
+   "delta_build_year": NaN,
+   "delta_ops_year": 78335.97051217
+  }
+ ],
+ "jobs": {
+  "BUSINESS": 177.57999999999998,
+  "RECREATION": 0.0,
+  "RESIDENTIAL": 0.0,
+  "SPECIAL": 1368.073
+ },
+ "jobs_by_project": {
+  "campus": 1402.103,
+  "kindergarten": 96.0,
+  "marina": 47.55
+ },
+ "investment_by_project": {
+  "campus": 1947636126.5700002,
+  "kindergarten": 100800000.0,
+  "marina": 217522091.23
+ },
+ "jobs_total": 1545.653,
+ "investment_need_total": 2265958217.8
+}

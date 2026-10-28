@@ -2,8 +2,8 @@
  "tag": "s2",
  "name": "Сценарий 2 — полная реализация (до 2031)",
  "population": 13734,
- "buildings": 9180,
- "build_floor_area_m2": 1865714.98,
+ "buildings": 9181,
+ "build_floor_area_m2": 1868594.98,
  "living_area_m2": 472063.21,
  "living_area_per_capita": 34.37186617154507,
  "median_acc_drive": 40.681352816868234,
@@ -49,40 +49,40 @@
  "town_t_drive_marina": 8.876618760624325,
  "provision": {
   "school_walk": {
-   "need": 1648,
+   "need": 1032,
    "capacity": 1847,
-   "within": 933,
-   "deficit": 715,
-   "excess": 588,
-   "strong": 0.566,
-   "weak": 0.764
+   "within": 590,
+   "deficit": 442,
+   "excess": 1039,
+   "strong": 0.572,
+   "weak": 0.783
   },
   "school_drive": {
-   "need": 1648,
+   "need": 1032,
    "capacity": 1847,
-   "within": 1593,
-   "deficit": 55,
-   "excess": 201,
-   "strong": 0.967,
-   "weak": 0.999
+   "within": 990,
+   "deficit": 42,
+   "excess": 815,
+   "strong": 0.959,
+   "weak": 1.0
   },
   "kindergarten_walk": {
-   "need": 838,
-   "capacity": 470,
-   "within": 230,
-   "deficit": 608,
-   "excess": 50,
-   "strong": 0.274,
-   "weak": 0.501
+   "need": 686,
+   "capacity": 630,
+   "within": 211,
+   "deficit": 475,
+   "excess": 216,
+   "strong": 0.308,
+   "weak": 0.603
   },
   "kindergarten_drive": {
-   "need": 838,
-   "capacity": 470,
-   "within": 470,
-   "deficit": 368,
+   "need": 686,
+   "capacity": 630,
+   "within": 579,
+   "deficit": 107,
    "excess": 0,
-   "strong": 0.561,
-   "weak": 0.561
+   "strong": 0.844,
+   "weak": 0.918
   },
   "college_drive": {
    "need": 110,
@@ -158,7 +158,7 @@
  },
  "territory": {
   "counts": {
-   "kindergarten": 4.0,
+   "kindergarten": 5.0,
    "school": 6.0,
    "college": 3.0,
    "university": 0.0,
@@ -199,7 +199,7 @@
    "catering": 8.0
   },
   "provision": {
-   "kindergarten": 0.48663101604278075,
+   "kindergarten": 0.6331550802139038,
    "school": 0.8668587896253602,
    "college": 0.9456066945606695,
    "university": 0.0,

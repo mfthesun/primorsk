@@ -1,0 +1,8 @@
+{
+"type": "FeatureCollection",
+"name": "kindergarten_building",
+"crs": { "type": "name", "properties": { "name": "urn:ogc:def:crs:OGC:1.3:CRS84" } },
+"features": [
+{ "type": "Feature", "properties": { "name": "Детский сад на 160 мест", "places": 160, "number_of_floors": 2 }, "geometry": { "type": "Polygon", "coordinates": [ [ [ 28.651720242955143, 60.353646366377816 ], [ 28.651733862245298, 60.353915617797924 ], [ 28.650864356542673, 60.35392641149069 ], [ 28.65085074441404, 60.353657159953165 ], [ 28.651720242955143, 60.353646366377816 ] ] ] } }
+]
+}

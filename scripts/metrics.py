@@ -164,7 +164,7 @@ def rows() -> list[dict]:
     add(g, "Жители г. Приморска в зоне шума ≥ 55 дБА", "чел.", lambda t: O[t]["noise"]["population_ge55"],
         "ObjectNat calculate_simplified_noise_frame", "Нацель «Комфортная среда»")
     add(g, "Объекты сценария в зоне шума ≥ 55 дБА", "зданий", lambda t: O[t]["noise"].get("scenario_buildings_ge55"),
-        "ObjectNat", "общежитие — 53 дБА (ниже нормы 55); здания марины у улицы — до 72 дБА")
+        "ObjectNat", "общежитие и детский сад — 53 дБА (ниже нормы 55); здания марины у улицы — до 72 дБА")
     add(g, "Видимая с набережной акватория (среднее с точки)", "га", lambda t: O[t]["visibility"]["mean_sea_view_ha"],
         "ObjectNat get_visibility", "М: видовые раскрытия на залив", fmt="{:.1f}")
     add(g, "Благоустроенные общественные пространства (маршруты, марина)", "ед.", lambda t: B[t]["public_spaces"],
@@ -175,10 +175,30 @@ def rows() -> list[dict]:
     add(g, "Места в парусной школе", "мест/год", lambda t: B[t]["sailing_school_places"], "сценарий", "М: 50–60")
     add(g, "Туристские объекты (гостиница, клуб, прокат, каток, рынок)", "ед.", lambda t: B[t]["tourism_objects"],
         "сценарий", "Указ № 309 (6н): доля туризма в ВВП 5 %")
-    add(g, "Инвестиции в проекты", "млн ₽", lambda t: (U[t]["investment_need_total"] / 1e6) if U[t] else (0 if t == "today" else None),
-        "Urbanomy InvestmentAttractivenessAnalyzer", "М: 150–200 млн ₽ (марина)", fmt="{:,.0f}")
-    add(g, "Новые рабочие места", "мест", lambda t: U[t]["jobs_total"] if U[t] else (0 if t == "today" else None),
-        "Urbanomy (jobs_per_m2)", "К: +250–300; М: +40–50 и +200")
+    z = lambda t, f: f(U[t]) if U[t] else (0 if t == "today" else None)  # noqa: E731
+    ser = lambda u, ind, k="delta_ops_year": next(r[k] for r in u["ser"] if r["indicator"] == ind)  # noqa: E731
+    add(g, "Инвестиции в проекты, всего", "млн ₽", lambda t: z(t, lambda u: u["investment_need_total"] / 1e6),
+        "Urbanomy InvestmentAttractivenessAnalyzer", "бенчмарки СПб; земля — кадастровая стоимость НСПД")
+    add(g, "Инвестиции: марина", "млн ₽", lambda t: z(t, lambda u: u["investment_by_project"]["marina"] / 1e6),
+        "Urbanomy InvestmentAttractivenessAnalyzer", "М: 150–200 млн ₽")
+    add(g, "Инвестиции: кампус", "млн ₽", lambda t: z(t, lambda u: u["investment_by_project"]["campus"] / 1e6),
+        "Urbanomy InvestmentAttractivenessAnalyzer", "К: в концепции не оценены")
+    add(g, "Инвестиции: детский сад (160 мест)", "млн ₽",
+        lambda t: z(t, lambda u: u["investment_by_project"].get("kindergarten", 0) / 1e6),
+        "Urbanomy InvestmentAttractivenessAnalyzer", "мероприятие МП: дефицит детсадов")
+    add(g, "Новые рабочие места: кампус", "мест", lambda t: z(t, lambda u: u["jobs_by_project"]["campus"]),
+        "Urbanomy (jobs_per_m2)", "К: +250–300")
+    add(g, "Новые рабочие места: марина", "мест", lambda t: z(t, lambda u: u["jobs_by_project"]["marina"]),
+        "Urbanomy (jobs_per_m2; для RECREATION норма 0)", "М: +40–50 (марина) и +200 (комплекс)")
+    add(g, "Δ доходов бюджета территории (год эксплуатации)", "млн ₽/год",
+        lambda t: z(t, lambda u: ser(u, "Доходы бюджета территории") / 1e6), "Urbanomy SEREstimator",
+        "бюджет 2024 — 281,4 млн ₽; концепция: +96–134 млн ₽/год (Т 30–45, М 6–9 и 60–80)", fmt="{:.1f}")
+    add(g, "Δ доходов бюджета территории (год стройки)", "млн ₽/год",
+        lambda t: z(t, lambda u: ser(u, "Доходы бюджета территории", "delta_build_year") / 1e6),
+        "Urbanomy SEREstimator", "то же", fmt="{:.1f}")
+    add(g, "Δ ВРП на душу (год эксплуатации)", "тыс. ₽/чел.",
+        lambda t: z(t, lambda u: ser(u, "Валовый региональный продукт на душу населения") / 1000),
+        "Urbanomy SEREstimator", "концепция: ВГП ×2,0–2,1", fmt="{:.1f}")
 
     g = "6. Климат (дополнительные метрики)"
     add(g, "Дни, пригодные для парусных занятий (май–сентябрь)", "дн.", lambda t: C["sail_days_mean"], "ERA5 / Open-Meteo",
@@ -192,17 +212,72 @@ def rows() -> list[dict]:
 
 
 NOT_COUNTED = [
-    ("Рождаемость, смертность, миграция", "нет данных по поселению (БД ПМО Росстата недоступна автоматически)",
-     "Нацель «Сохранение населения» (СКР 1,6 к 2030); BlocksNet DemographicIndicator есть"),
-    ("Стоимость земли «до / после»", "нет обученной модели CatBoost для Urbanomy LandPriceEstimator",
-     "KPI ТЭП «было / стало»; нужны модель курса или кадастровые цены"),
-    ("Доходы бюджета, ВРП на душу «стало»", "Urbanomy SEREstimator — скрипт готов, нужен запуск", "концепция: ВГП ×2,0–2,1"),
+    ("Возрастная структура поселения, очередь в детсады, СКР", "Росстат публикует возраст только по районам (взята "
+     "доля детей Выборгского р-на); данных об очереди нет", "проверка норматива; Нацель «Сохранение населения» "
+     "(СКР 1,6 к 2030)"),
+    ("Стоимость земли «после»", "есть только кадастровая «до» (НСПД: кампус 160, марина 1 053 руб./м²); для «после» "
+     "нет обученной модели CatBoost (Urbanomy LandPriceEstimator)", "KPI ТЭП «было / стало»"),
+    ("ВГП / ВРП «стало» в абсолютных значениях", "нет базового ВРП поселения; SEREstimator даёт только приросты",
+     "концепция: ВГП ×2,0–2,1"),
     ("Турпоток", "нет статистики размещения / посещений", "концепция: 75 тыс. чел./год, +400–700 %"),
     ("Пассажиропоток ж/д", "нет данных РЖД / СЗППК по ст. Приморск", "концепция: +150–200 %"),
     ("Отток молодёжи", "нет миграционной статистики по возрастам", "концепция: −35–45 %"),
     ("Дороги в нормативном состоянии", "нет данных диагностики покрытия", "Указ № 309 (4л): ≥ 60 % региональных"),
     ("Индекс качества городской среды", "методика Минстроя для опорных НП, нет исходных данных", "Указ № 309 (4а)"),
 ]
+
+
+SER_CSV = ROOT / "data" / "raw" / "ser_forecast_2030.csv"
+AGE_CSV = ROOT / "data" / "raw" / "rosstat_age_vyborg_2024.csv"   # возрастной состав Выборгского р-на
+
+
+def ser_section(R: list[dict]) -> list[str]:
+    """Сверка с официальным прогнозом СЭР поселения до 2030 (инерционный вариант, без проектов концепции)."""
+    if not SER_CSV.exists():
+        return []
+    f = pd.read_csv(SER_CSV).set_index("indicator")
+    v = lambda k, y: f.loc[k, f"y{y}"]  # noqa: E731
+    val = lambda name: next((r["s2"] for r in R if r["indicator"] == name), None)  # noqa: E731
+    jobs = sum(x or 0 for x in (val("Новые рабочие места: кампус"), val("Новые рабочие места: марина")))
+    inv = val("Инвестиции в проекты, всего")
+    births = (v("births", 2023) + v("births", 2024)) / 2
+    age = pd.read_csv(AGE_CSV).set_index("area")
+    share = age["age_1_6"] / age["population"]
+    town_pop = json.loads((MET / "blocksnet_today.json").read_text(encoding="utf-8"))["town_population"]
+    kids_town = town_pop * share["urban"]
+    kids = kids_town + (next(r["today"] for r in R if r["indicator"] == "Постоянное население") - town_pop) * share["rural"]
+    pt = pd.read_csv(REP / "provision_today.csv")
+    kg = pt[pt["service"] == "kindergarten"].iloc[0]
+    kg_need, kg_cap = kg["Норматив, мест"], kg["Вместимость (факт)"]
+    n = lambda x, d=0: "—" if x is None or x != x else f"{x:,.{d}f}".replace(",", " ").replace(".", ",")  # noqa: E731
+    rows_ = [
+        ("Численность населения на 1 января", "чел.", n(v("population_jan1", 2024)), n(v("population_jan1", 2030)),
+         n(val("Постоянное население")), "сценарий: +75 жителей общежития; прогноз СЭР: +61 к 2030 за счёт миграции"),
+        ("Рождаемость / смертность", "чел./год", f"{n(v('births', 2024))} / {n(v('deaths', 2024))}",
+         f"{n(v('births', 2030))} / {n(v('deaths', 2030))}", "—", "естественная убыль сохраняется (−27 в 2030)"),
+        ("Миграционный прирост", "чел./год", n(v("migration_increase", 2024)), n(v("migration_increase", 2030)), "—",
+         "сценарии миграцию не моделируют"),
+        ("Дети 1–6 лет (оценка по структуре Выборгского р-на, Росстат 01.01.2024)", "чел.", n(kids), "—", "—",
+         f"город {kids_town:.0f} (4,4 % жителей) + сёла {kids - kids_town:.0f} (3,8 %); по рождаемости 2023–2024 — "
+         f"≈ {6 * births:.0f}; мест в детсадах {kg_cap:.0f}, норматив МНГП ЛО (зона Б) — {kg_need:.0f}"),
+        ("Инвестиции в основной капитал", "млн ₽/год", n(v("investment_fixed_capital", 2024), 1),
+         n(v("investment_fixed_capital", 2030), 1), n(None if inv is None else inv / 5, 1),
+         "сценарий 2: проекты за 2027–2031, в среднем за год (Urbanomy)"),
+        ("Доходы бюджета поселения", "млн ₽", n(v("budget_revenue", 2024), 1), n(v("budget_revenue", 2030), 1),
+         "+" + n(val("Δ доходов бюджета территории (год эксплуатации)"), 1),
+         "Δ SEREstimator — все уровни бюджета; бюджет поселения получает лишь часть НДФЛ и имущественных налогов"),
+        ("Занятые в экономике", "чел.", n(v("employed_economy", 2024)), n(v("employed_economy", 2030)),
+         "+" + n(jobs), "сценарий 2: рабочие места кампуса и марины (Urbanomy), прогноз СЭР — без роста"),
+        ("Среднемесячная зарплата", "₽", n(v("avg_wage_month", 2024)), n(v("avg_wage_month", 2030)), "—",
+         "база SEREstimator — 2024"),
+    ]
+    out = ["## 7. Сверка с прогнозом СЭР поселения до 2030", "",
+           "Прогноз — постановление администрации МО «Приморское городское поселение» № 996 от 06.12.2024, "
+           "прил. 1 (`data/raw/ser_forecast_2030.csv`): инерционный вариант без проектов концепции.", "",
+           "| Показатель | Ед. | 2024 (оценка) | 2030 (прогноз СЭР) | Сценарий 2 (расчёт) | Комментарий |",
+           "|---|---|---|---|---|---|"]
+    out += [f"| {a} | {b} | {c} | {d} | {e} | {g} |" for a, b, c, d, e, g in rows_]
+    return out + [""]
 
 
 def fmt(v, f):
@@ -232,6 +307,7 @@ def main() -> None:
             lines.append(f"| {r['indicator']} | {r['unit']} | {fmt(a, r['fmt'])} | {fmt(r['s1'], r['fmt'])} | "
                          f"{fmt(c, r['fmt'])} | {ds} | {r['tool']} | {r['goal']} |")
         lines.append("")
+    lines += ser_section(R)
     lines += ["## Важные показатели, которые посчитать не удалось", "",
               "| Показатель | Почему | Зачем нужен |", "|---|---|---|"]
     lines += [f"| {a} | {b} | {c} |" for a, b, c in NOT_COUNTED]
@@ -248,7 +324,7 @@ KEY = [("Детские сады, с подвозом (15 мин)", "Детса�
        ("Жители в 30 мин от порта (пешком + шаттл)", "Жителей в 30 мин от порта"),
        ("Видимая с набережной акватория (среднее с точки)", "Видимая акватория, га"),
        ("Причальные места", "Причальные места"),
-       ("Новые рабочие места", "Новые рабочие места")]
+       ("Новые рабочие места: кампус", "Рабочие места в кампусе")]
 
 
 def chart(df: pd.DataFrame) -> None:

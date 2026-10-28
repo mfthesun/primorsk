@@ -65,6 +65,9 @@ PROVISION = {
     "kindergarten": {"walk": 7,  "drive": 15},
     "college":      {"drive": 60},          # норматив BlocksNet: 8 мест/1000, 60 мин (колледж — только в сценариях)
 }
+# Мест на 1000 постоянных жителей по МНГП ЛО (пост. № 525 от 04.12.2017, ред. 17.03.2026, п. 2.1.2) для зоны Б
+# (Приморское ГП — зона Б по РНГП ЛО, прил. 3): (г. Приморск, сельские НП). Остальные сервисы — норматив BlocksNet.
+MNGP = {"kindergarten": (61, 40), "school": (91, 61)}
 # Сервисы слоя → тип сервиса BlocksNet (service_types_config) для показателей территории.
 # Реальная вместимость есть у школ, детсадов, колледжа; у прочих — типовая вместимость наименьшего объекта
 # BlocksNet (units[].capacity) — оценка, отмечается в отчёте.
@@ -283,10 +286,17 @@ def provision(blocks: gpd.GeoDataFrame, acc: dict, phase: int) -> tuple[pd.DataF
         s = services_to_blocks(svc, blocks, phase)
         cap = s.groupby("index_right")["capacity"].sum().reindex(blocks.index, fill_value=0).astype(int) \
             if len(s) else pd.Series(0, index=blocks.index)
-        need = round(pop_total * demand_k / 1000)
-        df = pd.DataFrame({"population": blocks["population"],
-                           "demand": split_int(need, blocks["population"]).astype(int),
-                           "capacity": cap})
+        if svc in MNGP:
+            town = blocks["locality"] == TOWN
+            demand = pd.Series(0, index=blocks.index, dtype=int)
+            for mask, k in ((town, MNGP[svc][0]), (~town, MNGP[svc][1])):
+                p = blocks.loc[mask, "population"]
+                demand.loc[mask] = split_int(round(p.sum() * k / 1000), p)
+            need, demand_k = int(demand.sum()), "{} / {}".format(*MNGP[svc])
+        else:
+            need = round(pop_total * demand_k / 1000)
+            demand = split_int(need, blocks["population"])
+        df = pd.DataFrame({"population": blocks["population"], "demand": demand.astype(int), "capacity": cap})
         for mode, a in acc_min.items():
             r, links = competitive_provision(df.copy(), acc[mode], accessibility=a, max_depth=3)
             res[(svc, mode)] = r

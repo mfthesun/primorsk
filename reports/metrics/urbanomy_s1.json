@@ -1,0 +1,131 @@
+{
+ "tag": "s1",
+ "name": "Сценарий 1 — первая очередь (2027–2029)",
+ "projects": {
+  "campus": {
+   "by_use": [
+    {
+     "land_use": "RESIDENTIAL",
+     "land_area": 48465.93,
+     "built_area": 9172.7,
+     "land_cost": 7754548.08,
+     "construction_cost": 412771500.0,
+     "investment_need": 420526048.08,
+     "NPV": -85720284.72,
+     "IRR": 0.13,
+     "ROI": 5.87,
+     "PP_years": NaN,
+     "EI": 0.0,
+     "spatial_potential": 0.0,
+     "INV": 0.0
+    },
+    {
+     "land_use": "SPECIAL",
+     "land_area": 50582.05,
+     "built_area": 9573.2,
+     "land_cost": 8093128.49,
+     "construction_cost": 335062000.0,
+     "investment_need": 343155128.49,
+     "NPV": 37916443.57,
+     "IRR": 0.2,
+     "ROI": 9.52,
+     "PP_years": 13.1,
+     "EI": 19.07,
+     "spatial_potential": 0.0,
+     "INV": 10.92
+    }
+   ],
+   "total": {
+    "land_use": "project",
+    "land_area": 99047.98,
+    "built_area": 18745.9,
+    "land_cost": 15847676.57,
+    "construction_cost": 747833500.0,
+    "investment_need": 763681176.57,
+    "NPV": -47803841.16,
+    "IRR": 0.17,
+    "ROI": 7.52,
+    "PP_years": NaN,
+    "EI": 0.0,
+    "spatial_potential": 0.0,
+    "INV": 0.0
+   }
+  },
+  "marina": {
+   "by_use": [
+    {
+     "land_use": "RECREATION",
+     "land_area": 44653.96,
+     "built_area": 6171.37,
+     "land_cost": 47020191.23,
+     "construction_cost": 123427400.0,
+     "investment_need": 170447591.23,
+     "NPV": 16673948.08,
+     "IRR": 0.2,
+     "ROI": 6.94,
+     "PP_years": 13.59,
+     "EI": 12.11,
+     "spatial_potential": 0.0,
+     "INV": 6.93
+    }
+   ],
+   "total": {
+    "land_use": "project",
+    "land_area": 44653.96,
+    "built_area": 6171.37,
+    "land_cost": 47020191.23,
+    "construction_cost": 123427400.0,
+    "investment_need": 170447591.23,
+    "NPV": 16673948.08,
+    "IRR": 0.2,
+    "ROI": 6.94,
+    "PP_years": 13.59,
+    "EI": 12.11,
+    "spatial_potential": 0.0,
+    "INV": 6.93
+   }
+  }
+ },
+ "ser": [
+  {
+   "indicator": "Объём инвестиций в основной капитал на душу населения",
+   "delta_build_year": 68389.25015008419,
+   "delta_ops_year": NaN
+  },
+  {
+   "indicator": "Валовый региональный продукт на душу населения",
+   "delta_build_year": 10885.08386402128,
+   "delta_ops_year": 6249.198330770921
+  },
+  {
+   "indicator": "Доходы бюджета территории",
+   "delta_build_year": 124083437.98943333,
+   "delta_ops_year": 56792742.788200006
+  },
+  {
+   "indicator": "Средний уровень заработной платы",
+   "delta_build_year": NaN,
+   "delta_ops_year": -2109.127534132582
+  },
+  {
+   "indicator": "Износ основного фонда (тыс. руб.)",
+   "delta_build_year": NaN,
+   "delta_ops_year": 29882.643602955
+  }
+ ],
+ "jobs": {
+  "RECREATION": 0.0,
+  "RESIDENTIAL": 0.0,
+  "SPECIAL": 319.1066666666667
+ },
+ "jobs_by_project": {
+  "campus": 319.1066666666667,
+  "marina": 0.0
+ },
+ "investment_by_project": {
+  "campus": 763681176.5699999,
+  "marina": 170447591.23
+ },
+ "jobs_total": 319.1066666666667,
+ "investment_need_total": 934128767.8
+}
