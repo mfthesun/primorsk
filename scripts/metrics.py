@@ -178,7 +178,7 @@ def rows() -> list[dict]:
     z = lambda t, f: f(U[t]) if U[t] else (0 if t == "today" else None)  # noqa: E731
     ser = lambda u, ind, k="delta_ops_year": next(r[k] for r in u["ser"] if r["indicator"] == ind)  # noqa: E731
     add(g, "Инвестиции в проекты, всего", "млн ₽", lambda t: z(t, lambda u: u["investment_need_total"] / 1e6),
-        "Urbanomy InvestmentAttractivenessAnalyzer", "бенчмарки СПб, без стоимости земли")
+        "Urbanomy InvestmentAttractivenessAnalyzer", "бенчмарки СПб; земля — кадастровая стоимость НСПД")
     add(g, "Инвестиции: марина", "млн ₽", lambda t: z(t, lambda u: u["investment_by_project"]["marina"] / 1e6),
         "Urbanomy InvestmentAttractivenessAnalyzer", "М: 150–200 млн ₽")
     add(g, "Инвестиции: кампус", "млн ₽", lambda t: z(t, lambda u: u["investment_by_project"]["campus"] / 1e6),
@@ -215,8 +215,8 @@ NOT_COUNTED = [
     ("Возрастная структура поселения, очередь в детсады, СКР", "Росстат публикует возраст только по районам (взята "
      "доля детей Выборгского р-на); данных об очереди нет", "проверка норматива; Нацель «Сохранение населения» "
      "(СКР 1,6 к 2030)"),
-    ("Стоимость земли «до / после»", "нет обученной модели CatBoost для Urbanomy LandPriceEstimator",
-     "KPI ТЭП «было / стало»; нужны модель курса или кадастровые цены"),
+    ("Стоимость земли «после»", "есть только кадастровая «до» (НСПД: кампус 160, марина 1 053 руб./м²); для «после» "
+     "нет обученной модели CatBoost (Urbanomy LandPriceEstimator)", "KPI ТЭП «было / стало»"),
     ("ВГП / ВРП «стало» в абсолютных значениях", "нет базового ВРП поселения; SEREstimator даёт только приросты",
      "концепция: ВГП ×2,0–2,1"),
     ("Турпоток", "нет статистики размещения / посещений", "концепция: 75 тыс. чел./год, +400–700 %"),

@@ -57,50 +57,50 @@
      "land_use": "RECREATION",
      "land_area": 44653.96,
      "built_area": 6171.37,
-     "land_cost": 0.0,
+     "land_cost": 47020191.23,
      "construction_cost": 123427400.0,
-     "investment_need": 123427400.0,
-     "NPV": 63694139.31,
-     "IRR": 0.28,
-     "ROI": 14.88,
-     "PP_years": 8.13,
-     "EI": 57.08,
+     "investment_need": 170447591.23,
+     "NPV": 16673948.08,
+     "IRR": 0.2,
+     "ROI": 6.94,
+     "PP_years": 13.59,
+     "EI": 12.11,
      "spatial_potential": 0.0,
-     "INV": 32.69
+     "INV": 6.93
     }
    ],
    "total": {
     "land_use": "project",
     "land_area": 44653.96,
     "built_area": 6171.37,
-    "land_cost": 0.0,
+    "land_cost": 47020191.23,
     "construction_cost": 123427400.0,
-    "investment_need": 123427400.0,
-    "NPV": 63694139.31,
-    "IRR": 0.28,
-    "ROI": 14.88,
-    "PP_years": 8.13,
-    "EI": 57.08,
+    "investment_need": 170447591.23,
+    "NPV": 16673948.08,
+    "IRR": 0.2,
+    "ROI": 6.94,
+    "PP_years": 13.59,
+    "EI": 12.11,
     "spatial_potential": 0.0,
-    "INV": 32.69
+    "INV": 6.93
    }
   }
  },
  "ser": [
   {
    "indicator": "Объём инвестиций в основной капитал на душу населения",
-   "delta_build_year": 64946.81723186177,
+   "delta_build_year": 68389.25015008419,
    "delta_ops_year": NaN
   },
   {
    "indicator": "Валовый региональный продукт на душу населения",
-   "delta_build_year": 10311.345044317544,
+   "delta_build_year": 10885.08386402128,
    "delta_ops_year": 6249.198330770921
   },
   {
    "indicator": "Доходы бюджета территории",
-   "delta_build_year": 117837589.25438167,
-   "delta_ops_year": 55899359.15483
+   "delta_build_year": 124083437.98943333,
+   "delta_ops_year": 56792742.788200006
   },
   {
    "indicator": "Средний уровень заработной платы",
@@ -110,7 +110,7 @@
   {
    "indicator": "Износ основного фонда (тыс. руб.)",
    "delta_build_year": NaN,
-   "delta_ops_year": 28542.5681529
+   "delta_ops_year": 29882.643602955
   }
  ],
  "jobs": {
@@ -124,8 +124,8 @@
  },
  "investment_by_project": {
   "campus": 763681176.5699999,
-  "marina": 123427400.0
+  "marina": 170447591.23
  },
  "jobs_total": 319.1066666666667,
- "investment_need_total": 887108576.5699999
+ "investment_need_total": 934128767.8
 }

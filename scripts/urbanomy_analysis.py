@@ -36,6 +36,11 @@ PROC = ROOT / "data" / "processed"
 REP = ROOT / "reports"
 INPUTS = json.loads((ROOT / "data" / "raw" / "urbanomy_inputs.json").read_text(encoding="utf-8"))
 PROJECT_OF_TERRITORY = {0: "campus", 1: "marina", 2: "marina"}
+# цена земли проекта, руб./м²: средневзвешенная кадастровая стоимость участков НСПД (data/raw/cadastral_parcels.csv);
+# если участков проекта нет — значение из urbanomy_inputs.json
+_cad = pd.read_csv(ROOT / "data" / "raw" / "cadastral_parcels.csv").groupby("project")[["area_m2", "cadastral_value_rub"]].sum()
+LAND_PRICE = {**{k: float(v or 0) for k, v in INPUTS["land_price_rub_m2"].items() if not k.startswith("_")},
+              **(_cad["cadastral_value_rub"] / _cad["area_m2"]).to_dict()}
 PROJECT_NAME = {"campus": "Кампус ИНТЦ", "marina": "Марина", "kindergarten": "Детский сад"}
 # здания сценария вне территорий проектов: id → (проект, участок из data/raw/scenario_design)
 OWN_SITE = {29: ("kindergarten", "kindergarten_site")}
@@ -60,7 +65,7 @@ def project_input(phase: int) -> gpd.GeoDataFrame:
         site = sites.get(proj) or terr.loc[[k for k, v in PROJECT_OF_TERRITORY.items() if v == proj]].area.sum()
         share_gfa = g["build_floor_area"].sum() / b.loc[b["project"] == proj, "build_floor_area"].sum()
         land_area = float(site * share_gfa)
-        price = float(INPUTS["land_price_rub_m2"].get(proj, 0) or 0)
+        price = LAND_PRICE.get(proj, 0.0)
         rows.append({"project": proj, "land_use": lu, "site_area": land_area, "price_pred": price * land_area,
                      "living_area": float(g["living_area"].sum()), "non_living_area": float(g["non_living_area"].sum()),
                      "build_floor_area": float(g["build_floor_area"].sum()), "share": 1.0,
@@ -111,8 +116,10 @@ def run(tag: str) -> dict | None:
 
 def report(results: list[dict]) -> None:
     lines = ["# Urbanomy: инвестиции и социально-экономический эффект", "",
-             "Сгенерировано `scripts/urbanomy_analysis.py`. Бенчмарки и цена земли — `data/raw/urbanomy_inputs.json` "
-             "(демо-значения Urbanomy по СПб; цена земли до получения кадастровой стоимости не учитывается).", ""]
+             "Сгенерировано `scripts/urbanomy_analysis.py`. Бенчмарки — `data/raw/urbanomy_inputs.json` "
+             "(демо-значения Urbanomy по СПб); цена земли — кадастровая стоимость участков НСПД "
+             "(`data/raw/cadastral_parcels.csv`): " + ", ".join(f"{PROJECT_NAME[k]} {v:,.0f} ₽/м²".replace(",", " ")
+                                                              for k, v in LAND_PRICE.items() if k in PROJECT_NAME) + ".", ""]
     for r in results:
         lines += [f"## {r['name']}", "", "| Проект | Инвестиции, млн ₽ | NPV, млн ₽ | IRR | Окупаемость, лет |",
                   "|---|---|---|---|---|"]
@@ -123,7 +130,8 @@ def report(results: list[dict]) -> None:
                          f"{f('PP_years', 1)} |")
         jp = r["jobs_by_project"]
         lines += ["", f"Рабочих мест (нормы Urbanomy `jobs_per_m2`): {r['jobs_total']:.0f} — кампус "
-                  f"{jp.get('campus', 0):.0f}, марина {jp.get('marina', 0):.0f} (для RECREATION норма 0)", "",
+                  f"{jp.get('campus', 0):.0f}, марина {jp.get('marina', 0):.0f} (для RECREATION норма 0)"
+                  + (f", детский сад {jp['kindergarten']:.0f}" if "kindergarten" in jp else ""), "",
                   "| Показатель (SEREstimator) | Δ за год стройки | Δ за год эксплуатации |", "|---|---|---|"]
         for s in r["ser"]:
             fmt = lambda v: "—" if v is None or v != v else f"{v:,.0f}".replace(",", " ")  # noqa: E731
