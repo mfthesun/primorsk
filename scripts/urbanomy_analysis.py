@@ -89,7 +89,8 @@ def run(tag: str) -> dict | None:
         o, _ = an.calculate_investment_metrics(g.drop(columns="project").reset_index(drop=True))
         allout.append(pd.DataFrame(o.drop(columns="geometry")).assign(project=proj))
     df = pd.concat(allout, ignore_index=True)
-    est = SEREstimator({"population": pop, "employment_base": int(pop * INPUTS["ser"]["employment_share"]),
+    emp = INPUTS["ser"].get("employment_base") or int(pop * INPUTS["ser"]["employment_share"])
+    est = SEREstimator({"population": pop, "employment_base": int(emp),
                         "avg_wage_base": INPUTS["ser"]["avg_wage_base"]})
     ser = est.compute(df, pretty=False)
     res["ser"] = ser.to_dict(orient="records")

@@ -85,7 +85,7 @@
    "by_use": [
     {
      "land_use": "SPECIAL",
-     "land_area": 8400.0,
+     "land_area": 9200.0,
      "built_area": 4356.0,
      "land_cost": 0.0,
      "construction_cost": 152460000.0,
@@ -101,7 +101,7 @@
    ],
    "total": {
     "land_use": "project",
-    "land_area": 8400.0,
+    "land_area": 9200.0,
     "built_area": 4356.0,
     "land_cost": 0.0,
     "construction_cost": 152460000.0,
@@ -184,7 +184,7 @@
   {
    "indicator": "Средний уровень заработной платы",
    "delta_build_year": NaN,
-   "delta_ops_year": 995.3249723038316
+   "delta_ops_year": -8790.263578832193
   },
   {
    "indicator": "Износ основного фонда (тыс. руб.)",

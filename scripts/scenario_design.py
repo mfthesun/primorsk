@@ -44,12 +44,13 @@ PARKING_PLACES = 100
 PARKING_M2_PER_PLACE = 25.0
 PIERS, PIER_LEN, BERTHS_PER_PIER = 4, 60.0, 10               # 40 причальных мест
 PIER_GAP = 25.0                                              # м между причалами
-# детский сад (сценарий 2): 240 мест — 12 групп по 20; участок 35 м²/место (СП 42.13330.2016, прил. Д),
-# здание 2 эт., ≈ 18 м² общей площади на место
+# детский сад (сценарий 2): 240 мест — 12 групп по 20; участок свыше 100 мест — 38 м²/место (МНГП ЛО,
+# пост. Правительства ЛО № 525 от 04.12.2017 в ред. от 17.03.2026, п. 2.1.4), здание 2 эт., ≈ 18 м² на место
 KG_PLACES = 240
-KG_SITE = (100.0, 84.0)                                      # м, ≈ 0,84 га
+KG_SITE = (100.0, 92.0)                                      # м, 0,92 га ≥ 240 × 38 = 9 120 м²
 KG_BUILDING = (66.0, 33.0)                                   # м, пятно ≈ 2 180 м²
 KG_FLOORS = 2
+KG_BUILDING_ID = 29                                          # id здания в process.py
 
 
 def route(G: nx.Graph, names: list[str]) -> LineString:
@@ -102,7 +103,8 @@ def kindergarten() -> tuple[gpd.GeoDataFrame, gpd.GeoDataFrame]:
     lay = {n: gpd.read_file(PROC / f"{n}.geojson").to_crs(MCRS) for n in ("building", "water", "railways", "forest")}
     roads = gpd.read_file(PROC / "roads.geojson").to_crs(MCRS)
     roads = roads[roads.intersects(win)].union_all()
-    sc = [gpd.read_file(PROC / "scenario" / "building.geojson").to_crs(MCRS)]
+    sc = gpd.read_file(PROC / "scenario" / "building.geojson").to_crs(MCRS)
+    sc = [sc[sc["id"] != KG_BUILDING_ID]]                    # сам детсад прошлого прогона — не препятствие
     obst = shapely.union_all([lay["building"][lay["building"].intersects(win)].buffer(10).union_all(),
                               lay["water"][lay["water"].intersects(win)].union_all(),
                               lay["forest"][lay["forest"].intersects(win)].union_all(),
