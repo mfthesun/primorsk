@@ -41,6 +41,7 @@
 
 ```bash
 bash scripts/setup.sh                      # .venv, .venv-blocksnet (+ Urbanomy), .venv-objectnat — Python 3.12, uv
+                                           # (в облачной среде — автоматически, см. docs/cloud-environment.md)
 .venv/bin/python scripts/process.py && .venv/bin/python scripts/validate.py
 .venv-blocksnet/bin/python scripts/analysis.py            # BlocksNet: today / s1 / s2
 .venv-objectnat/bin/python scripts/objectnat_analysis.py  # ObjectNat: изохроны, обеспеченность по зданиям, шум, видимость
