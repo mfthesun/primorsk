@@ -5,6 +5,11 @@
 #   bash scripts/setup.sh base       # только пайплайн данных и карты (requirements.txt)
 #   bash scripts/setup.sh blocksnet  # только окружение моделирования (BlocksNet + Urbanomy)
 #   bash scripts/setup.sh objectnat  # только окружение ObjectNat
+#   bash scripts/setup.sh link       # только ссылки .venv* в репозитории на окружения из PRIMORSK_VENVS
+#
+# PRIMORSK_VENVS — где лежат окружения (по умолчанию — корень репозитория). В облачной среде Claude Code
+# окружения ставятся в /opt/primorsk (переживает свежий клон репозитория), а в репозитории создаются ссылки
+# .venv → /opt/primorsk/.venv и т. д. (docs/cloud-environment.md).
 #
 # Окружения:
 #   .venv            — пайплайн данных (process.py, validate.py, maps.py): requirements.txt, любой Python ≥ 3.10;
@@ -22,6 +27,12 @@ set -euo pipefail
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 cd "$ROOT"
 WHAT="${1:-all}"
+# окружения: PRIMORSK_VENVS, иначе /opt/primorsk (облачная среда), если там уже установлено, иначе — репозиторий
+if [ -n "${PRIMORSK_VENVS:-}" ]; then VENVS="$PRIMORSK_VENVS"
+elif [ -d /opt/primorsk/.venv ]; then VENVS=/opt/primorsk
+else VENVS="$ROOT"; fi
+mkdir -p "$VENVS"
+V="$VENVS/.venv"; VB="$VENVS/.venv-blocksnet"; VO="$VENVS/.venv-objectnat"
 
 BLOCKSNET_VERSION="1.0.0a9"
 IDUEDU_VERSION="0.4.1"        # BlocksNet 1.0.0a9 несовместим с iduedu ≥ 1.0
@@ -48,16 +59,16 @@ reachable() {  # reachable URL — доступен ли хост (код отв
 
 setup_base() {
     log "Базовое окружение .venv (requirements.txt)"
-    [ -d .venv ] || uv venv -q .venv
-    VIRTUAL_ENV="$ROOT/.venv" uv pip install -q -r requirements.txt
-    .venv/bin/python -c "import geopandas, pyogrio, shapely, matplotlib; print('geopandas', geopandas.__version__)"
+    [ -d "$V" ] || uv venv -q "$V"
+    VIRTUAL_ENV="$V" uv pip install -q -r requirements.txt
+    "$V/bin/python" -c "import geopandas, pyogrio, shapely, matplotlib; print('geopandas', geopandas.__version__)"
 }
 
 setup_blocksnet() {
     log "Окружение моделирования .venv-blocksnet (Python 3.12, BlocksNet $BLOCKSNET_VERSION)"
     # uv сам скачает Python 3.12, если его нет в системе (нужен доступ к github.com);
     # при ограниченном интернете поставьте python3.12 из пакетов ОС заранее.
-    [ -d .venv-blocksnet ] || uv venv -q -p 3.12 .venv-blocksnet
+    [ -d "$VB" ] || uv venv -q -p 3.12 "$VB"
     local extra=()
     if reachable "$TORCH_INDEX/torch/"; then
         # CPU-сборка torch: ~200 МБ вместо ~2 ГБ с CUDA
@@ -65,10 +76,10 @@ setup_blocksnet() {
     else
         echo "download.pytorch.org недоступен — torch будет взят с PyPI (сборка с CUDA, тяжелее)"
     fi
-    VIRTUAL_ENV="$ROOT/.venv-blocksnet" uv pip install -q "${extra[@]}" \
+    VIRTUAL_ENV="$VB" uv pip install -q "${extra[@]}" \
         "blocksnet[torch]==$BLOCKSNET_VERSION" "iduedu==$IDUEDU_VERSION" \
         -r requirements.txt
-    .venv-blocksnet/bin/python - <<'PY'
+    "$VB/bin/python" - <<'PY'
 import blocksnet, iduedu, torch, pulp
 print("blocksnet", blocksnet.__version__, "| iduedu", iduedu.__version__, "| torch", torch.__version__)
 from blocksnet.analysis.provision import competitive_provision  # noqa: F401
@@ -80,34 +91,46 @@ setup_urbanomy() {
     # Urbanomy: pyproject требует Python 3.10 и BlocksNet 1.0.0a1 (ради land_value_modeling); используемые
     # модули (investment_potential, socio_economic_indicators) от BlocksNet не зависят — подключаем src в .venv-blocksnet
     log "Urbanomy ($URBANOMY_COMMIT) → .venv-blocksnet"
-    local dst="$ROOT/.venv-blocksnet/src/urbanomy"
+    local dst="$VB/src/urbanomy"
     if [ ! -d "$dst/.git" ]; then
         git clone -q "$URBANOMY_REPO" "$dst"
     fi
     git -C "$dst" fetch -q --depth 1 origin "$URBANOMY_COMMIT" 2>/dev/null || true
     git -C "$dst" checkout -q "$URBANOMY_COMMIT"
     local site
-    site=$(.venv-blocksnet/bin/python -c "import sysconfig; print(sysconfig.get_paths()['purelib'])")
+    site=$("$VB/bin/python" -c "import sysconfig; print(sysconfig.get_paths()['purelib'])")
     echo "$dst/src" > "$site/urbanomy_src.pth"
-    VIRTUAL_ENV="$ROOT/.venv-blocksnet" uv pip install -q catboost libpysal
-    .venv-blocksnet/bin/python -c "from urbanomy.methods.socio_economic_indicators.sei_calculate import SEREstimator; print('urbanomy OK')"
+    VIRTUAL_ENV="$VB" uv pip install -q catboost libpysal
+    "$VB/bin/python" -c "from urbanomy.methods.socio_economic_indicators.sei_calculate import SEREstimator; print('urbanomy OK')"
 }
 
 setup_objectnat() {
     log "Окружение ObjectNat .venv-objectnat (Python 3.12, ObjectNat $OBJECTNAT_VERSION)"
-    [ -d .venv-objectnat ] || uv venv -q -p 3.12 .venv-objectnat
-    VIRTUAL_ENV="$ROOT/.venv-objectnat" uv pip install -q "objectnat==$OBJECTNAT_VERSION" -r requirements.txt
-    .venv-objectnat/bin/python -c "import objectnat, iduedu; print('objectnat', '$OBJECTNAT_VERSION', '| iduedu', iduedu.__version__)"
+    [ -d "$VO" ] || uv venv -q -p 3.12 "$VO"
+    VIRTUAL_ENV="$VO" uv pip install -q "objectnat==$OBJECTNAT_VERSION" -r requirements.txt
+    "$VO/bin/python" -c "import objectnat, iduedu; print('objectnat', '$OBJECTNAT_VERSION', '| iduedu', iduedu.__version__)"
 }
 
+link_venvs() {
+    # окружения вне репозитория → ссылки .venv* в корне репозитория (команды в документации не меняются)
+    [ "$VENVS" = "$ROOT" ] && return
+    for n in .venv .venv-blocksnet .venv-objectnat; do
+        if [ -d "$VENVS/$n" ] && [ ! -e "$ROOT/$n" -o -L "$ROOT/$n" ]; then
+            ln -sfn "$VENVS/$n" "$ROOT/$n"
+        fi
+    done
+}
+
+if [ "$WHAT" = "link" ]; then link_venvs; exit 0; fi
 ensure_uv
 case "$WHAT" in
     base) setup_base ;;
     blocksnet) setup_blocksnet; setup_urbanomy ;;
     objectnat) setup_objectnat ;;
     all) setup_base; setup_blocksnet; setup_urbanomy; setup_objectnat ;;
-    *) echo "использование: bash scripts/setup.sh [all|base|blocksnet|objectnat]"; exit 2 ;;
+    *) echo "использование: bash scripts/setup.sh [all|base|blocksnet|objectnat|link]"; exit 2 ;;
 esac
+link_venvs
 
 log "Готово"
 cat <<'TXT'
