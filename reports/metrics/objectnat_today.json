@@ -1,0 +1,117 @@
+{
+ "tag": "today",
+ "name": "Существующее положение (2026)",
+ "isochrones": [
+  {
+   "origin": "станция",
+   "mode": "walk",
+   "minutes": 15,
+   "population": 2483,
+   "area_ha": 212.3
+  },
+  {
+   "origin": "центр",
+   "mode": "walk",
+   "minutes": 15,
+   "population": 3637,
+   "area_ha": 214.1
+  },
+  {
+   "origin": "марина",
+   "mode": "walk",
+   "minutes": 15,
+   "population": 3124,
+   "area_ha": 140.1
+  },
+  {
+   "origin": "кампус",
+   "mode": "walk",
+   "minutes": 15,
+   "population": 103,
+   "area_ha": 74.1
+  },
+  {
+   "origin": "порт",
+   "mode": "walk",
+   "minutes": 15,
+   "population": 0,
+   "area_ha": 256.3
+  },
+  {
+   "origin": "станция",
+   "mode": "transit",
+   "minutes": 30,
+   "population": 5047,
+   "area_ha": 526.2
+  },
+  {
+   "origin": "центр",
+   "mode": "transit",
+   "minutes": 30,
+   "population": 4657,
+   "area_ha": 559.7
+  },
+  {
+   "origin": "марина",
+   "mode": "transit",
+   "minutes": 30,
+   "population": 4578,
+   "area_ha": 463.8
+  },
+  {
+   "origin": "кампус",
+   "mode": "transit",
+   "minutes": 30,
+   "population": 564,
+   "area_ha": 224.7
+  },
+  {
+   "origin": "порт",
+   "mode": "transit",
+   "minutes": 30,
+   "population": 0,
+   "area_ha": 542.0
+  }
+ ],
+ "provision": {
+  "kindergarten": {
+   "demand": 833.2,
+   "supplied_within": 257.0,
+   "share_within": 0.308,
+   "columns": [
+    "demand",
+    "demand_left",
+    "supplied_demands_within",
+    "supplied_demands_without",
+    "min_dist",
+    "avg_dist",
+    "provision_value"
+   ]
+  },
+  "school": {
+   "demand": 1639.1,
+   "supplied_within": 659.0,
+   "share_within": 0.402,
+   "columns": [
+    "demand",
+    "demand_left",
+    "supplied_demands_within",
+    "supplied_demands_without",
+    "min_dist",
+    "avg_dist",
+    "provision_value"
+   ]
+  }
+ },
+ "noise": {
+  "population_ge55": 3070,
+  "town_population": 6340,
+  "share_ge55": 0.484
+ },
+ "visibility": {
+  "points": 22,
+  "mean_view_ha": 36.1,
+  "mean_sea_view_ha": 22.97,
+  "union_sea_view_ha": 103.5
+ }
+}

@@ -40,20 +40,39 @@
 ## Окружение
 
 ```bash
-pip install -r requirements.txt   # пайплайн данных: geopandas, pyogrio, shapely, matplotlib
+bash scripts/setup.sh                      # .venv, .venv-blocksnet (+ Urbanomy), .venv-objectnat — Python 3.12, uv
+                                           # (в облачной среде — автоматически, см. docs/cloud-environment.md)
+bash scripts/setup.sh link                 # облачная среда: если в репозитории нет .venv* — ссылки на /opt/primorsk
+.venv/bin/python scripts/process.py && .venv/bin/python scripts/validate.py
+.venv-blocksnet/bin/python scripts/analysis.py            # BlocksNet: today / s1 / s2
+.venv-objectnat/bin/python scripts/objectnat_analysis.py  # ObjectNat: изохроны, обеспеченность по зданиям, шум, видимость
+.venv-blocksnet/bin/python scripts/urbanomy_analysis.py   # Urbanomy: инвестиции, SER
+.venv/bin/python scripts/climate.py && .venv/bin/python scripts/metrics.py   # климат; сводная таблица
+.venv/bin/python scripts/maps.py && .venv/bin/python scripts/webmap.py       # карты PNG; HTML «Цифровой мастер-план»
 ```
 
-Для моделирования (этап 3) — отдельное окружение на Python 3.12 через `uv`: BlocksNet 1.0.0a9 требует
-iduedu 0.4.1 и extra `[torch]` (Python 3.10–3.12); ObjectNat 2.1 требует iduedu ≥ 2.2 — ещё одно окружение.
-Опыт и подводные камни — репозиторий github.com/mfthesun/pskov-blocksnet.
+Сценарии — `scripts/scenarios.py` (today / s1 — первая очередь до 2029 / s2 — полная реализация до 2031), у объектов
+сценария атрибут `phase`. Дачи — сезонный фонд (`is_seasonal`), в постоянное население не входят.
+
+BlocksNet 1.0.0a9 требует iduedu 0.4.1 и extra `[torch]` (Python 3.10–3.12; setup.sh ставит CPU-сборку torch);
+ObjectNat 2.1 требует iduedu ≥ 2.2 — `.venv-objectnat`; `UrbanGraph.from_nx_graph` в iduedu 2.3 падает — собирать
+`UrbanGraph(nodes, edges, ...)` из таблиц. Urbanomy — только из GitHub (IDUclub/urbanomy, коммит в setup.sh), без
+модели CatBoost стоимость земли не считается. Опыт — github.com/mfthesun/pskov-blocksnet.
+
+Граф — `scripts/roadgraph.py` по `roads.geojson` + достройка разрывов `data/raw/osm_roads.geojson` (без интернета).
+Подводные камни IduEdu 0.4.1: граф должен быть ориентированным, узлы — подряд 0..n-1 (метка = номер строки
+матрицы), вес ребра ≥ 0,01 мин (хранится как целое ×100). Точка квартала — центр его застройки, не
+`representative_point()` (кварталы до сотен га).
+
+Карты: без заголовков (они в презентации; подписи — `reports/maps/README.md`), кадр 4:3, север — вверху справа,
+масштабная линейка — внизу слева, легенда — внизу справа, подложка Esri без надписей, все подписи по-русски.
 
 Внешние данные (OSM/Overpass, 2ГИС, Росстат) скрипты не скачивают.
 
 ## Ближайшие задачи
 
-1. Довести сценарий до концепции (`docs/scenario.md`, TODO): общежитие и население, вместимости колледжа и
-   парусной школы, слои велодорожек / пешеходных маршрутов / шаттла / парковки ТПУ, причалы.
-2. Открытые вопросы по данным (`docs/review_comments.md`): выборочная проверка `is_living`, аптеки, база отдыха
-   вне здания, почтовые отделения, `service_id`, население границы (13 659 в слое vs 13 593 в презентациях).
-3. Предпроектный анализ (BlocksNet, ObjectNat, Urbanomy) → таблицы ТЭП и обеспеченности «до / после» (`docs/roadmap.md`).
-4. `scripts/maps.py` — перестроить карты «жилые/нежилые» и «этажность» после исправления `building`.
+1. Запустить `urbanomy_analysis.py` (нужно разрешение на код из GitHub) и вписать кадастровую стоимость земли
+   в `data/raw/urbanomy_inputs.json`; получить модель CatBoost курса для стоимости земли до / после.
+2. Демография из БД ПМО Росстата; программа / стратегия развития поселения → целевые показатели в `metrics.py`.
+3. Дефицит детских садов (363 места) сценарии не закрывают — кандидат в мероприятия МП.
+4. Таблица ТЭП по форме кураторов; таблицы мероприятий (очерёдность) и рисков.

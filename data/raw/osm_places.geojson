@@ -1,0 +1,28 @@
+{
+"type": "FeatureCollection",
+"name": "osm_places",
+"crs": { "type": "name", "properties": { "name": "urn:ogc:def:crs:OGC:1.3:CRS84" } },
+"features": [
+{ "type": "Feature", "properties": { "osm_id": 34390476, "place": "town", "name": "Приморск", "population": "5791" }, "geometry": { "type": "Point", "coordinates": [ 28.616673, 60.366665 ] } },
+{ "type": "Feature", "properties": { "osm_id": 344717669, "place": "village", "name": "Рябово", "population": "647" }, "geometry": { "type": "Point", "coordinates": [ 28.9928809, 60.3371334 ] } },
+{ "type": "Feature", "properties": { "osm_id": 344717684, "place": "village", "name": "Красная Долина", "population": "1219" }, "geometry": { "type": "Point", "coordinates": [ 28.988787, 60.35955 ] } },
+{ "type": "Feature", "properties": { "osm_id": 344717950, "place": "hamlet", "name": "Александровка", "population": "21" }, "geometry": { "type": "Point", "coordinates": [ 28.9586349, 60.4067896 ] } },
+{ "type": "Feature", "properties": { "osm_id": 344718232, "place": "hamlet", "name": "Краснофлотское", "population": "36" }, "geometry": { "type": "Point", "coordinates": [ 29.103081, 60.341782 ] } },
+{ "type": "Feature", "properties": { "osm_id": 702747454, "place": "village", "name": "Камышовка", "population": "573" }, "geometry": { "type": "Point", "coordinates": [ 29.0646403, 60.43206 ] } },
+{ "type": "Feature", "properties": { "osm_id": 702747469, "place": "hamlet", "name": "Пионерское", "population": "6" }, "geometry": { "type": "Point", "coordinates": [ 28.969852, 60.375061 ] } },
+{ "type": "Feature", "properties": { "osm_id": 702747479, "place": "hamlet", "name": "Мамонтовка", "population": "17" }, "geometry": { "type": "Point", "coordinates": [ 29.00248, 60.38908 ] } },
+{ "type": "Feature", "properties": { "osm_id": 702747483, "place": "hamlet", "name": "Мысовое", "population": "21" }, "geometry": { "type": "Point", "coordinates": [ 28.935284, 60.390228 ] } },
+{ "type": "Feature", "properties": { "osm_id": 702747498, "place": "hamlet", "name": "Малышево", "population": "40" }, "geometry": { "type": "Point", "coordinates": [ 28.8615442, 60.3983565 ] } },
+{ "type": "Feature", "properties": { "osm_id": 1016139628, "place": "hamlet", "name": "Вязы", "population": "52" }, "geometry": { "type": "Point", "coordinates": [ 28.552656, 60.43438 ] } },
+{ "type": "Feature", "properties": { "osm_id": 1016139669, "place": "hamlet", "name": "Ключевое", "population": "106" }, "geometry": { "type": "Point", "coordinates": [ 28.710325, 60.46209 ] } },
+{ "type": "Feature", "properties": { "osm_id": 1096559005, "place": "hamlet", "name": "Тарасовское", "population": "3" }, "geometry": { "type": "Point", "coordinates": [ 29.135712, 60.259132 ] } },
+{ "type": "Feature", "properties": { "osm_id": 1324624336, "place": "hamlet", "name": "Заречье", "population": "14" }, "geometry": { "type": "Point", "coordinates": [ 29.003506, 60.314575 ] } },
+{ "type": "Feature", "properties": { "osm_id": 1359526421, "place": "hamlet", "name": "Балтийское", "population": "21" }, "geometry": { "type": "Point", "coordinates": [ 28.7880242, 60.3448842 ] } },
+{ "type": "Feature", "properties": { "osm_id": 1909967051, "place": "hamlet", "name": "Лужки", "population": "103" }, "geometry": { "type": "Point", "coordinates": [ 28.9951227, 60.2761263 ] } },
+{ "type": "Feature", "properties": { "osm_id": 1930731893, "place": "hamlet", "name": "Прибылово", "population": "219" }, "geometry": { "type": "Point", "coordinates": [ 28.675739, 60.427025 ] } },
+{ "type": "Feature", "properties": { "osm_id": 1936954517, "place": "village", "name": "Зеркальный", "population": "271" }, "geometry": { "type": "Point", "coordinates": [ 29.1381364, 60.2427336 ] } },
+{ "type": "Feature", "properties": { "osm_id": 2613914982, "place": "hamlet", "name": "Озерки", "population": "100" }, "geometry": { "type": "Point", "coordinates": [ 29.008879, 60.216053 ] } },
+{ "type": "Feature", "properties": { "osm_id": 7342929385, "place": "village", "name": "Глебычево", "population": null }, "geometry": { "type": "Point", "coordinates": [ 28.7185675, 60.4534775 ] } },
+{ "type": "Feature", "properties": { "osm_id": 13778925968, "place": "village", "name": "Ермилово", "population": "1275" }, "geometry": { "type": "Point", "coordinates": [ 28.7643421, 60.3599356 ] } }
+]
+}
