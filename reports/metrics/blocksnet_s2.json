@@ -2,8 +2,8 @@
  "tag": "s2",
  "name": "Сценарий 2 — полная реализация (до 2031)",
  "population": 13734,
- "buildings": 9180,
- "build_floor_area_m2": 1865714.98,
+ "buildings": 9181,
+ "build_floor_area_m2": 1870070.98,
  "living_area_m2": 472063.21,
  "living_area_per_capita": 34.37186617154507,
  "median_acc_drive": 40.681352816868234,
@@ -68,21 +68,21 @@
   },
   "kindergarten_walk": {
    "need": 838,
-   "capacity": 470,
-   "within": 230,
-   "deficit": 608,
-   "excess": 50,
-   "strong": 0.274,
-   "weak": 0.501
+   "capacity": 710,
+   "within": 243,
+   "deficit": 595,
+   "excess": 227,
+   "strong": 0.29,
+   "weak": 0.576
   },
   "kindergarten_drive": {
    "need": 838,
-   "capacity": 470,
-   "within": 470,
-   "deficit": 368,
+   "capacity": 710,
+   "within": 684,
+   "deficit": 154,
    "excess": 0,
-   "strong": 0.561,
-   "weak": 0.561
+   "strong": 0.816,
+   "weak": 0.847
   },
   "college_drive": {
    "need": 110,
@@ -158,7 +158,7 @@
  },
  "territory": {
   "counts": {
-   "kindergarten": 4.0,
+   "kindergarten": 5.0,
    "school": 6.0,
    "college": 3.0,
    "university": 0.0,
@@ -199,7 +199,7 @@
    "catering": 8.0
   },
   "provision": {
-   "kindergarten": 0.48663101604278075,
+   "kindergarten": 0.6491978609625668,
    "school": 0.8668587896253602,
    "college": 0.9456066945606695,
    "university": 0.0,

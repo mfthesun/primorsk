@@ -212,16 +212,16 @@ def map_floors() -> None:
                f"Этажность застройки{', г. Приморск' if ext == 'town' else ''}", "building.geojson")
 
 
-def blocks_today() -> gpd.GeoDataFrame:
-    p = PROC / "analysis" / "blocks_today.geojson"
+def blocks_today(tag: str = "today") -> gpd.GeoDataFrame:
+    p = PROC / "analysis" / f"blocks_{tag}.geojson"
     if not p.exists():
-        raise SystemExit("нет blocks_today.geojson — сначала .venv-blocksnet/bin/python scripts/analysis.py")
+        raise SystemExit(f"нет blocks_{tag}.geojson — сначала .venv-blocksnet/bin/python scripts/analysis.py")
     return read(p)
 
 
 def choropleth(name, column, bins, labels, colors, legend_title, caption, source, mask=None, extra=None,
-               ext="settlement") -> None:
-    bl = blocks_today()
+               ext="settlement", tag="today") -> None:
+    bl = blocks_today(tag)
     fig, ax = frame(ext)
     cmap = ListedColormap(colors)
     norm = BoundaryNorm(bins, cmap.N)
@@ -266,24 +266,52 @@ def map_accessibility() -> None:
 def map_provision() -> None:
     acc = {"school": {"walk": 15, "drive": 30}, "kindergarten": {"walk": 7, "drive": 15}}
     ramp = ["#d73027", "#fc8d59", "#fee08b", "#91cf60", "#1a9850"]
-    for svc, what, legend_name in (("school", "школами", "школы"), ("kindergarten", "детскими садами", "детские сады")):
+
+    def objects_of(svc: str, legend_name: str, tag: str):
         s = read(PROC / "services" / f"{svc}.geojson")
+        layers = [(s, "#08306b", f"{legend_name} (число — мест)")]
+        sc = PROC / "scenario" / f"{svc}.geojson"
+        if tag != "today" and sc.exists():
+            x = read(sc)
+            x = x[x["phase"] <= {"s1": 1, "s2": 2}[tag]]
+            if len(x):
+                layers.append((x, "#c2255c", f"{legend_name} сценария (число — мест)"))
 
-        def objects(ax, s=s, legend_name=legend_name):
-            s.plot(ax=ax, color="#08306b", markersize=np.sqrt(s["capacity"].clip(lower=10)) * 4, edgecolor="white",
-                   lw=0.6, zorder=12)
-            for p, c in zip(s.geometry, s["capacity"]):
-                ax.annotate(str(c), (p.x, p.y), xytext=(6, -10), textcoords="offset points", fontsize=7.5,
-                            color="#08306b", fontweight="bold", zorder=13, path_effects=HALO)
-            return [Line2D([], [], marker="o", ls="", color="#08306b", label=f"{legend_name} (число — мест)")]
+        def objects(ax):
+            h = []
+            for g, col, lab in layers:
+                g.plot(ax=ax, color=col, markersize=np.sqrt(g["capacity"].clip(lower=10)) * 4, edgecolor="white",
+                       lw=0.6, zorder=12)
+                for p, c in zip(g.geometry, g["capacity"]):
+                    ax.annotate(str(c), (p.x, p.y), xytext=(6, -10), textcoords="offset points", fontsize=7.5,
+                                color=col, fontweight="bold", zorder=13, path_effects=HALO)
+                h.append(Line2D([], [], marker="o", ls="", color=col, label=lab))
+            return h
+        return objects
 
+    bins, labels = [0, 0.2, 0.5, 0.8, 0.999, 1.01], ["< 20 %", "20–50 %", "50–80 %", "80–99 %", "100 %"]
+    for svc, what, legend_name in (("school", "школами", "школы"), ("kindergarten", "детскими садами", "детские сады")):
         for mode, how in (("walk", "пешком"), ("drive", "с подвозом (транспорт)")):
-            choropleth(f"provision_{svc}_{mode}", f"{svc}_{mode}_provision_strong", [0, 0.2, 0.5, 0.8, 0.999, 1.01],
-                       ["< 20 %", "20–50 %", "50–80 %", "80–99 %", "100 %"], ramp,
+            choropleth(f"provision_{svc}_{mode}", f"{svc}_{mode}_provision_strong", bins, labels, ramp,
                        "Обеспеченность (provision_strong)",
                        f"Обеспеченность {what}: {how}, ≤ {acc[svc][mode]} мин",
                        "blocks_today.geojson (BlocksNet competitive_provision); вместимость — capacity",
-                       mask=lambda b, c=f"{svc}_{mode}_demand": b[c] > 0, extra=objects)
+                       mask=lambda b, c=f"{svc}_{mode}_demand": b[c] > 0, extra=objects_of(svc, legend_name, "today"))
+    # детские сады «сегодня / сценарий 2»: мероприятие — детский сад на 240 мест на востоке Приморска
+    for mode, how in (("walk", "пешком"), ("drive", "с подвозом (транспорт)")):
+        for tag in ("today", "s2"):
+            for ext in ("settlement", "town"):
+                if tag == "today" and ext == "settlement":
+                    continue                                   # это provision_kindergarten_<mode> выше
+                name = f"provision_kindergarten_{mode}" + ("_town" if ext == "town" else "") + \
+                    ("_s2" if tag == "s2" else "")
+                choropleth(name, f"kindergarten_{mode}_provision_strong", bins, labels, ramp,
+                           "Обеспеченность (provision_strong)",
+                           f"Обеспеченность детскими садами: {how}, ≤ {acc['kindergarten'][mode]} мин"
+                           + (", г. Приморск" if ext == "town" else "") + f", {STATE[tag]}",
+                           f"blocks_{tag}.geojson (BlocksNet competitive_provision); вместимость — capacity",
+                           mask=lambda b, c=f"kindergarten_{mode}_demand": b[c] > 0,
+                           extra=objects_of("kindergarten", "детские сады", tag), ext=ext, tag=tag)
 
 
 def map_scenario() -> None:
@@ -302,6 +330,8 @@ def map_scenario() -> None:
     read(sc / "bus_stop.geojson").plot(ax=ax, color="white", edgecolor="#1864ab", lw=1.5, markersize=40, zorder=10)
     read(sc / "train_station.geojson").plot(ax=ax, color="white", edgecolor="black", marker="s", markersize=50,
                                             zorder=10)
+    read(sc / "kindergarten.geojson").plot(ax=ax, color="#c2255c", edgecolor="white", marker="o", markersize=70,
+                                           zorder=10)
     for p, n in zip(terr.representative_point(), terr["name"]):
         ax.annotate(n, (p.x, p.y), xytext=(0, 14), textcoords="offset points", fontsize=8, ha="center", zorder=11,
                     path_effects=HALO)
@@ -315,9 +345,10 @@ def map_scenario() -> None:
          mpatches.Patch(color="#f8f9fa", ec="black", label="парковка ТПУ, 100 мест"),
          Line2D([], [], color="#ffd43b", lw=3, label="причалы марины, 40 мест"),
          Line2D([], [], marker="o", ls="", mfc="white", mec="#1864ab", label="остановки шаттла"),
-         Line2D([], [], marker="s", ls="", mfc="white", mec="black", label="ж/д станция (ТПУ)")]
+         Line2D([], [], marker="s", ls="", mfc="white", mec="black", label="ж/д станция (ТПУ)"),
+         Line2D([], [], marker="o", ls="", mfc="#c2255c", mec="white", label="детский сад, 240 мест (сценарий 2)")]
     finish(fig, ax, "scenario_projects", h, "Сценарий",
-           "Проектные предложения: кампус ИНТЦ, марина, транспортный каркас",
+           "Проектные предложения: кампус ИНТЦ, марина, транспортный каркас, детский сад",
            "data/processed/scenario (проектные решения команды)", style=IMAGERY)
 
 

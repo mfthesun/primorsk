@@ -538,6 +538,7 @@ MARINA_SERVICES = [
     ("ice_rink", None, "Каток", "Сезонный каток", None),
 ]
 DESIGN = RAW / "scenario_design"     # трассировка транспортных слоёв и причалов (scripts/scenario_design.py)
+KG_BUILDING_ID = 29                  # детский сад сценария 2 (data/raw/scenario_design/kindergarten_building.geojson)
 
 
 def scenario_design(dst: Path, sb: gpd.GeoDataFrame) -> None:
@@ -601,6 +602,15 @@ def scenario(bld: gpd.GeoDataFrame) -> None:
     sb.loc[d, "population"] = DORM_POPULATION
     sb = sb[["id", "build_floor_area", "living_area", "non_living_area", "footprint_area",
              "number_of_floors", "population", "is_living", "geometry"]]
+    # детский сад (сценарий 2) — проектное решение из scripts/scenario_design.py
+    kg = read(DESIGN / "kindergarten_building.geojson")
+    fp = round(float(kg.to_crs(MCRS).area.iloc[0]), 2)
+    fl = int(kg["number_of_floors"].iloc[0])
+    sb = pd.concat([sb, gpd.GeoDataFrame({
+        "id": pd.array([KG_BUILDING_ID], dtype="int32"), "build_floor_area": [round(fp * fl, 2)], "living_area": [0.0],
+        "non_living_area": [round(fp * fl, 2)], "footprint_area": [fp],
+        "number_of_floors": pd.array([fl], dtype="int32"), "population": pd.array([0], dtype="int32"),
+        "is_living": [False]}, geometry=kg.geometry.values, crs=CRS)], ignore_index=True)
     write(sb, dst / "building.geojson")
     all_bld = pd.concat([bld[["geometry"]], sb[["geometry"]]], ignore_index=True)
     all_bld = gpd.GeoDataFrame(all_bld, geometry="geometry", crs=CRS)
@@ -658,6 +668,10 @@ def scenario(bld: gpd.GeoDataFrame) -> None:
         x = gpd.GeoDataFrame({"service_id": pd.array([sid], dtype="Int32"), "service_name": [sname],
                               "capacity": pd.array([0], dtype="Int32"), "name": [name]}, geometry=[geom], crs=CRS)
         write(x, dst / f"{svc}.geojson")
+    kgp = sbm.loc[[KG_BUILDING_ID]].to_crs(MCRS).representative_point().to_crs(CRS).iloc[0]
+    write(gpd.GeoDataFrame({"service_id": pd.array([21], dtype="Int32"), "service_name": ["Детский сад"],
+                            "capacity": pd.array([int(kg["places"].iloc[0])], dtype="Int32"),
+                            "name": [str(kg["name"].iloc[0])]}, geometry=[kgp], crs=CRS), dst / "kindergarten.geojson")
     scenario_design(dst, sb)
     add_phases(dst)
     pd.DataFrame(log, columns=LOG_COLS).to_csv(REP / "scenario_snap.csv", index=False, encoding="utf-8-sig")

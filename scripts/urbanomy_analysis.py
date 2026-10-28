@@ -36,7 +36,9 @@ PROC = ROOT / "data" / "processed"
 REP = ROOT / "reports"
 INPUTS = json.loads((ROOT / "data" / "raw" / "urbanomy_inputs.json").read_text(encoding="utf-8"))
 PROJECT_OF_TERRITORY = {0: "campus", 1: "marina", 2: "marina"}
-PROJECT_NAME = {"campus": "Кампус ИНТЦ", "marina": "Марина"}
+PROJECT_NAME = {"campus": "Кампус ИНТЦ", "marina": "Марина", "kindergarten": "Детский сад"}
+# здания сценария вне территорий проектов: id → (проект, участок из data/raw/scenario_design)
+OWN_SITE = {29: ("kindergarten", "kindergarten_site")}
 
 
 def project_input(phase: int) -> gpd.GeoDataFrame:
@@ -47,11 +49,16 @@ def project_input(phase: int) -> gpd.GeoDataFrame:
     j = gpd.sjoin_nearest(pts, terr[["geometry"]], how="left")
     j = j[~j.index.duplicated()]
     b["project"] = j["index_right"].map(PROJECT_OF_TERRITORY)
+    sites = {}
+    for bid, (proj, site_layer) in OWN_SITE.items():
+        b.loc[b["id"] == bid, "project"] = proj
+        sites[proj] = float(gpd.read_file(ROOT / "data" / "raw" / "scenario_design" / f"{site_layer}.geojson")
+                            .to_crs(MCRS).area.sum())
     b["land_use"] = b["id"].map(BUILDING_USE).fillna(DEFAULT_USE)
     rows = []
     for (proj, lu), g in b.groupby(["project", "land_use"]):
-        site = terr.loc[[k for k, v in PROJECT_OF_TERRITORY.items() if v == proj]].area.sum()
-        share_gfa = g["build_floor_area"].sum() / b.loc[b.project == proj, "build_floor_area"].sum()
+        site = sites.get(proj) or terr.loc[[k for k, v in PROJECT_OF_TERRITORY.items() if v == proj]].area.sum()
+        share_gfa = g["build_floor_area"].sum() / b.loc[b["project"] == proj, "build_floor_area"].sum()
         land_area = float(site * share_gfa)
         price = float(INPUTS["land_price_rub_m2"].get(proj, 0) or 0)
         rows.append({"project": proj, "land_use": lu, "site_area": land_area, "price_pred": price * land_area,
@@ -80,16 +87,18 @@ def run(tag: str) -> dict | None:
     allout = []
     for proj, g in gdf.groupby("project"):
         o, _ = an.calculate_investment_metrics(g.drop(columns="project").reset_index(drop=True))
-        allout.append(pd.DataFrame(o.drop(columns="geometry")))
+        allout.append(pd.DataFrame(o.drop(columns="geometry")).assign(project=proj))
     df = pd.concat(allout, ignore_index=True)
     est = SEREstimator({"population": pop, "employment_base": int(pop * INPUTS["ser"]["employment_share"]),
                         "avg_wage_base": INPUTS["ser"]["avg_wage_base"]})
     ser = est.compute(df, pretty=False)
     res["ser"] = ser.to_dict(orient="records")
     jobs_m2 = DEFAULT_SER_PARAMETERS["jobs_per_m2"]
-    res["jobs"] = {lu: float(g["built_area"].sum() * jobs_m2.get(lu, jobs_m2["default"]))
-                   for lu, g in df.groupby("land_use")}
-    res["jobs_total"] = float(sum(res["jobs"].values()))
+    df["jobs"] = df["built_area"] * df["land_use"].map(lambda lu: jobs_m2.get(lu, jobs_m2["default"]))
+    res["jobs"] = {lu: float(v) for lu, v in df.groupby("land_use")["jobs"].sum().items()}
+    res["jobs_by_project"] = {p: float(v) for p, v in df.groupby("project")["jobs"].sum().items()}
+    res["investment_by_project"] = {p: float(v) for p, v in df.groupby("project")["investment_need"].sum().items()}
+    res["jobs_total"] = float(df["jobs"].sum())
     res["investment_need_total"] = float(df["investment_need"].sum())
     (REP / "metrics").mkdir(parents=True, exist_ok=True)
     (REP / "metrics" / f"urbanomy_{tag}.json").write_text(json.dumps(res, ensure_ascii=False, indent=1, default=str),
@@ -108,10 +117,12 @@ def report(results: list[dict]) -> None:
                   "|---|---|---|---|---|"]
         for proj, p in r["projects"].items():
             t = p["total"]
-            f = lambda k, d=1e6: (f"{float(t[k]) / d:,.1f}".replace(",", " ") if k in t and t[k] not in ("nan", None) else "—")  # noqa: E731
+            f = lambda k, d=1e6: (f"{float(t[k]) / d:,.1f}".replace(",", " ") if k in t and pd.notna(t[k]) and t[k] != "nan" else "—")  # noqa: E731
             lines.append(f"| {PROJECT_NAME[proj]} | {f('investment_need')} | {f('NPV')} | {f('IRR', 0.01)} % | "
                          f"{f('PP_years', 1)} |")
-        lines += ["", f"Рабочих мест (нормы Urbanomy `jobs_per_m2`): {r['jobs_total']:.0f}", "",
+        jp = r["jobs_by_project"]
+        lines += ["", f"Рабочих мест (нормы Urbanomy `jobs_per_m2`): {r['jobs_total']:.0f} — кампус "
+                  f"{jp.get('campus', 0):.0f}, марина {jp.get('marina', 0):.0f} (для RECREATION норма 0)", "",
                   "| Показатель (SEREstimator) | Δ за год стройки | Δ за год эксплуатации |", "|---|---|---|"]
         for s in r["ser"]:
             fmt = lambda v: "—" if v is None or v != v else f"{v:,.0f}".replace(",", " ")  # noqa: E731

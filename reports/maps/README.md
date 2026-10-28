@@ -12,10 +12,16 @@
 | `buildings_living_settlement.png` | Жилые и нежилые здания | building.geojson (OSM, Реестр домов; корректировка is_living — process.py) |
 | `buildings_living_town.png` | Жилые и нежилые здания, г. Приморск | building.geojson (OSM, Реестр домов; корректировка is_living — process.py) |
 | `provision_kindergarten_drive.png` | Обеспеченность детскими садами: с подвозом (транспорт), ≤ 15 мин | blocks_today.geojson (BlocksNet competitive_provision); вместимость — capacity |
+| `provision_kindergarten_drive_s2.png` | Обеспеченность детскими садами: с подвозом (транспорт), ≤ 15 мин, сценарий 2 | blocks_s2.geojson (BlocksNet competitive_provision); вместимость — capacity |
+| `provision_kindergarten_drive_town.png` | Обеспеченность детскими садами: с подвозом (транспорт), ≤ 15 мин, г. Приморск, сегодня | blocks_today.geojson (BlocksNet competitive_provision); вместимость — capacity |
+| `provision_kindergarten_drive_town_s2.png` | Обеспеченность детскими садами: с подвозом (транспорт), ≤ 15 мин, г. Приморск, сценарий 2 | blocks_s2.geojson (BlocksNet competitive_provision); вместимость — capacity |
 | `provision_kindergarten_walk.png` | Обеспеченность детскими садами: пешком, ≤ 7 мин | blocks_today.geojson (BlocksNet competitive_provision); вместимость — capacity |
+| `provision_kindergarten_walk_s2.png` | Обеспеченность детскими садами: пешком, ≤ 7 мин, сценарий 2 | blocks_s2.geojson (BlocksNet competitive_provision); вместимость — capacity |
+| `provision_kindergarten_walk_town.png` | Обеспеченность детскими садами: пешком, ≤ 7 мин, г. Приморск, сегодня | blocks_today.geojson (BlocksNet competitive_provision); вместимость — capacity |
+| `provision_kindergarten_walk_town_s2.png` | Обеспеченность детскими садами: пешком, ≤ 7 мин, г. Приморск, сценарий 2 | blocks_s2.geojson (BlocksNet competitive_provision); вместимость — capacity |
 | `provision_school_drive.png` | Обеспеченность школами: с подвозом (транспорт), ≤ 30 мин | blocks_today.geojson (BlocksNet competitive_provision); вместимость — capacity |
 | `provision_school_walk.png` | Обеспеченность школами: пешком, ≤ 15 мин | blocks_today.geojson (BlocksNet competitive_provision); вместимость — capacity |
-| `scenario_projects.png` | Проектные предложения: кампус ИНТЦ, марина, транспортный каркас | data/processed/scenario (проектные решения команды) |
+| `scenario_projects.png` | Проектные предложения: кампус ИНТЦ, марина, транспортный каркас, детский сад | data/processed/scenario (проектные решения команды) |
 | `town_access_transit_s2.png` | Зоны доступности 30 мин без автомобиля (пешком + шаттл) от ж/д станции и порта, сценарий 2 | ObjectNat get_graph_isochrones, isochrones_s2.geojson |
 | `town_access_transit_today.png` | Зоны доступности 30 мин без автомобиля (пешком) от ж/д станции и порта, сегодня | ObjectNat get_graph_isochrones, isochrones_today.geojson |
 | `town_noise_s2.png` | Шумовое воздействие ж/д, магистральных улиц и порта, сценарий 2 | ObjectNat calculate_simplified_noise_frame, noise_s2.geojson |

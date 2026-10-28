@@ -33,6 +33,8 @@ PTS = {
     "кирха": (588551, 6693082),       # кирха св. Марии Магдалины
     "марина": (588694, 6693041),      # территория #1
     "парусная школа": (589442, 6692493),  # территория #2
+    "детсад": (590625, 6691776),      # центр тяжести не обеспеченного пешком спроса на детсады в Приморске
+                                      # (analysis.py, «сегодня», kindergarten_walk_demand_left)
 }
 SHUTTLE = ["центр", "станция", "кампус", "порт"]            # концепция: остановки «центр», «кампус», «порт»
 CYCLE = [["марина", "станция", "кампус"]]                    # 4,5–5 км
@@ -42,6 +44,12 @@ PARKING_PLACES = 100
 PARKING_M2_PER_PLACE = 25.0
 PIERS, PIER_LEN, BERTHS_PER_PIER = 4, 60.0, 10               # 40 причальных мест
 PIER_GAP = 25.0                                              # м между причалами
+# детский сад (сценарий 2): 240 мест — 12 групп по 20; участок 35 м²/место (СП 42.13330.2016, прил. Д),
+# здание 2 эт., ≈ 18 м² общей площади на место
+KG_PLACES = 240
+KG_SITE = (100.0, 84.0)                                      # м, ≈ 0,84 га
+KG_BUILDING = (66.0, 33.0)                                   # м, пятно ≈ 2 180 м²
+KG_FLOORS = 2
 
 
 def route(G: nx.Graph, names: list[str]) -> LineString:
@@ -82,6 +90,47 @@ def parking_lot() -> gpd.GeoDataFrame:
             break
     return gpd.GeoDataFrame({"name": ["Парковка ТПУ «Приморск»"], "places": [PARKING_PLACES]},
                             geometry=[best], crs=MCRS)
+
+
+def kindergarten() -> tuple[gpd.GeoDataFrame, gpd.GeoDataFrame]:
+    """Участок и здание детского сада: ближайший к опорной точке свободный участок, не задевающий здания
+    (10 м), дороги (10 м), ж/д (50 м), воду, лес и зону шума ≥ 55 дБА (СанПиН 1.2.3685-21, территория
+    детских учреждений; data/processed/objectnat/noise_today.geojson), не дальше 150 м от дороги."""
+    sx, sy = PTS["детсад"]
+    w, h = KG_SITE
+    win = box(sx - 900, sy - 900, sx + 900, sy + 900)
+    lay = {n: gpd.read_file(PROC / f"{n}.geojson").to_crs(MCRS) for n in ("building", "water", "railways", "forest")}
+    roads = gpd.read_file(PROC / "roads.geojson").to_crs(MCRS)
+    roads = roads[roads.intersects(win)].union_all()
+    sc = [gpd.read_file(PROC / "scenario" / "building.geojson").to_crs(MCRS)]
+    obst = shapely.union_all([lay["building"][lay["building"].intersects(win)].buffer(10).union_all(),
+                              lay["water"][lay["water"].intersects(win)].union_all(),
+                              lay["forest"][lay["forest"].intersects(win)].union_all(),
+                              lay["railways"][lay["railways"].intersects(win)].buffer(50).union_all(),
+                              roads.buffer(10), *[x.buffer(10).union_all() for x in sc]])
+    nz = PROC / "objectnat" / "noise_today.geojson"
+    if nz.exists():
+        n = gpd.read_file(nz).to_crs(MCRS)
+        obst = obst.union(n[(n["noise_level"] >= 55) & n.intersects(win)].union_all())
+    best = None
+    for r in np.arange(0, 800, 10):
+        for a in np.linspace(0, 2 * np.pi, 1 if r == 0 else 36, endpoint=False):
+            cx, cy = sx + r * np.cos(a), sy + r * np.sin(a)
+            site = box(cx - w / 2, cy - h / 2, cx + w / 2, cy + h / 2)
+            if not site.intersects(obst) and site.distance(roads) <= 150:
+                best = site
+                break
+        if best is not None:
+            break
+    if best is None:
+        raise RuntimeError("свободный участок для детского сада не найден")
+    c = best.centroid
+    bw, bh = KG_BUILDING
+    bld = box(c.x - bw / 2, c.y - bh / 2, c.x + bw / 2, c.y + bh / 2)
+    site = gpd.GeoDataFrame({"name": ["Участок детского сада"], "places": [KG_PLACES]}, geometry=[best], crs=MCRS)
+    b = gpd.GeoDataFrame({"name": [f"Детский сад на {KG_PLACES} мест"], "places": [KG_PLACES],
+                          "number_of_floors": [KG_FLOORS]}, geometry=[bld], crs=MCRS)
+    return site, b
 
 
 def piers() -> gpd.GeoDataFrame:
@@ -129,6 +178,7 @@ def main() -> None:
                              geometry=[Point(PTS[n]) for n in SHUTTLE], crs=MCRS)
     out = {"shuttle_route": shuttle, "cycleway": cycle, "footway": foot, "shuttle_stop": stops,
            "parking": parking_lot(), "pier": piers()}
+    out["kindergarten_site"], out["kindergarten_building"] = kindergarten()
     for name, g in out.items():
         p = OUT / f"{name}.geojson"
         if p.exists():
@@ -137,6 +187,9 @@ def main() -> None:
     for name in ("shuttle_route", "cycleway", "footway"):
         print(name, out[name][["name", "length_m"]].to_string(index=False, header=False))
     print("parking", round(out["parking"].area.iloc[0]), "м²;", "pier", int(out["pier"]["berths"].sum()), "мест")
+    c = out["kindergarten_site"].centroid.iloc[0]
+    print("kindergarten", KG_PLACES, "мест, участок", round(out["kindergarten_site"].area.iloc[0]), "м², центр",
+          round(c.x), round(c.y))
 
 
 if __name__ == "__main__":
