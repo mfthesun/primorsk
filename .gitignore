@@ -9,3 +9,4 @@ __pycache__/
 data/cache/
 data/processed/analysis/graph_*.geojson
 .venv-objectnat/
+.claude/chat-exports/
