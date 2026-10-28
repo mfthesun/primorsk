@@ -11,6 +11,7 @@
 | `buildings_floors_town.png` | Этажность застройки, г. Приморск | building.geojson |
 | `buildings_living_settlement.png` | Жилые и нежилые здания | building.geojson (OSM, Реестр домов; корректировка is_living — process.py) |
 | `buildings_living_town.png` | Жилые и нежилые здания, г. Приморск | building.geojson (OSM, Реестр домов; корректировка is_living — process.py) |
+| `location_region.png` | Приморское городское поселение в Ленинградской области: 132 км до Санкт-Петербурга, 47 км до Выборга | ne_land_lakes.geojson (Natural Earth), region_context.geojson (OSM), boundary.geojson |
 | `provision_kindergarten_drive.png` | Обеспеченность детскими садами: с подвозом (транспорт), ≤ 15 мин | blocks_today.geojson (BlocksNet competitive_provision); вместимость — capacity |
 | `provision_kindergarten_drive_s2.png` | Обеспеченность детскими садами: с подвозом (транспорт), ≤ 15 мин, сценарий 2 | blocks_s2.geojson (BlocksNet competitive_provision); вместимость — capacity |
 | `provision_kindergarten_drive_town.png` | Обеспеченность детскими садами: с подвозом (транспорт), ≤ 15 мин, г. Приморск, сегодня | blocks_today.geojson (BlocksNet competitive_provision); вместимость — capacity |

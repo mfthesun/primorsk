@@ -46,9 +46,10 @@ SCALE_XY = (0.03, 0.055)     # масштабная линейка (низ сл�
 LEGEND_LOC = "lower right"   # условные обозначения
 # охваты (lon0, lon1, lat0, lat1) — расширяются до 4:3 вокруг центра
 # (с запасом справа-снизу под легенду: она всегда в правом нижнем углу)
-EXTENT = {"settlement": (28.36, 29.42, 60.14, 60.58), "town": (28.565, 28.725, 60.322, 60.376)}
+EXTENT = {"settlement": (28.36, 29.42, 60.14, 60.58), "town": (28.565, 28.725, 60.322, 60.376),
+          "region": (26.3, 35.9, 58.35, 61.45)}
 # подложки Esri — только без собственных надписей (на них латиница); все подписи на карте — наши, по-русски
-GRAY, IMAGERY = "WorldGrayCanvas", "WorldImagery"
+GRAY, IMAGERY, RELIEF = "WorldGrayCanvas", "WorldImagery", "WorldShadedRelief"   # RELIEF — без надписей
 ATTRIBUTION = "Подложка: © Esri"
 # подписи водных объектов (lon, lat, текст)
 WATER_LABELS = [(28.50, 60.24, "Финский залив"), (28.54, 60.47, "Выборгский залив"),
@@ -105,7 +106,7 @@ def scale_bar(ax) -> None:
     lat = np.degrees(2 * np.arctan(np.exp(((y0 + y1) / 2) / 6378137)) - np.pi / 2)
     k = 1 / np.cos(np.radians(lat))
     ground_w = (x1 - x0) / k
-    nice = [100, 200, 250, 500, 1000, 2000, 2500, 5000, 10000, 20000]
+    nice = [100, 200, 250, 500, 1000, 2000, 2500, 5000, 10000, 20000, 25000, 50000, 100000]
     length = max(n for n in nice if n <= ground_w / 5)
     bx = x0 + SCALE_XY[0] * (x1 - x0)
     by = y0 + SCALE_XY[1] * (y1 - y0)
@@ -129,9 +130,12 @@ def legend(ax, handles, title: str) -> None:
     lg.set_zorder(20)
 
 
-def finish(fig, ax, name: str, handles, legend_title: str, caption: str, source: str, style: str = GRAY) -> None:
-    water_labels(ax)
-    basemap(ax, style)
+def finish(fig, ax, name: str, handles, legend_title: str, caption: str, source: str, style: str = GRAY,
+           water: bool = True) -> None:
+    if water:
+        water_labels(ax)
+    if style:
+        basemap(ax, style)
     legend(ax, handles, legend_title)
     north_arrow(ax)
     scale_bar(ax)
@@ -193,6 +197,60 @@ def map_living() -> None:
         finish(fig, ax, f"buildings_living_{ext}", h, "Здания",
                f"Жилые и нежилые здания{', г. Приморск' if ext == 'town' else ''}",
                "building.geojson (OSM, Реестр домов; корректировка is_living — process.py)")
+
+
+# города и расстояния для карты местоположения (lon, lat, подпись, смещение подписи в pt)
+REGION_CITIES = [(30.315, 59.939, "Санкт-Петербург", (8, -14)), (28.733, 60.710, "Выборг", (8, 4)),
+                 (28.610, 60.366, "Приморск", (6, -14)), (29.700, 60.196, "Зеленогорск", (8, 4))]
+
+
+def map_location() -> None:
+    """Местоположение поселения относительно Ленинградской области и Санкт-Петербурга.
+    Без тайловой подложки: суша и озера — Natural Earth, границы обрезаны по суше."""
+    ne = read(ROOT / "data" / "raw" / "ne_land_lakes.geojson")
+    land = ne[ne["kind"] == "land"].union_all()
+    lakes = ne[ne["kind"] == "lake"]
+    rc = read(ROOT / "data" / "raw" / "region_context.geojson")
+    fig, ax = frame("region")
+    ax.set_facecolor("#dbe7ef")
+    fig.patch.set_facecolor("#dbe7ef")
+    gpd.GeoSeries([land], crs=WEB).plot(ax=ax, color="#f4f1ec", edgecolor="#c9d6df", lw=0.5, zorder=1)
+    lo = rc[rc["name"] == "Ленинградская область"].geometry.iloc[0].intersection(land)
+    spb = rc[rc["name"] == "Санкт-Петербург"].geometry.iloc[0].intersection(land)
+    gpd.GeoSeries([lo], crs=WEB).plot(ax=ax, color="#fde2da", edgecolor="#f87e60", lw=1.3, zorder=2)
+    lakes.plot(ax=ax, color="#dbe7ef", edgecolor="#c9d6df", lw=0.4, zorder=3)
+    gpd.GeoSeries([spb], crs=WEB).plot(ax=ax, color="#9fb3c2", edgecolor="#5f7a8d", lw=1.0, zorder=4)
+    bnd = read(PROC / "boundary.geojson")
+    gpd.GeoSeries([bnd.geometry.iloc[0].intersection(land)], crs=WEB).plot(ax=ax, color="#f87e60",
+                                                                          edgecolor="#7a2a17", lw=1.0, zorder=5)
+    for lon, lat, name, off in REGION_CITIES:
+        p = gpd.GeoSeries.from_xy([lon], [lat], crs=4326).to_crs(WEB).iloc[0]
+        ax.plot(p.x, p.y, "o", ms=5 if name != "Санкт-Петербург" else 7, color="#111", mec="white", mew=1.2, zorder=6)
+        ax.annotate(name, (p.x, p.y), xytext=off, textcoords="offset points", fontsize=11, color="#111", zorder=7,
+                    path_effects=HALO, ha="right" if off[0] < 0 else "left")
+    c = bnd.geometry.iloc[0].intersection(land).representative_point()
+    lab = gpd.GeoSeries.from_xy([27.35], [60.72], crs=4326).to_crs(WEB).iloc[0]
+    ax.annotate("Приморское\nгородское поселение", (c.x, c.y), xytext=(lab.x, lab.y), fontsize=12, fontweight="bold",
+                color="#7a2a17", ha="center", va="center", zorder=8, path_effects=HALO,
+                arrowprops=dict(arrowstyle="-", color="#7a2a17", lw=1.2))
+    for lon, lat, text in ((27.05, 60.02, "Финский залив"), (31.3, 60.85, "Ладожское озеро"),
+                           (31.4, 58.25, "Ильмень")):
+        p = gpd.GeoSeries.from_xy([lon], [lat], crs=4326).to_crs(WEB).iloc[0]
+        ax.text(p.x, p.y, text, fontsize=10, fontstyle="italic", color="#3a6f99", ha="center", va="center",
+                zorder=7, path_effects=[pe.withStroke(linewidth=2, foreground="#dbe7ef")])
+    for lon, lat, text in ((27.6, 61.25, "Финляндия"), (26.9, 58.75, "Эстония"), (33.8, 58.7, "Новгородская обл.")):
+        p = gpd.GeoSeries.from_xy([lon], [lat], crs=4326).to_crs(WEB).iloc[0]
+        ax.text(p.x, p.y, text, fontsize=9, color="#8a8f94", ha="center", va="center", zorder=7)
+    h = [mpatches.Patch(color="#f87e60", ec="#7a2a17", label="Приморское городское поселение"),
+         mpatches.Patch(color="#fde2da", ec="#f87e60", label="Ленинградская область"),
+         mpatches.Patch(color="#9fb3c2", ec="#5f7a8d", label="Санкт-Петербург"),
+         Line2D([], [], marker="o", ls="", color="#111", mec="white", label="города")]
+    ax.text(0.01, 0.008, "Данные: Natural Earth, © участники OpenStreetMap", transform=ax.transAxes, fontsize=6,
+            color="#555", zorder=20)
+    finish(fig, ax, "location_region", h, "Местоположение",
+           "Приморское городское поселение в Ленинградской области: 132 км до Санкт-Петербурга, 47 км до Выборга",
+           "ne_land_lakes.geojson (Natural Earth), region_context.geojson (OSM), boundary.geojson",
+           style=None, water=False)
 
 
 def map_floors() -> None:
@@ -417,7 +475,7 @@ def map_before_after() -> None:
                f"ObjectNat get_visibility, visibility_{tag}.geojson")
 
 
-MAPS = {"buildings_living": map_living, "buildings_floors": map_floors, "blocks_population_density": map_density,
+MAPS = {"location_region": map_location, "buildings_living": map_living, "buildings_floors": map_floors, "blocks_population_density": map_density,
         "access": map_accessibility, "provision": map_provision, "scenario_projects": map_scenario,
         "town_before_after": map_before_after}
 
