@@ -222,3 +222,60 @@ def edges_gdf(G: nx.Graph) -> gpd.GeoDataFrame:
     rows = [{"u": u, "v": v, **{k: d[k] for k in ("length_meter", "time_min", "speed_kmh", "kind", "source_layer")},
              "geometry": d["geometry"]} for u, v, d in G.edges(data=True)]
     return gpd.GeoDataFrame(rows, geometry="geometry", crs=MCRS)
+
+
+def add_transit(G: nx.Graph, route: LineString, stops: list[tuple[float, float]], speed_kmh: float = 25.0,
+                headway_min: float = 15.0, kind: str = "shuttle") -> nx.Graph:
+    """Пешеходный граф + маршрут ОТ (шаттл): рёбра между всеми парами остановок, время = путь по маршруту /
+    скорость + ожидание (половина интервала). Остановки привязываются к ближайшим узлам графа."""
+    G = G.copy()
+    pos = sorted((route.line_locate_point(shapely.Point(xy)), xy) for xy in stops)
+    nodes = [nearest_node(G, *xy) for _, xy in pos]
+    for i in range(len(pos)):
+        for j in range(i + 1, len(pos)):
+            d = abs(pos[j][0] - pos[i][0])
+            t = d / (speed_kmh * 1000 / 60) + headway_min / 2
+            a, b = nodes[i], nodes[j]
+            if a == b or (G.has_edge(a, b) and G[a][b]["time_min"] <= t):
+                continue
+            G.add_edge(a, b, length_meter=float(d), time_min=float(t), speed_kmh=speed_kmh, kind=kind,
+                       source_layer="scenario", geometry=LineString([pos[i][1], pos[j][1]]))
+    return G
+
+
+TRANSIT = {"speed_kmh": 25.0, "headway_min": 15.0}     # шаттл: скорость с остановками, интервал движения
+
+
+def scenario_layer(name: str, phase: int) -> gpd.GeoDataFrame | None:
+    """Объекты слоя сценария, вводимые к очереди phase (0 — сегодня: объектов нет)."""
+    p = ROOT / "data" / "processed" / "scenario" / f"{name}.geojson"
+    if phase == 0 or not p.exists():
+        return None
+    x = gpd.read_file(p).to_crs(MCRS)
+    x = x[x["phase"] <= phase]
+    return x if len(x) else None
+
+
+def scenario_graphs(phase: int) -> tuple[dict, dict]:
+    """Графы для сценария (неориентированные, крупнейшая компонента, узлы 0..n-1):
+    walk (в сценариях — с велодорожкой и пешеходными маршрутами), drive и transit (walk + шаттл; сегодня = walk)."""
+    net = load_network()
+    out, info = {}, {}
+    extra = [x for x in (scenario_layer("cycleway", phase), scenario_layer("footway", phase)) if x is not None]
+    for mode in ("walk", "drive"):
+        lines = None
+        if extra and mode == "walk":
+            lines = pd.concat(extra, ignore_index=True)[["geometry"]].assign(source_layer="scenario",
+                                                                            kind="scenario_path")
+        G = build_graph(net, mode, extra_lines=lines)
+        info[mode] = graph_summary(G)
+        out[mode] = largest_component(G)
+    route, stops = scenario_layer("shuttle_route", phase), scenario_layer("bus_stop", phase)
+    if route is not None and stops is not None:
+        st = stops[stops.distance(route.geometry.iloc[0]) < 300]
+        out["transit"] = add_transit(out["walk"], route.geometry.iloc[0], [(p.x, p.y) for p in st.geometry],
+                                     **TRANSIT)
+        info["transit"] = {**graph_summary(out["transit"]), "stops": len(st)}
+    else:
+        out["transit"] = out["walk"]
+    return out, info

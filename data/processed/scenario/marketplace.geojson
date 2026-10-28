@@ -3,6 +3,6 @@
 "name": "marketplace",
 "crs": { "type": "name", "properties": { "name": "urn:ogc:def:crs:OGC:1.3:CRS84" } },
 "features": [
-{ "type": "Feature", "properties": { "service_id": null, "service_name": "Рыбный рынок", "capacity": 0 }, "geometry": { "type": "Point", "coordinates": [ 28.607989595325684, 60.365097583461676 ] } }
+{ "type": "Feature", "properties": { "service_id": null, "service_name": "Рыбный рынок", "capacity": 0, "phase": 1 }, "geometry": { "type": "Point", "coordinates": [ 28.607989595325684, 60.365097583461676 ] } }
 ]
 }

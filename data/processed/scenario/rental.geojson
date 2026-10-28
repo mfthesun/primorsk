@@ -3,6 +3,6 @@
 "name": "rental",
 "crs": { "type": "name", "properties": { "name": "urn:ogc:def:crs:OGC:1.3:CRS84" } },
 "features": [
-{ "type": "Feature", "properties": { "service_id": null, "service_name": "Прокат", "capacity": 0, "name": "Прокат буеров, снегоходов, сапов" }, "geometry": { "type": "Point", "coordinates": [ 28.621531563025474, 60.359043289918276 ] } }
+{ "type": "Feature", "properties": { "service_id": null, "service_name": "Прокат", "capacity": 0, "name": "Прокат буеров, снегоходов, сапов", "phase": 1 }, "geometry": { "type": "Point", "coordinates": [ 28.621531563025474, 60.359043289918276 ] } }
 ]
 }

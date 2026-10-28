@@ -6,3 +6,4 @@ numpy>=1.26
 matplotlib>=3.8
 contextily>=1.6      # подложки Esri/OSM для scripts/maps.py
 networkx>=3.2
+folium>=0.17        # интерактивная карта scripts/webmap.py

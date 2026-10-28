@@ -1,0 +1,30 @@
+{
+ "period": "2015–2024",
+ "sail_days_mean": 89.8,
+ "sail_days_min": 72,
+ "sail_days_max": 108,
+ "sail_season_days": 153,
+ "frost_days_mean": 34.0,
+ "frost_days_min": 0,
+ "below0_days_mean": 94.0,
+ "longest_frost_run_mean": 27.333333333333332,
+ "gust_max_ms": 32.0,
+ "q_gust_kpa": 0.64,
+ "w0_kpa": 0.3,
+ "wind_mean_max_ms": 14.97,
+ "q_mean_kpa": 0.1400630625,
+ "windy_daytime_share": 0.4274021352313167,
+ "wind_mean_ms": 4.62337907199562,
+ "prevailing": "ЮЗ",
+ "rose": {
+  "С": 0.096,
+  "СВ": 0.096,
+  "В": 0.085,
+  "ЮВ": 0.101,
+  "Ю": 0.131,
+  "ЮЗ": 0.205,
+  "З": 0.182,
+  "СЗ": 0.104
+ },
+ "sunshine_hours_summer": 1201.3930958333333
+}

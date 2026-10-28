@@ -1,0 +1,120 @@
+{
+ "tag": "s2",
+ "name": "Сценарий 2 — полная реализация (до 2031)",
+ "isochrones": [
+  {
+   "origin": "станция",
+   "mode": "walk",
+   "minutes": 15,
+   "population": 2459,
+   "area_ha": 210.0
+  },
+  {
+   "origin": "центр",
+   "mode": "walk",
+   "minutes": 15,
+   "population": 3637,
+   "area_ha": 213.7
+  },
+  {
+   "origin": "марина",
+   "mode": "walk",
+   "minutes": 15,
+   "population": 3112,
+   "area_ha": 138.6
+  },
+  {
+   "origin": "кампус",
+   "mode": "walk",
+   "minutes": 15,
+   "population": 178,
+   "area_ha": 74.1
+  },
+  {
+   "origin": "порт",
+   "mode": "walk",
+   "minutes": 15,
+   "population": 0,
+   "area_ha": 256.3
+  },
+  {
+   "origin": "станция",
+   "mode": "transit",
+   "minutes": 30,
+   "population": 5629,
+   "area_ha": 772.2
+  },
+  {
+   "origin": "центр",
+   "mode": "transit",
+   "minutes": 30,
+   "population": 5524,
+   "area_ha": 779.3
+  },
+  {
+   "origin": "марина",
+   "mode": "transit",
+   "minutes": 30,
+   "population": 4814,
+   "area_ha": 515.4
+  },
+  {
+   "origin": "кампус",
+   "mode": "transit",
+   "minutes": 30,
+   "population": 684,
+   "area_ha": 282.0
+  },
+  {
+   "origin": "порт",
+   "mode": "transit",
+   "minutes": 30,
+   "population": 1171,
+   "area_ha": 798.8
+  }
+ ],
+ "provision": {
+  "kindergarten": {
+   "demand": 837.8,
+   "supplied_within": 257.0,
+   "share_within": 0.307,
+   "columns": [
+    "demand",
+    "demand_left",
+    "supplied_demands_within",
+    "supplied_demands_without",
+    "min_dist",
+    "avg_dist",
+    "provision_value"
+   ]
+  },
+  "school": {
+   "demand": 1648.1,
+   "supplied_within": 659.0,
+   "share_within": 0.4,
+   "columns": [
+    "demand",
+    "demand_left",
+    "supplied_demands_within",
+    "supplied_demands_without",
+    "min_dist",
+    "avg_dist",
+    "provision_value"
+   ]
+  }
+ },
+ "noise": {
+  "population_ge55": 3070,
+  "town_population": 6415,
+  "share_ge55": 0.479,
+  "scenario_buildings_ge55": 6,
+  "scenario_buildings": 24,
+  "scenario_population_ge55": 0
+ },
+ "visibility": {
+  "points": 22,
+  "mean_view_ha": 33.84,
+  "mean_sea_view_ha": 21.5,
+  "union_sea_view_ha": 103.0
+ }
+}

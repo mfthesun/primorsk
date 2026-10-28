@@ -3,6 +3,6 @@
 "name": "extra_education",
 "crs": { "type": "name", "properties": { "name": "urn:ogc:def:crs:OGC:1.3:CRS84" } },
 "features": [
-{ "type": "Feature", "properties": { "service_id": 23, "service_name": "Дополнительное образование детей (языковая, искусств,спортивная школы)", "capacity": 60, "name": "Парусная школа" }, "geometry": { "type": "Point", "coordinates": [ 28.621531563025474, 60.359043289918276 ] } }
+{ "type": "Feature", "properties": { "service_id": 23, "service_name": "Дополнительное образование детей (языковая, искусств,спортивная школы)", "capacity": 60, "name": "Парусная школа", "phase": 1 }, "geometry": { "type": "Point", "coordinates": [ 28.621531563025474, 60.359043289918276 ] } }
 ]
 }

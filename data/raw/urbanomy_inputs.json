@@ -1,0 +1,20 @@
+{
+  "_comment": "Входные данные для scripts/urbanomy_analysis.py. Цены — руб.; площади — м². Заполняется командой.",
+  "land_price_rub_m2": {
+    "_source": "НЕ ЗАПОЛНЕНО: кадастровая стоимость (НСПД, nspd.gov.ru) участка 47:01:0401004:19 и участков у марины. До заполнения земля в расчёт не входит (0).",
+    "campus": 0,
+    "marina": 0
+  },
+  "benchmarks": {
+    "_source": "демо-бенчмарки Urbanomy (examples/investment_metrics.ipynb, Санкт-Петербург); для Приморска — уточнить по рынку ЛО",
+    "SPECIAL": {"cost_build": 35000, "rent_annual": 11000, "rent_years": 15, "construction_years": 3, "opex_rate": 1500},
+    "RESIDENTIAL": {"cost_build": 45000, "rent_annual": 9000, "rent_years": 15, "construction_years": 3, "opex_rate": 800},
+    "BUSINESS": {"cost_build": 55000, "rent_annual": 34000, "rent_years": 12, "construction_years": 3, "opex_rate": 1300},
+    "RECREATION": {"cost_build": 20000, "rent_annual": 8500, "rent_years": 15, "construction_years": 3, "opex_rate": 1000}
+  },
+  "ser": {
+    "_source": "население — boundary; занятые — трудоспособные 55 % населения (концепция: «трудоспособное население — 55 %»); средняя зарплата — значение Urbanomy по умолчанию",
+    "employment_share": 0.55,
+    "avg_wage_base": 70430
+  }
+}

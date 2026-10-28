@@ -3,11 +3,14 @@
 #
 #   bash scripts/setup.sh            # базовое окружение + BlocksNet
 #   bash scripts/setup.sh base       # только пайплайн данных и карты (requirements.txt)
-#   bash scripts/setup.sh blocksnet  # только окружение моделирования
+#   bash scripts/setup.sh blocksnet  # только окружение моделирования (BlocksNet + Urbanomy)
+#   bash scripts/setup.sh objectnat  # только окружение ObjectNat
 #
 # Окружения:
 #   .venv            — пайплайн данных (process.py, validate.py, maps.py): requirements.txt, любой Python ≥ 3.10;
-#   .venv-blocksnet  — моделирование (analysis.py): Python 3.12, BlocksNet 1.0.0a9 [torch] + iduedu 0.4.1.
+#   .venv-blocksnet  — моделирование (analysis.py, urbanomy_analysis.py): Python 3.12, BlocksNet 1.0.0a9 [torch]
+#                      + iduedu 0.4.1; Urbanomy — из GitHub (IDUclub/urbanomy, на PyPI нет) на закреплённом коммите;
+#   .venv-objectnat  — objectnat_analysis.py: Python 3.12, ObjectNat 2.1 + iduedu 2.3 (несовместим с BlocksNet).
 #
 # Интернет может быть ограничен: скрипт ставит пакеты только из PyPI (и CPU-сборку torch с download.pytorch.org,
 # если она доступна — иначе torch берётся с PyPI). Данные OSM/Overpass не нужны: граф строится в analysis.py
@@ -23,6 +26,9 @@ WHAT="${1:-all}"
 BLOCKSNET_VERSION="1.0.0a9"
 IDUEDU_VERSION="0.4.1"        # BlocksNet 1.0.0a9 несовместим с iduedu ≥ 1.0
 TORCH_INDEX="https://download.pytorch.org/whl/cpu"
+OBJECTNAT_VERSION="2.1.0"
+URBANOMY_REPO="https://github.com/IDUclub/urbanomy.git"
+URBANOMY_COMMIT="0666d6b7e128fd9a081b56f30be8893690a6fd40"   # 2025-10-09
 
 log() { printf '\n== %s\n' "$*"; }
 
@@ -70,17 +76,45 @@ print("CBC:", pulp.PULP_CBC_CMD().available())
 PY
 }
 
+setup_urbanomy() {
+    # Urbanomy: pyproject требует Python 3.10 и BlocksNet 1.0.0a1 (ради land_value_modeling); используемые
+    # модули (investment_potential, socio_economic_indicators) от BlocksNet не зависят — подключаем src в .venv-blocksnet
+    log "Urbanomy ($URBANOMY_COMMIT) → .venv-blocksnet"
+    local dst="$ROOT/.venv-blocksnet/src/urbanomy"
+    if [ ! -d "$dst/.git" ]; then
+        git clone -q "$URBANOMY_REPO" "$dst"
+    fi
+    git -C "$dst" fetch -q --depth 1 origin "$URBANOMY_COMMIT" 2>/dev/null || true
+    git -C "$dst" checkout -q "$URBANOMY_COMMIT"
+    local site
+    site=$(.venv-blocksnet/bin/python -c "import sysconfig; print(sysconfig.get_paths()['purelib'])")
+    echo "$dst/src" > "$site/urbanomy_src.pth"
+    VIRTUAL_ENV="$ROOT/.venv-blocksnet" uv pip install -q catboost libpysal
+    .venv-blocksnet/bin/python -c "from urbanomy.methods.socio_economic_indicators.sei_calculate import SEREstimator; print('urbanomy OK')"
+}
+
+setup_objectnat() {
+    log "Окружение ObjectNat .venv-objectnat (Python 3.12, ObjectNat $OBJECTNAT_VERSION)"
+    [ -d .venv-objectnat ] || uv venv -q -p 3.12 .venv-objectnat
+    VIRTUAL_ENV="$ROOT/.venv-objectnat" uv pip install -q "objectnat==$OBJECTNAT_VERSION" -r requirements.txt
+    .venv-objectnat/bin/python -c "import objectnat, iduedu; print('objectnat', '$OBJECTNAT_VERSION', '| iduedu', iduedu.__version__)"
+}
+
 ensure_uv
 case "$WHAT" in
     base) setup_base ;;
-    blocksnet) setup_blocksnet ;;
-    all) setup_base; setup_blocksnet ;;
-    *) echo "использование: bash scripts/setup.sh [all|base|blocksnet]"; exit 2 ;;
+    blocksnet) setup_blocksnet; setup_urbanomy ;;
+    objectnat) setup_objectnat ;;
+    all) setup_base; setup_blocksnet; setup_urbanomy; setup_objectnat ;;
+    *) echo "использование: bash scripts/setup.sh [all|base|blocksnet|objectnat]"; exit 2 ;;
 esac
 
 log "Готово"
 cat <<'TXT'
   .venv/bin/python scripts/process.py && .venv/bin/python scripts/validate.py
-  .venv-blocksnet/bin/python scripts/analysis.py
+  .venv-blocksnet/bin/python scripts/analysis.py            # BlocksNet: today, s1, s2
+  .venv-objectnat/bin/python scripts/objectnat_analysis.py  # ObjectNat
+  .venv-blocksnet/bin/python scripts/urbanomy_analysis.py   # Urbanomy
+  .venv/bin/python scripts/climate.py && .venv/bin/python scripts/metrics.py
   .venv/bin/python scripts/maps.py
 TXT

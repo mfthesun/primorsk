@@ -3,6 +3,6 @@
 "name": "hotel",
 "crs": { "type": "name", "properties": { "name": "urn:ogc:def:crs:OGC:1.3:CRS84" } },
 "features": [
-{ "type": "Feature", "properties": { "service_id": 110, "service_name": "Гостиница", "capacity": 0, "name": "Гостинично-досуговый комплекс (ф. 2 марины)" }, "geometry": { "type": "Point", "coordinates": [ 28.608617413417644, 60.364483581737574 ] } }
+{ "type": "Feature", "properties": { "service_id": 110, "service_name": "Гостиница", "capacity": 0, "name": "Гостинично-досуговый комплекс (ф. 2 марины)", "phase": 2 }, "geometry": { "type": "Point", "coordinates": [ 28.608617413417644, 60.364483581737574 ] } }
 ]
 }

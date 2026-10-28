@@ -3,6 +3,6 @@
 "name": "yacht_club",
 "crs": { "type": "name", "properties": { "name": "urn:ogc:def:crs:OGC:1.3:CRS84" } },
 "features": [
-{ "type": "Feature", "properties": { "service_id": null, "service_name": "Яхт-клуб", "capacity": 0, "name": "Клубный дом марины" }, "geometry": { "type": "Point", "coordinates": [ 28.608163227267127, 60.364234521766683 ] } }
+{ "type": "Feature", "properties": { "service_id": null, "service_name": "Яхт-клуб", "capacity": 0, "name": "Клубный дом марины", "phase": 1 }, "geometry": { "type": "Point", "coordinates": [ 28.608163227267127, 60.364234521766683 ] } }
 ]
 }

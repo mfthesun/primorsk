@@ -1,0 +1,329 @@
+{
+ "tag": "today",
+ "name": "Существующее положение (2026)",
+ "population": 13659,
+ "buildings": 9156,
+ "build_floor_area_m2": 1806281.75,
+ "living_area_m2": 470313.21,
+ "living_area_per_capita": 34.43247748737097,
+ "median_acc_drive": 40.714634960327324,
+ "median_acc_walk": 250.04008322238957,
+ "median_acc_transit": 250.04008322238957,
+ "t_drive_station": 20.896244234570613,
+ "t_transit_station": 144.7178490372648,
+ "share_walk_station_20": 0.270005124826122,
+ "share_transit_station_20": 0.270005124826122,
+ "share_transit_station_30": 0.36452156087561316,
+ "share_transit_marina_30": 0.31217512262976793,
+ "share_transit_campus_30": 0.03074895673182517,
+ "share_transit_centre_30": 0.32096053883886083,
+ "share_transit_port_30": 0.0,
+ "town_population": 6396,
+ "town_share_walk_station_20": 0.5766103814884302,
+ "town_share_walk_station_30": 0.7784552845528455,
+ "town_share_walk_campus_20": 0.01813633520950594,
+ "town_share_walk_campus_30": 0.06566604127579738,
+ "town_share_walk_port_20": 0.0,
+ "town_share_walk_port_30": 0.0,
+ "town_share_walk_marina_20": 0.525328330206379,
+ "town_share_walk_marina_30": 0.6666666666666666,
+ "town_share_transit_station_20": 0.5766103814884302,
+ "town_share_transit_station_30": 0.7784552845528455,
+ "town_share_transit_campus_20": 0.01813633520950594,
+ "town_share_transit_campus_30": 0.06566604127579738,
+ "town_share_transit_port_20": 0.0,
+ "town_share_transit_port_30": 0.0,
+ "town_share_transit_marina_20": 0.525328330206379,
+ "town_share_transit_marina_30": 0.6666666666666666,
+ "town_t_walk_station": 32.02173233270795,
+ "town_t_walk_campus": 69.72301438398999,
+ "town_t_walk_port": 89.64640400250157,
+ "town_t_walk_marina": 33.29612257661038,
+ "town_t_transit_station": 32.02173233270795,
+ "town_t_transit_campus": 69.72301438398999,
+ "town_t_transit_port": 89.64640400250157,
+ "town_t_transit_marina": 33.29612257661038,
+ "town_t_drive_station": 9.153799249530957,
+ "town_t_drive_campus": 13.75236085053158,
+ "town_t_drive_port": 13.916338336460287,
+ "town_t_drive_marina": 8.87962789243277,
+ "provision": {
+  "school_walk": {
+   "need": 1639,
+   "capacity": 1847,
+   "within": 933,
+   "deficit": 706,
+   "excess": 613,
+   "strong": 0.569,
+   "weak": 0.753
+  },
+  "school_drive": {
+   "need": 1639,
+   "capacity": 1847,
+   "within": 1584,
+   "deficit": 55,
+   "excess": 208,
+   "strong": 0.966,
+   "weak": 1.0
+  },
+  "kindergarten_walk": {
+   "need": 833,
+   "capacity": 470,
+   "within": 230,
+   "deficit": 603,
+   "excess": 50,
+   "strong": 0.276,
+   "weak": 0.504
+  },
+  "kindergarten_drive": {
+   "need": 833,
+   "capacity": 470,
+   "within": 470,
+   "deficit": 363,
+   "excess": 0,
+   "strong": 0.564,
+   "weak": 0.564
+  },
+  "college_drive": {
+   "need": 109,
+   "capacity": 0,
+   "within": 0,
+   "deficit": 109,
+   "excess": 0,
+   "strong": 0.0,
+   "weak": 0.0
+  }
+ },
+ "coverage": {
+  "polyclinic": {
+   "walk": 0.551,
+   "transit": 0.551,
+   "drive": 0.944
+  },
+  "hospital": {
+   "walk": 0.316,
+   "transit": 0.316,
+   "drive": 0.95
+  },
+  "pharmacy": {
+   "walk": 0.437,
+   "transit": 0.437,
+   "drive": 0.77
+  },
+  "post_office": {
+   "walk": 0.521,
+   "transit": 0.521,
+   "drive": 0.944
+  },
+  "mfz": {
+   "walk": 0.28,
+   "transit": 0.28,
+   "drive": 0.77
+  },
+  "library": {
+   "walk": 0.468,
+   "transit": 0.468,
+   "drive": 0.888
+  },
+  "community_centre": {
+   "walk": 0.129,
+   "transit": 0.129,
+   "drive": 0.246
+  },
+  "extra_education": {
+   "walk": 0.266,
+   "transit": 0.266,
+   "drive": 0.77
+  },
+  "convenience": {
+   "walk": 0.389,
+   "transit": 0.389,
+   "drive": 0.82
+  },
+  "supermarket": {
+   "walk": 0.417,
+   "transit": 0.417,
+   "drive": 0.944
+  },
+  "bus_stop": {
+   "walk": 0.78,
+   "transit": 0.78,
+   "drive": NaN
+  },
+  "train_station": {
+   "walk": 0.5,
+   "transit": 0.5,
+   "drive": 0.944
+  }
+ },
+ "territory": {
+  "counts": {
+   "kindergarten": 4.0,
+   "school": 6.0,
+   "college": 0.0,
+   "university": 0.0,
+   "extracurricular": null,
+   "hospital": 1.0,
+   "polyclinic": 5.0,
+   "ambulance": null,
+   "sanatorium": 0.0,
+   "special_medical": null,
+   "preventive_medical": null,
+   "pharmacy": 4.0,
+   "gym": null,
+   "swimming_pool": 0.0,
+   "pitch": 9.0,
+   "stadium": 0.0,
+   "orphanage": null,
+   "social_facility": 0.0,
+   "social_service_center": null,
+   "post": 4.0,
+   "bank": 3.0,
+   "multifunctional_center": 2.0,
+   "library": 4.0,
+   "museum": 1.0,
+   "theatre": 0.0,
+   "cultural_center": null,
+   "cinema": 0.0,
+   "concert_hall": null,
+   "ice_arena": null,
+   "mall": 0.0,
+   "park": 4.0,
+   "beach": 0.0,
+   "eco_trail": null,
+   "fire_station": null,
+   "police": 1.0,
+   "hotel": 5.0,
+   "hostel": 0.0,
+   "tourist_base": null,
+   "catering": 7.0
+  },
+  "provision": {
+   "kindergarten": 0.489247311827957,
+   "school": 0.8661645422943222,
+   "college": 0.0,
+   "university": 0.0,
+   "extracurricular": null,
+   "hospital": 0.44,
+   "polyclinic": 0.5084175084175084,
+   "ambulance": null,
+   "sanatorium": 0.0,
+   "special_medical": null,
+   "preventive_medical": null,
+   "pharmacy": 0.4984423676012461,
+   "gym": null,
+   "swimming_pool": 0.0,
+   "pitch": 0.34615384615384615,
+   "stadium": 0.0,
+   "orphanage": null,
+   "social_facility": 0.0,
+   "social_service_center": null,
+   "post": 0.26344676180021953,
+   "bank": 0.9238845144356955,
+   "multifunctional_center": 0.2546689303904924,
+   "library": 0.7624309392265194,
+   "museum": 0.9210526315789473,
+   "theatre": 0.0,
+   "cultural_center": null,
+   "cinema": 0.0,
+   "concert_hall": null,
+   "ice_arena": null,
+   "mall": 0.0,
+   "park": 0.9413696060037523,
+   "beach": 0.0,
+   "eco_trail": null,
+   "fire_station": null,
+   "police": 0.2898550724637681,
+   "hotel": 0.968,
+   "hostel": 0.0,
+   "tourist_base": null,
+   "catering": 0.0839087533377837
+  },
+  "general": {
+   "area": 649.5925653052835,
+   "urbanization": 0.01694382553943866
+  },
+  "demographic": {
+   "population": 13659.0,
+   "density": 21.027026369337825
+  },
+  "transport": {
+   "road_network_density": 1.8753775420532723,
+   "settlements_connectivity": 0.4900946319103241,
+   "road_network_length": 1218.2313084583025,
+   "fuel_stations_count": 1.0,
+   "average_fuel_station_accessibility": 22.09047508239746,
+   "railway_stops_count": 4.0,
+   "average_railway_stop_accessibility": 12.881115913391113,
+   "airports_count": 0.0,
+   "average_airport_accessibility": null
+  }
+ },
+ "estimated_capacity": [
+  "polyclinic",
+  "hospital",
+  "pharmacy",
+  "post",
+  "multifunctional_center",
+  "library",
+  "bank",
+  "cafe",
+  "restaurant",
+  "convenience",
+  "supermarket",
+  "hotel",
+  "museum",
+  "police",
+  "fuel",
+  "religion",
+  "pitch",
+  "playground",
+  "park",
+  "train_station",
+  "bus_stop",
+  "hairdresser",
+  "market",
+  "pier",
+  "cemetery"
+ ],
+ "graph": {
+  "walk": {
+   "nodes": 9032,
+   "edges": 10587,
+   "km": 1481.4,
+   "components": 67,
+   "largest_share": 0.952,
+   "gap_links": 2066,
+   "km_by_source": {
+    "roads": 387.9,
+    "gap": 29.1,
+    "osm": 1064.4
+   }
+  },
+  "drive": {
+   "nodes": 8527,
+   "edges": 9561,
+   "km": 1303.9,
+   "components": 117,
+   "largest_share": 0.935,
+   "gap_links": 2050,
+   "km_by_source": {
+    "roads": 388.0,
+    "gap": 29.0,
+    "osm": 886.9
+   }
+  },
+  "roads_only": {
+   "nodes": 2077,
+   "edges": 2149,
+   "km": 388.2,
+   "components": 117,
+   "largest_share": 0.216,
+   "gap_links": 99,
+   "km_by_source": {
+    "roads": 387.4,
+    "gap": 0.8
+   }
+  }
+ }
+}

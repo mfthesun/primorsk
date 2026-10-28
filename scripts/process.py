@@ -52,6 +52,8 @@ NEIGHBOUR_MIN = 2
 AUX_MAX = 70.0        # м², постройка до этой площади рядом с более крупным домом = хозпостройка
 AUX_RADIUS = 12.0     # м
 LIVING_COEF = 0.7     # доля жилой площади в общей площади для домов без данных реестра
+MIN_HOUSEHOLD = 2.0   # чел. на постоянный дом: больше домов в пункте — лишние считаются дачами (сезонный фонд)
+SEASONAL_HOUSEHOLD = 2.5   # чел. на дачу летом — для оценки сезонного населения (концепция: ≈ 6 000)
 
 # Независимая проверка is_living по тегам building=* OpenStreetMap (data/raw/osm_building_tags.geojson) —
 # замена ручной сверки по 2ГИС для зданий, где OSM даёт однозначный тип.
@@ -265,6 +267,28 @@ def building(bnd: gpd.GeoDataFrame) -> gpd.GeoDataFrame:
         new[hit] = m[hit].astype(bool)
         rule[hit] = "ручная правка (2ГИС)"
 
+    # 8. сезонный фонд: дачи в жилых зонах посёлков. Если «жилых» домов в пункте больше, чем может занять его
+    #    население по переписи (MIN_HOUSEHOLD чел. на дом), постоянными считаются дома из реестра и ближайшие к
+    #    центру пункта, остальные — дачи: в постоянное население не входят (is_living = false, is_seasonal = true)
+    seasonal = pd.Series(False, index=g.index)
+    if CENSUS.exists():
+        cand = new & ~registry
+        loc = locality_of(gm[new])
+        targets = pd.read_csv(CENSUS).set_index("name")["population"]
+        targets = targets / targets.sum() * TERRITORY_POPULATION
+        pl = read(PLACES).to_crs(MCRS).set_index("name")
+        for name, t in targets.items():
+            ids = loc.index[loc.values == name]
+            cap = int(t // MIN_HOUSEHOLD)
+            if len(ids) <= cap or name not in pl.index:
+                continue
+            centre = pl.loc[[name]].geometry.iloc[0]
+            order = sorted(ids, key=lambda i: (not registry[i], gm.geometry[i].distance(centre)))
+            extra_ids = [i for i in order[cap:] if cand[i]]
+            seasonal[extra_ids] = True
+        new[seasonal] = False
+        rule[seasonal] = "сезонный фонд (дача): домов больше, чем жителей по переписи"
+    g["is_seasonal"] = seasonal | (rule == "садоводство -> нежилое") & fa.between(MIN_HOUSE, MAX_HOUSE)
     g["is_living"] = new.astype(bool)
 
     # --- площади ---
@@ -319,9 +343,12 @@ def building(bnd: gpd.GeoDataFrame) -> gpd.GeoDataFrame:
     log.to_csv(REP / "is_living_changes.csv", index=False, encoding="utf-8-sig")
 
     cols = ["id", "build_floor_area", "living_area", "non_living_area", "footprint_area",
-            "number_of_floors", "population", "is_living", "geometry"]
+            "number_of_floors", "population", "is_living", "is_seasonal", "geometry"]
     out = g[cols].copy()
     write(out, OUT / "building.geojson")
+    n_seas = int(g["is_seasonal"].sum())
+    print(f"сезонный фонд: {n_seas} домов (≈ {round(n_seas * SEASONAL_HOUSEHOLD)} чел. летом), "
+          f"из них переведено из жилых: {int(seasonal.sum())}")
     return out
 
 
@@ -532,6 +559,25 @@ def scenario_design(dst: Path, sb: gpd.GeoDataFrame) -> None:
     write(pr, dst / "pier.geojson")
 
 
+def add_phases(dst: Path) -> None:
+    """Очередь реализации (phase) у всех объектов сценария — по scripts/scenarios.py."""
+    import sys
+    sys.path.insert(0, str(Path(__file__).resolve().parent))
+    from scenarios import BUILDING_PHASE, LAYER_PHASE
+    for f in sorted(dst.glob("*.geojson")):
+        x = read(f)
+        if f.stem == "building":
+            miss = set(x["id"]) - set(BUILDING_PHASE)
+            if miss:
+                raise ValueError(f"нет очереди у зданий сценария: {sorted(miss)} — дополнить scenarios.py")
+            x["phase"] = x["id"].map(BUILDING_PHASE).astype("int32")
+        else:
+            if f.stem not in LAYER_PHASE:
+                raise ValueError(f"нет очереди у слоя сценария {f.stem} — дополнить scenarios.py")
+            x["phase"] = pd.array([LAYER_PHASE[f.stem]] * len(x), dtype="int32")
+        write(x, f)
+
+
 def scenario(bld: gpd.GeoDataFrame) -> None:
     src, dst = RAW / "scenario_gpkg", OUT / "scenario"
     log: list = []
@@ -613,6 +659,7 @@ def scenario(bld: gpd.GeoDataFrame) -> None:
                               "capacity": pd.array([0], dtype="Int32"), "name": [name]}, geometry=[geom], crs=CRS)
         write(x, dst / f"{svc}.geojson")
     scenario_design(dst, sb)
+    add_phases(dst)
     pd.DataFrame(log, columns=LOG_COLS).to_csv(REP / "scenario_snap.csv", index=False, encoding="utf-8-sig")
 
 

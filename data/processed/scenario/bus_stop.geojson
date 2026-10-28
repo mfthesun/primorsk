@@ -3,9 +3,9 @@
 "name": "bus_stop",
 "crs": { "type": "name", "properties": { "name": "urn:ogc:def:crs:OGC:1.3:CRS84" } },
 "features": [
-{ "type": "Feature", "properties": { "service_id": null, "service_name": "Остановка наземного общественного транспорта", "capacity": 0, "name": "Карасёвка" }, "geometry": { "type": "Point", "coordinates": [ 28.6732918, 60.3499482 ] } },
-{ "type": "Feature", "properties": { "service_id": null, "service_name": "Остановка наземного общественного транспорта", "capacity": 0, "name": "Шаттл: центр" }, "geometry": { "type": "Point", "coordinates": [ 28.607097330480826, 60.367566367315931 ] } },
-{ "type": "Feature", "properties": { "service_id": null, "service_name": "Остановка наземного общественного транспорта", "capacity": 0, "name": "Шаттл: станция" }, "geometry": { "type": "Point", "coordinates": [ 28.630936233336733, 60.363441585154959 ] } },
-{ "type": "Feature", "properties": { "service_id": null, "service_name": "Остановка наземного общественного транспорта", "capacity": 0, "name": "Шаттл: порт" }, "geometry": { "type": "Point", "coordinates": [ 28.720116011463858, 60.340216633565362 ] } }
+{ "type": "Feature", "properties": { "service_id": null, "service_name": "Остановка наземного общественного транспорта", "capacity": 0, "name": "Карасёвка", "phase": 1 }, "geometry": { "type": "Point", "coordinates": [ 28.6732918, 60.3499482 ] } },
+{ "type": "Feature", "properties": { "service_id": null, "service_name": "Остановка наземного общественного транспорта", "capacity": 0, "name": "Шаттл: центр", "phase": 1 }, "geometry": { "type": "Point", "coordinates": [ 28.607097330480826, 60.367566367315931 ] } },
+{ "type": "Feature", "properties": { "service_id": null, "service_name": "Остановка наземного общественного транспорта", "capacity": 0, "name": "Шаттл: станция", "phase": 1 }, "geometry": { "type": "Point", "coordinates": [ 28.630936233336733, 60.363441585154959 ] } },
+{ "type": "Feature", "properties": { "service_id": null, "service_name": "Остановка наземного общественного транспорта", "capacity": 0, "name": "Шаттл: порт", "phase": 1 }, "geometry": { "type": "Point", "coordinates": [ 28.720116011463858, 60.340216633565362 ] } }
 ]
 }

@@ -40,14 +40,22 @@
 ## Окружение
 
 ```bash
-bash scripts/setup.sh                      # .venv (requirements.txt) + .venv-blocksnet (Python 3.12, uv)
+bash scripts/setup.sh                      # .venv, .venv-blocksnet (+ Urbanomy), .venv-objectnat — Python 3.12, uv
 .venv/bin/python scripts/process.py && .venv/bin/python scripts/validate.py
-.venv-blocksnet/bin/python scripts/analysis.py   # «было»: кварталы, доступность, обеспеченность
-.venv/bin/python scripts/maps.py                  # карты в reports/maps/
+.venv-blocksnet/bin/python scripts/analysis.py            # BlocksNet: today / s1 / s2
+.venv-objectnat/bin/python scripts/objectnat_analysis.py  # ObjectNat: изохроны, обеспеченность по зданиям, шум, видимость
+.venv-blocksnet/bin/python scripts/urbanomy_analysis.py   # Urbanomy: инвестиции, SER
+.venv/bin/python scripts/climate.py && .venv/bin/python scripts/metrics.py   # климат; сводная таблица
+.venv/bin/python scripts/maps.py && .venv/bin/python scripts/webmap.py       # карты PNG; HTML «Цифровой мастер-план»
 ```
 
+Сценарии — `scripts/scenarios.py` (today / s1 — первая очередь до 2029 / s2 — полная реализация до 2031), у объектов
+сценария атрибут `phase`. Дачи — сезонный фонд (`is_seasonal`), в постоянное население не входят.
+
 BlocksNet 1.0.0a9 требует iduedu 0.4.1 и extra `[torch]` (Python 3.10–3.12; setup.sh ставит CPU-сборку torch);
-ObjectNat 2.1 требует iduedu ≥ 2.2 — ещё одно окружение. Опыт — github.com/mfthesun/pskov-blocksnet.
+ObjectNat 2.1 требует iduedu ≥ 2.2 — `.venv-objectnat`; `UrbanGraph.from_nx_graph` в iduedu 2.3 падает — собирать
+`UrbanGraph(nodes, edges, ...)` из таблиц. Urbanomy — только из GitHub (IDUclub/urbanomy, коммит в setup.sh), без
+модели CatBoost стоимость земли не считается. Опыт — github.com/mfthesun/pskov-blocksnet.
 
 Граф — `scripts/roadgraph.py` по `roads.geojson` + достройка разрывов `data/raw/osm_roads.geojson` (без интернета).
 Подводные камни IduEdu 0.4.1: граф должен быть ориентированным, узлы — подряд 0..n-1 (метка = номер строки
@@ -61,8 +69,8 @@ ObjectNat 2.1 требует iduedu ≥ 2.2 — ещё одно окружени
 
 ## Ближайшие задачи
 
-1. «Стало» (раздел 4 МП): `analysis.py --scenario` (заготовка) + сценарные линии в графе (велодорожка, шаттл,
-   41А-082), обеспеченность с колледжем/общежитием; таблица ТЭП по форме кураторов.
-2. ObjectNat (изохроны от станции, порта, центра; шум от порта и 41А-082), Urbanomy (стоимость земли).
-3. Дефицит детских садов (363 места) — кандидат в мероприятия МП; дачи, отмеченные жилыми (`docs/review_comments.md`).
-4. Таблицы мероприятий (очерёдность) и рисков; интерактивная HTML-карта.
+1. Запустить `urbanomy_analysis.py` (нужно разрешение на код из GitHub) и вписать кадастровую стоимость земли
+   в `data/raw/urbanomy_inputs.json`; получить модель CatBoost курса для стоимости земли до / после.
+2. Демография из БД ПМО Росстата; программа / стратегия развития поселения → целевые показатели в `metrics.py`.
+3. Дефицит детских садов (363 места) сценарии не закрывают — кандидат в мероприятия МП.
+4. Таблица ТЭП по форме кураторов; таблицы мероприятий (очерёдность) и рисков.

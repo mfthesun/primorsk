@@ -12,7 +12,7 @@
     python scripts/maps.py              # все карты
     python scripts/maps.py provision    # только карты, в имени которых есть «provision»
 
-Карты «было» требуют data/processed/analysis/blocks_before.geojson (scripts/analysis.py).
+Карты «было» требуют data/processed/analysis/blocks_today.geojson (scripts/analysis.py).
 """
 from __future__ import annotations
 
@@ -212,16 +212,16 @@ def map_floors() -> None:
                f"Этажность застройки{', г. Приморск' if ext == 'town' else ''}", "building.geojson")
 
 
-def blocks_before() -> gpd.GeoDataFrame:
-    p = PROC / "analysis" / "blocks_before.geojson"
+def blocks_today() -> gpd.GeoDataFrame:
+    p = PROC / "analysis" / "blocks_today.geojson"
     if not p.exists():
-        raise SystemExit("нет blocks_before.geojson — сначала .venv-blocksnet/bin/python scripts/analysis.py")
+        raise SystemExit("нет blocks_today.geojson — сначала .venv-blocksnet/bin/python scripts/analysis.py")
     return read(p)
 
 
 def choropleth(name, column, bins, labels, colors, legend_title, caption, source, mask=None, extra=None,
                ext="settlement") -> None:
-    bl = blocks_before()
+    bl = blocks_today()
     fig, ax = frame(ext)
     cmap = ListedColormap(colors)
     norm = BoundaryNorm(bins, cmap.N)
@@ -240,7 +240,7 @@ def map_density() -> None:
     choropleth("blocks_population_density", "pop_density", [0.001, 1, 5, 15, 40, 1e4],
                ["< 1", "1–5", "5–15", "15–40", "> 40"], ["#eff3ff", "#bdd7e7", "#6baed6", "#3182bd", "#08519c"],
                "Плотность населения, чел./га", "Плотность населения по кварталам",
-               "blocks_before.geojson — агрегация зданий по кварталам (BlocksNet aggregate_objects)",
+               "blocks_today.geojson — агрегация зданий по кварталам (BlocksNet aggregate_objects)",
                mask=lambda b: b["population"] > 0)
 
 
@@ -254,12 +254,12 @@ def map_accessibility() -> None:
     choropleth("access_station_drive", "t_drive_station", [0, 10, 20, 30, 45, 1e4],
                ["< 10", "10–20", "20–30", "30–45", "> 45"], ramp, "Время до ст. Приморск, мин",
                "Доступность ж/д станции Приморск на автомобиле (от центра застройки квартала)",
-               "blocks_before.geojson; граф УДС roads.geojson + OSM (roadgraph.py), матрица BlocksNet",
+               "blocks_today.geojson; граф УДС roads.geojson + OSM (roadgraph.py), матрица BlocksNet",
                mask=lambda b: b["population"] > 0, extra=stations)
     choropleth("access_median_drive", "median_acc_drive", [0, 30, 40, 50, 60, 1e4],
                ["< 30", "30–40", "40–50", "50–60", "> 60"], ramp, "Медианное время, мин",
                "Транспортная связность кварталов: медианное время на автомобиле до остальных кварталов "
-               "(median_accessibility)", "blocks_before.geojson (BlocksNet median_accessibility)",
+               "(median_accessibility)", "blocks_today.geojson (BlocksNet median_accessibility)",
                mask=lambda b: b["population"] > 0)
 
 
@@ -282,7 +282,7 @@ def map_provision() -> None:
                        ["< 20 %", "20–50 %", "50–80 %", "80–99 %", "100 %"], ramp,
                        "Обеспеченность (provision_strong)",
                        f"Обеспеченность {what}: {how}, ≤ {acc[svc][mode]} мин",
-                       "blocks_before.geojson (BlocksNet competitive_provision); вместимость — capacity",
+                       "blocks_today.geojson (BlocksNet competitive_provision); вместимость — capacity",
                        mask=lambda b, c=f"{svc}_{mode}_demand": b[c] > 0, extra=objects)
 
 
@@ -321,8 +321,74 @@ def map_scenario() -> None:
            "data/processed/scenario (проектные решения команды)", style=IMAGERY)
 
 
+ON = PROC / "objectnat"
+STATE = {"today": "сегодня", "s1": "сценарий 1", "s2": "сценарий 2"}
+
+
+def town_buildings(ax, tag: str) -> list:
+    read(PROC / "building.geojson").plot(ax=ax, color="#c8c8c8", lw=0, zorder=5)
+    h = [mpatches.Patch(color="#c8c8c8", label="существующие здания")]
+    if tag != "today":
+        sb = read(PROC / "scenario" / "building.geojson")
+        sb = sb[sb["phase"] <= {"s1": 1, "s2": 2}[tag]]
+        sb.plot(ax=ax, color="#e8590c", lw=0, zorder=6)
+        h.append(mpatches.Patch(color="#e8590c", label="здания сценария"))
+    return h
+
+
+def map_before_after() -> None:
+    """Пары карт «сегодня / сценарий 2» для территории г. Приморска (ObjectNat)."""
+    for tag in ("today", "s2"):
+        # 1. изохроны «пешком + шаттл» 30 мин от станции и порта
+        fig, ax = frame("town")
+        iso = read(ON / f"isochrones_{tag}.geojson")
+        iso = iso[iso["mode"] == "transit"]
+        h = []
+        for name, col in (("станция", "#2a78d6"), ("порт", "#eb6834")):
+            g = iso[iso["name"] == name]
+            g.plot(ax=ax, color=col, alpha=0.28, edgecolor=col, lw=1.2, zorder=3)
+            pop = int(g["population"].sum())
+            h.append(mpatches.Patch(color=col, alpha=0.5, label=f"30 мин от {'станции' if name == 'станция' else 'порта'}: {pop} жит."))
+        h += town_buildings(ax, tag)
+        if tag != "today":
+            read(PROC / "scenario" / "shuttle_route.geojson").plot(ax=ax, color="#104281", lw=2.4, zorder=8)
+            read(PROC / "scenario" / "bus_stop.geojson").plot(ax=ax, color="white", edgecolor="#104281", lw=1.4,
+                                                            markersize=36, zorder=9)
+            h += [Line2D([], [], color="#104281", lw=2.4, label="шаттл"),
+                  Line2D([], [], marker="o", ls="", mfc="white", mec="#104281", label="остановки шаттла")]
+        h += context(ax, boundary=False)
+        finish(fig, ax, f"town_access_transit_{tag}", h, "Пешком + шаттл",
+               f"Зоны доступности 30 мин без автомобиля (пешком{' + шаттл' if tag != 'today' else ''}) от ж/д станции и "
+               f"порта, {STATE[tag]}", f"ObjectNat get_graph_isochrones, isochrones_{tag}.geojson")
+        # 2. шум
+        fig, ax = frame("town")
+        nz = read(ON / f"noise_{tag}.geojson").sort_values("noise_level")
+        levels = [50, 55, 60, 65, 70, 75, 80]
+        cmap = ListedColormap(["#fff1a8", "#fdd27a", "#fca95a", "#f67b43", "#e14d35", "#b8262e", "#7f0e24"])
+        norm = BoundaryNorm(levels + [200], cmap.N)
+        nz.plot(ax=ax, column="noise_level", cmap=cmap, norm=norm, alpha=0.75, lw=0, zorder=3)
+        h = [mpatches.Patch(color=cmap(i), label=f"{lv} дБА" + (" и выше" if lv == 80 else "")) for i, lv in enumerate(levels)]
+        h += town_buildings(ax, tag) + context(ax, boundary=False)
+        finish(fig, ax, f"town_noise_{tag}", h, "Уровень шума",
+               f"Шумовое воздействие ж/д, магистральных улиц и порта, {STATE[tag]}",
+               f"ObjectNat calculate_simplified_noise_frame, noise_{tag}.geojson")
+        # 3. видимость
+        fig, ax = frame("town")
+        vis = read(ON / f"visibility_{tag}.geojson")
+        gpd.GeoSeries([vis.union_all()], crs=WEB).plot(ax=ax, color="#1baf7a", alpha=0.35, lw=0, zorder=3)
+        fw = read(PROC / "scenario" / "footway.geojson").iloc[[0]]
+        fw.plot(ax=ax, color="#c2255c", lw=2, ls=":", zorder=8)
+        h = [mpatches.Patch(color="#1baf7a", alpha=0.5, label="зона видимости с набережной"),
+             Line2D([], [], color="#c2255c", lw=2, ls=":", label="маршрут центр – кирха – марина")]
+        h += town_buildings(ax, tag) + context(ax, boundary=False)
+        finish(fig, ax, f"town_visibility_{tag}", h, "Видовые раскрытия",
+               f"Зоны видимости с пешеходного маршрута по набережной (до 600 м), {STATE[tag]}",
+               f"ObjectNat get_visibility, visibility_{tag}.geojson")
+
+
 MAPS = {"buildings_living": map_living, "buildings_floors": map_floors, "blocks_population_density": map_density,
-        "access": map_accessibility, "provision": map_provision, "scenario_projects": map_scenario}
+        "access": map_accessibility, "provision": map_provision, "scenario_projects": map_scenario,
+        "town_before_after": map_before_after}
 
 
 def write_captions() -> None:
