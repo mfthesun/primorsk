@@ -67,4 +67,4 @@
 | Инвестиционная привлекательность | Urbanomy | `calculate_investment_metrics()` — вложения, доходность, окупаемость |
 | Стоимость до / после | Urbanomy | `ScenarioTEPModifier.apply()` → повторный `predict()` |
 
-Ссылки на ноутбуки — в таблице «КИГС, 2 курс — инструменты» (Google Sheets, проект claude.ai).
+Ссылки на ноутбуки — в таблице «КИГС, 2 курс — инструменты» (Google Sheets).
