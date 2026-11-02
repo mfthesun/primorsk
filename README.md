@@ -34,7 +34,7 @@ data/
   raw/                слои в сданном виде (не редактировать)
   processed/          итоговые GeoJSON, EPSG:4326: территория, services/, scenario/
 scripts/
-  setup.sh            окружения: .venv и .venv-blocksnet (Python 3.12, uv)
+  setup.sh            окружения: .venv, .venv-blocksnet и .venv-objectnat (Python 3.12, uv)
   process.py          raw → processed (все исправления)
   validate.py         проверка на соответствие требованиям
   roadgraph.py        дорожный граф по roads.geojson (+ разрывы из OSM), формат BlocksNet/IduEdu

@@ -21,7 +21,8 @@
 - `data/raw/` — исходники, **не редактировать**. Все правки — в `scripts/process.py`, результат — `data/processed/`.
 - После любых изменений: `python scripts/process.py && python scripts/validate.py` → 0 ошибок;
   `reports/` коммитить вместе с данными.
-- Ручные правки по 2ГИС для зданий — `data/raw/is_living_overrides.csv` (`id,is_living[,comment]`), применяются
+- Ручные правки по 2ГИС для зданий — `data/raw/is_living_overrides.csv` (`id,is_living[,comment]`; файл
+  необязательный, создаётся при появлении правок — `scripts/process.py` спокойно работает без него), применяются
   поверх правил в `building()`.
 - Новые исходные слои — в `data/raw/` + запись об источнике и дате в `docs/data-sources.md`.
 
