@@ -48,7 +48,7 @@ scripts/
   maps.py             карты для презентации → reports/maps/
   webmap.py           интерактивный «Цифровой мастер-план» → reports/master_plan.html
 reports/              отчёт валидации и журналы изменений
-CLAUDE.md             инструкции для Claude Code
+AGENTS.md             инструкции для Kimi Code
 ```
 
 ## Быстрый старт
