@@ -1,0 +1,20 @@
+{
+ "type": "FeatureCollection",
+ "features": [
+  {
+   "type": "Feature",
+   "properties": {
+    "service_name": "Детский сад (сценарий 2)",
+    "capacity": 160,
+    "name": "Детский сад, 160 мест (участок в Карасёвке, 0,62 га)"
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     28.6535,
+     60.353
+    ]
+   }
+  }
+ ]
+}

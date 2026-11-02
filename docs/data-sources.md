@@ -16,6 +16,8 @@
 | сервисы OSM | airport, bank, beauty, bus_stop, cafe, cemetery, clothes, community_centre, convenience, dentist, hairdresser, hotel, library, mfz, museum, oopt, park, parking, pitch, playground, port, restaurant, supermarket | `osm_id` |
 | сервисы, отрисованные вручную | agricultural_services, outpost, police, wastewater_plant | только `service_*` |
 | сценарий | границы и ВРИ — кадастр (НСПД): з/у 47:01:0401004:19; остальное — проектные решения команды | `cad_num` |
+| сценарий, проектные слои | `data/raw/scenario_geojson/` — причалы, парковка ТПУ, детсад, велодорожка, пешеходные маршруты, шаттл, остановки шаттла; черновики `scripts/scenario_drafts.py` (02.11.2026), маршруты — кратчайшие пути по графу дорог ГП/СТП; править в QGIS по месту | `name`, `service_name` |
+| врезка-локатор карт | `data/raw/natural_earth/` — countries/regions/lakes, Natural Earth 1:50m (public domain, nvkelso/natural-earth-vector), обрезано по окрестностям Ленобласти 02.11.2026 | `ADMIN`, `name` |
 
 Вместимости школ и детских садов заполнены вручную (с сайтов учреждений).
 

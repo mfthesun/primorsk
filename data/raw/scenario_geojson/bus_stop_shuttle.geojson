@@ -1,0 +1,50 @@
+{
+ "type": "FeatureCollection",
+ "features": [
+  {
+   "type": "Feature",
+   "properties": {
+    "service_name": "Остановка шаттла",
+    "capacity": 0,
+    "name": "Шаттл: центр"
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     28.6085,
+     60.3649
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "service_name": "Остановка шаттла",
+    "capacity": 0,
+    "name": "Шаттл: станция"
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     28.6309,
+     60.3634
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "service_name": "Остановка шаттла",
+    "capacity": 0,
+    "name": "Шаттл: порт"
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     28.7355,
+     60.35
+    ]
+   }
+  }
+ ]
+}

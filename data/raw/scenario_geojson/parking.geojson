@@ -1,0 +1,19 @@
+{
+ "type": "FeatureCollection",
+ "features": [
+  {
+   "type": "Feature",
+   "properties": {
+    "service_name": "Парковка ТПУ (100 мест)",
+    "capacity": 0
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     28.6309,
+     60.3634
+    ]
+   }
+  }
+ ]
+}

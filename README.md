@@ -31,7 +31,7 @@ docs/
   review_comments.md  замечания преподавателя и статус
   data-sources.md     источники слоёв
 data/
-  raw/                слои в сданном виде (не редактировать)
+  raw/                слои в сданном виде (не редактировать); сценарные слои — scenario_design/
   processed/          итоговые GeoJSON, EPSG:4326: территория, services/, scenario/
 scripts/
   setup.sh            окружения: .venv, .venv-blocksnet и .venv-objectnat (Python 3.12, uv)
@@ -46,8 +46,10 @@ scripts/
   climate.py          климатические метрики (ERA5): парусный сезон, лёд, ветер
   metrics.py          сводная таблица «сегодня / сценарий 1 / сценарий 2» → reports/metrics_scenarios.md
   maps.py             карты для презентации → reports/maps/
+  maps_presentation.py  карты в стиле Figma-презентации (Inter/Dela Gothic One, врезки) → maps/
   webmap.py           интерактивный «Цифровой мастер-план» → reports/master_plan.html
 reports/              отчёт валидации и журналы изменений
+notebooks/            тетради Jupyter: обеспеченность, эффект шаттла, шум (data/results/)
 AGENTS.md             инструкции для Kimi Code
 ```
 

@@ -1,0 +1,14 @@
+﻿layer,object,field,old,new
+building,id 23,id,23,28
+building,id 18,is_living,False,True
+building,id 18,population,0,75
+building,id 18,living_area,0.0,6530.02
+building,id 18,non_living_area,9328.6,2798.58
+building,id 16,is_living,False,True
+building,id 16,population,0,75
+building,id 16,living_area,0.0,6420.89
+building,id 16,non_living_area,9172.7,2751.81
+college,строка 0,capacity,,95
+college,строка 1,capacity,,94
+college,строка 2,capacity,,111
+extra_education,строка 0,capacity,,50

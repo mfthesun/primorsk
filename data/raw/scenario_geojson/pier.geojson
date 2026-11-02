@@ -1,0 +1,605 @@
+{
+ "type": "FeatureCollection",
+ "features": [
+  {
+   "type": "Feature",
+   "properties": {
+    "service_name": "Причал",
+    "capacity": 0,
+    "name": "Понтон западный, место 1"
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     28.608,
+     60.36272084681648
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "service_name": "Причал",
+    "capacity": 0,
+    "name": "Понтон западный, место 2"
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     28.608,
+     60.36264877474441
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "service_name": "Причал",
+    "capacity": 0,
+    "name": "Понтон западный, место 3"
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     28.608,
+     60.362576702672335
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "service_name": "Причал",
+    "capacity": 0,
+    "name": "Понтон западный, место 4"
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     28.608,
+     60.36250463060026
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "service_name": "Причал",
+    "capacity": 0,
+    "name": "Понтон западный, место 5"
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     28.608,
+     60.36243255852819
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "service_name": "Причал",
+    "capacity": 0,
+    "name": "Понтон западный, место 6"
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     28.608,
+     60.36236048645612
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "service_name": "Причал",
+    "capacity": 0,
+    "name": "Понтон западный, место 7"
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     28.608,
+     60.36228841438405
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "service_name": "Причал",
+    "capacity": 0,
+    "name": "Понтон западный, место 8"
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     28.608,
+     60.362216342311974
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "service_name": "Причал",
+    "capacity": 0,
+    "name": "Понтон западный, место 9"
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     28.608,
+     60.3621442702399
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "service_name": "Причал",
+    "capacity": 0,
+    "name": "Понтон западный, место 10"
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     28.608,
+     60.36207219816783
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "service_name": "Причал",
+    "capacity": 0,
+    "name": "Понтон западный, место 11"
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     28.608,
+     60.36200012609576
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "service_name": "Причал",
+    "capacity": 0,
+    "name": "Понтон западный, место 12"
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     28.608,
+     60.361928054023686
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "service_name": "Причал",
+    "capacity": 0,
+    "name": "Понтон западный, место 13"
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     28.608,
+     60.361855981951614
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "service_name": "Причал",
+    "capacity": 0,
+    "name": "Понтон западный, место 14"
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     28.608,
+     60.36178390987954
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "service_name": "Причал",
+    "capacity": 0,
+    "name": "Понтон западный, место 15"
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     28.608,
+     60.36171183780747
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "service_name": "Причал",
+    "capacity": 0,
+    "name": "Понтон западный, место 16"
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     28.608,
+     60.3616397657354
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "service_name": "Причал",
+    "capacity": 0,
+    "name": "Понтон западный, место 17"
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     28.608,
+     60.361567693663325
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "service_name": "Причал",
+    "capacity": 0,
+    "name": "Понтон западный, место 18"
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     28.608,
+     60.36149562159125
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "service_name": "Причал",
+    "capacity": 0,
+    "name": "Понтон западный, место 19"
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     28.608,
+     60.36142354951918
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "service_name": "Причал",
+    "capacity": 0,
+    "name": "Понтон западный, место 20"
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     28.608,
+     60.36135147744711
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "service_name": "Причал",
+    "capacity": 0,
+    "name": "Понтон восточный, место 1"
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     28.6098,
+     60.363016739675075
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "service_name": "Причал",
+    "capacity": 0,
+    "name": "Понтон восточный, место 2"
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     28.6098,
+     60.362944667603
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "service_name": "Причал",
+    "capacity": 0,
+    "name": "Понтон восточный, место 3"
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     28.6098,
+     60.36287259553093
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "service_name": "Причал",
+    "capacity": 0,
+    "name": "Понтон восточный, место 4"
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     28.6098,
+     60.36280052345886
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "service_name": "Причал",
+    "capacity": 0,
+    "name": "Понтон восточный, место 5"
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     28.6098,
+     60.362728451386786
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "service_name": "Причал",
+    "capacity": 0,
+    "name": "Понтон восточный, место 6"
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     28.6098,
+     60.362656379314714
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "service_name": "Причал",
+    "capacity": 0,
+    "name": "Понтон восточный, место 7"
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     28.6098,
+     60.36258430724264
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "service_name": "Причал",
+    "capacity": 0,
+    "name": "Понтон восточный, место 8"
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     28.6098,
+     60.36251223517057
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "service_name": "Причал",
+    "capacity": 0,
+    "name": "Понтон восточный, место 9"
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     28.6098,
+     60.3624401630985
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "service_name": "Причал",
+    "capacity": 0,
+    "name": "Понтон восточный, место 10"
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     28.6098,
+     60.362368091026426
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "service_name": "Причал",
+    "capacity": 0,
+    "name": "Понтон восточный, место 11"
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     28.6098,
+     60.36229601895435
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "service_name": "Причал",
+    "capacity": 0,
+    "name": "Понтон восточный, место 12"
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     28.6098,
+     60.36222394688228
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "service_name": "Причал",
+    "capacity": 0,
+    "name": "Понтон восточный, место 13"
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     28.6098,
+     60.36215187481021
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "service_name": "Причал",
+    "capacity": 0,
+    "name": "Понтон восточный, место 14"
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     28.6098,
+     60.36207980273814
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "service_name": "Причал",
+    "capacity": 0,
+    "name": "Понтон восточный, место 15"
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     28.6098,
+     60.362007730666065
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "service_name": "Причал",
+    "capacity": 0,
+    "name": "Понтон восточный, место 16"
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     28.6098,
+     60.36193565859399
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "service_name": "Причал",
+    "capacity": 0,
+    "name": "Понтон восточный, место 17"
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     28.6098,
+     60.36186358652192
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "service_name": "Причал",
+    "capacity": 0,
+    "name": "Понтон восточный, место 18"
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     28.6098,
+     60.36179151444985
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "service_name": "Причал",
+    "capacity": 0,
+    "name": "Понтон восточный, место 19"
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     28.6098,
+     60.361719442377776
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "service_name": "Причал",
+    "capacity": 0,
+    "name": "Понтон восточный, место 20"
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     28.6098,
+     60.361647370305704
+    ]
+   }
+  }
+ ]
+}

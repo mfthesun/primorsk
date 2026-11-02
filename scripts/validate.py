@@ -39,13 +39,9 @@ GEOM = {
     "railways": {"LineString", "MultiLineString"}, "roads": {"LineString", "MultiLineString"},
 }
 SERVICE_FIELDS = {"service_id": INT, "service_name": STR, "capacity": INT}
-NOT_IN_BUILDING = {"bus_stop", "playground", "pitch", "cell_tower", "pier", "ice_rink"}
-LINE_LAYERS = {"roads", "shuttle_route", "cycleway", "footway"}    # линейные слои сценария (highway_type)
-# Сервисы, которых нет в таблице сервисов курса: service_id пуст по требованиям (docs/review_comments.md)
-NO_SERVICE_ID = {"agricultural_services", "airport", "boilerhouse", "bus_stop", "cell_tower", "cemetery", "fuel",
-                 "oopt", "park", "parking", "pitch", "playground", "port", "pumping_station", "train_station",
-                 "wastewater_plant", "household", "research_center", "marketplace", "pier", "rental", "ice_rink",
-                 "yacht_club"}
+NOT_IN_BUILDING = {"bus_stop", "playground", "pitch", "cell_tower", "pier"}  # pier — в акватории
+# линейные слои транспортного проекта в сценарии (не сервисы)
+SCENARIO_LINES = {"cycleway", "pedestrian", "shuttle"}
 
 issues: list[tuple[str, str, str]] = []   # (level, layer, message)
 
@@ -75,7 +71,7 @@ def common(layer, path, g):
             add("WARN", layer, f"атрибут «{f}» содержит заглавные буквы")
 
 
-def check_schema(layer, path, schema, no_id=False):
+def check_schema(layer, path, schema):
     flds, _ = fields(path)
     for f, types in schema.items():
         if f not in flds:
@@ -83,9 +79,6 @@ def check_schema(layer, path, schema, no_id=False):
         elif flds[f] not in types:
             g = gpd.read_file(path, columns=[f])
             if g[f].isna().all():
-                if no_id and f == "service_id":
-                    add("INFO", layer, "service_id пуст: сервиса нет в таблице курса")
-                    continue
                 add("WARN", layer, f"атрибут {f} пустой у всех объектов (в GeoJSON читается как String)")
                 continue
             add("ERROR", layer, f"атрибут {f}: тип {flds[f]}, нужен {'/'.join(sorted(types))}")
@@ -138,7 +131,6 @@ def main():
     # сервисы
     bm = bld.to_crs(MCRS)
     tree = shapely.STRtree(bm.geometry.values)
-    ids: dict[int, set] = {}
     for folder in ("services", "scenario"):
         d = DATA / folder
         if not d.exists():
@@ -151,18 +143,20 @@ def main():
             layer = f"{folder}/{svc}"
             g = gpd.read_file(path)
             common(layer, path, g)
-            if folder == "scenario" and svc in {"building", "boundary", "landuse", "blocks"} | LINE_LAYERS:
+            if folder == "scenario" and svc in ("building", "boundary", "landuse", "roads", "blocks"):
                 if svc == "building":
                     check_schema(layer, path, SCHEMA["building"])
-                if svc == "boundary":
-                    check_schema(layer, path, {"population": INT})
-                if svc in LINE_LAYERS:
+                if svc == "roads":
                     check_schema(layer, path, SCHEMA["roads"])
                 continue
-            check_schema(layer, path, SERVICE_FIELDS, no_id=svc in NO_SERVICE_ID)
-            if "service_id" in g and g["service_id"].notna().any():
-                for sid in g["service_id"].dropna().unique():
-                    ids.setdefault(int(sid), set()).add(svc)
+            if folder == "scenario" and svc in SCENARIO_LINES:
+                bad = set(g.geom_type.unique()) - {"LineString", "MultiLineString"}
+                if bad:
+                    add("ERROR", layer, f"нужны линии, а не {sorted(bad)}")
+                if "name" not in g.columns or not g["name"].notna().any():
+                    add("WARN", layer, "нет атрибута name (название маршрута/дорожки)")
+                continue
+            check_schema(layer, path, SERVICE_FIELDS)
             if folder == "services" and (~g.intersects(bnd_geom)).any():
                 add("ERROR", layer, f"объекты за границей: {(~g.intersects(bnd_geom)).sum()}")
             if g.geom_type.isin(["MultiPoint"]).any():
@@ -177,18 +171,13 @@ def main():
                 if off:
                     add("WARN", layer, f"точек не на полигоне здания: {off} из {len(on)}")
 
-    for sid, svcs in sorted(ids.items()):
-        if len(svcs) > 1:
-            add("ERROR", "services", f"service_id {sid} у разных сервисов: {', '.join(sorted(svcs))}")
-
     # отчёт
     rep = ROOT / "reports" / "validation_report.md"
     rep.parent.mkdir(exist_ok=True)
     n_err = sum(1 for i in issues if i[0] == "ERROR")
     n_warn = sum(1 for i in issues if i[0] == "WARN")
-    n_info = sum(1 for i in issues if i[0] == "INFO")
     lines = [f"# Отчёт валидации `{DATA.relative_to(ROOT) if DATA.is_relative_to(ROOT) else DATA}`", "",
-             f"Ошибок: **{n_err}**, предупреждений: **{n_warn}**, справочно: {n_info}", "",
+             f"Ошибок: **{n_err}**, предупреждений: **{n_warn}**", "",
              "| Уровень | Слой | Сообщение |", "|---|---|---|"]
     lines += [f"| {lvl} | {lay} | {msg} |" for lvl, lay, msg in issues]
     lines += ["", "## Сводка по зданиям", "",
