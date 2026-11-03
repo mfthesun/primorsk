@@ -101,7 +101,7 @@ def graph_with_shuttle(g: nx.Graph, pos_m: dict, data_dir: Path | None = None,
                        speed_bus: float = SPEED_BUS):
     """Граф «после»: маршрут шаттла рёбрами на скорости автобуса + подходы к остановкам пешком."""
     data_dir = data_dir or ROOT / "data" / "processed"
-    route = gpd.read_file(data_dir / "scenario" / "shuttle.geojson").union_all()
+    route = gpd.read_file(data_dir / "scenario" / "shuttle_route.geojson").union_all()
     route = shapely.line_merge(route)
     route = gpd.GeoSeries([route], crs=CRS).to_crs(MCRS).iloc[0]   # метры, не градусы
     if route.geom_type == "MultiLineString":          # склейка частей в одну полилинию
