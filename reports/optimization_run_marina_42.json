@@ -1,0 +1,16 @@
+{
+  "project": "marina",
+  "block_id": 227,
+  "seed": 42,
+  "population": 64,
+  "generations": 100,
+  "evaluations": 6400,
+  "feasible_front": true,
+  "seconds": 45.14877218900074,
+  "original_feasible": true,
+  "max_floor_limit": 4.0,
+  "generations_requested": 100,
+  "generations_executed": 100,
+  "status": "completed",
+  "input_signature": "81748a9b62296bbbd1eb92e56a349b51f019ad332d64c87a3f9ca9927c39ee92"
+}

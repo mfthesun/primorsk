@@ -6,7 +6,7 @@
 Команда: Яковлев Денис, Ренгач Владислав, Комарова Арина, Непомнящая Мария, Яцуба Александра,
 Саркисова Наталия, Цыганов Виктор.
 
-**Презентация «Цифровой мастер-план» (контроль 03.11.2026), Figma Slides:**
+**Презентация «Цифровой мастер-план» (защита 24.12.2026), Figma Slides:**
 https://www.figma.com/slides/KSYAlweFOrSx2AfOUjUJlO — структура и подписи к слайдам — `docs/slides-0311.md`.
 
 ## Этапы
@@ -81,3 +81,21 @@ bash scripts/setup.sh                              # окружения .venv и
 
 Слои основаны на OpenStreetMap (© участники OpenStreetMap, ODbL), материалах генерального плана и СТП
 Ленинградской области, Реестре домов и Росстате — см. `docs/data-sources.md`.
+
+## Дополнение расчётов 04.11.2026
+
+[Реестр 17 методов](docs/course-tools-audit.md), [паспорт и методика стоимости земли](docs/land-model.md), [журнал реализации](docs/implementation-ledger.md), [мероприятия и риски](docs/events-and-risks.md), [аннотационный отчёт](docs/annotation-report.md), [приёмочные проверки](reports/completion-verification.md).
+
+```bash
+bash scripts/setup_land.sh                         # отдельная .venv-land, pinned Urbanomy; прежние окружения сохраняются
+.venv-land/bin/python scripts/land_value.py         # внешний CatBoost → стоимость today/s1/s2
+.venv-land/bin/python scripts/district_optimization.py  # 4 площадки × 3 seeds × 64 особи × 100 поколений
+.venv-objectnat/bin/python scripts/analytical_exports.py # coverage, графы, загрузка и связи
+.venv-blocksnet/bin/python scripts/blocks_generation.py  # независимая нарезка, без замены канона
+.venv/bin/python scripts/metrics.py
+.venv/bin/python scripts/webmap.py                  # MapLibre, 2D/3D, исходный URL карты сохранён
+```
+
+Модель и учебный GeoJSON не включены в Git. Пути задаются переменными `PRIMORSK_LAND_MODEL` и `PRIMORSK_LAND_TRAIN` (см. паспорт). В текущем локальном окружении исторический инвестиционный расчёт запускается `.venv-urbanomy/bin/python scripts/urbanomy_analysis.py`; после штатного `setup.sh` он доступен и в `.venv-blocksnet`. Финансовые результаты на демо-бенчмарках не являются инвестиционным обоснованием.
+
+Оптимизация исследовательская: все согласованные функции, вместимости и постоянные жители сохраняются. Невыполнимость ограничений — допустимый итог, а не повод изменить этажность в источнике. Канонические кварталы526 не заменены независимой нарезкой. Веточный результат проходит Draft PR; действующий Pages обновится после принятия изменений в main.

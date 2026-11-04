@@ -72,8 +72,9 @@ ObjectNat 2.1 требует iduedu ≥ 2.2 — `.venv-objectnat`; `UrbanGraph.f
 
 ## Ближайшие задачи
 
-1. Кадастровая стоимость участков — `data/raw/cadastral_parcels.csv` (НСПД); получить модель CatBoost курса для
-   стоимости земли «после».
+1. Кадастровая стоимость — `data/raw/cadastral_parcels.csv`; внешний CatBoost подключён через
+   `scripts/land_value.py` в `.venv-land`. Модель и учебный пример в Git не добавлять; пути —
+   `PRIMORSK_LAND_MODEL` / `PRIMORSK_LAND_TRAIN`. Паспорт — `reports/land_model_passport.json`.
 2. Прогноз СЭР поселения до 2030 подключён (`data/raw/ser_forecast_2030.csv`, разд. 7 `metrics_scenarios.md`);
    нет возрастной структуры (дети 1–6 лет) и очереди в детсады — норматив 61/1000 даёт спрос в 2,5 раза выше
    оценки по рождаемости. Приморское ГП — зона Б по РНГП ЛО (прил. 3).
@@ -90,3 +91,11 @@ ObjectNat 2.1 требует iduedu ≥ 2.2 — `.venv-objectnat`; `UrbanGraph.f
 слайдами по вместимости детсадов (470 мест); по остальным метрикам — консервативнее слайдов, см. выводы
 в тетрадях. Для обновлённой презентации (шрифты Inter/Dela Gothic One, врезки) — `scripts/maps_presentation.py`
 → `maps/*.png`.
+
+## Дополнение расчётного комплекта04.11.2026
+
+- `scripts/setup_land.sh` закрепляет отдельный Urbanomy qgis_plugin на `1f3ec003890524e557f56d7778d2393410dadd2e`; старое окружение инвестиций не заменять.
+- `scripts/district_optimization.py`: только экспериментальные варианты на фиксированном s2; функции, вместимости и постоянные жители неизменны. Допустимость проверять по фактическому GFA/footprint. Противоречие площадей и указанной этажности кампуса не маскировать пересчётным коэффициентом.
+- `scripts/analytical_exports.py` и `scripts/blocks_generation.py`: отдельные результаты в analytical_export/blockgen, не замена канона. Integer demand ObjectNat отличается от исходного нормативного спроса — показывать оба.
+- `scripts/webmap.py` строит MapLibre2D/3D по прежнему адресу; runtime CDN и базовые тайлы требуют сети. Нет данных — не ноль.
+- Перед заявлением «всё выполнено» сверять `docs/course-tools-audit.md`, `reports/completion-verification.md` и организационные зависимости. Наличие модели не подтверждает её точность на Приморске.

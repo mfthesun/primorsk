@@ -1,0 +1,562 @@
+{
+  "model": {
+    "path": "/home/mfthesun/Workspace/ИИ, анализ данных и моделирование в урбанистике/Данные/catboost_land_value_no_services.cbm",
+    "sha256": "a39448f9521fc533f86594f541962d0780a35439b4bbd5a443f23dbb5ba530b0",
+    "features": [
+      "residential",
+      "business",
+      "recreation",
+      "industrial",
+      "transport",
+      "special",
+      "agriculture",
+      "land_use",
+      "share",
+      "footprint_area",
+      "build_floor_area",
+      "living_area",
+      "non_living_area",
+      "population",
+      "site_area",
+      "fsi",
+      "gsi",
+      "mxi",
+      "l",
+      "morphotype",
+      "area_accessibility",
+      "lag500_residential",
+      "lag1000_residential",
+      "lag2000_residential",
+      "lag3000_residential",
+      "lag500_business",
+      "lag1000_business",
+      "lag2000_business",
+      "lag3000_business",
+      "lag500_recreation",
+      "lag1000_recreation",
+      "lag2000_recreation",
+      "lag3000_recreation",
+      "lag500_industrial",
+      "lag1000_industrial",
+      "lag2000_industrial",
+      "lag3000_industrial",
+      "lag500_transport",
+      "lag1000_transport",
+      "lag2000_transport",
+      "lag3000_transport",
+      "lag500_special",
+      "lag1000_special",
+      "lag2000_special",
+      "lag3000_special",
+      "lag500_agriculture",
+      "lag1000_agriculture",
+      "lag2000_agriculture",
+      "lag3000_agriculture",
+      "lag500_share",
+      "lag1000_share",
+      "lag2000_share",
+      "lag3000_share",
+      "lag500_footprint_area",
+      "lag1000_footprint_area",
+      "lag2000_footprint_area",
+      "lag3000_footprint_area",
+      "lag500_build_floor_area",
+      "lag1000_build_floor_area",
+      "lag2000_build_floor_area",
+      "lag3000_build_floor_area",
+      "lag500_living_area",
+      "lag1000_living_area",
+      "lag2000_living_area",
+      "lag3000_living_area",
+      "lag500_non_living_area",
+      "lag1000_non_living_area",
+      "lag2000_non_living_area",
+      "lag3000_non_living_area",
+      "lag500_population",
+      "lag1000_population",
+      "lag2000_population",
+      "lag3000_population",
+      "lag500_site_area",
+      "lag1000_site_area",
+      "lag2000_site_area",
+      "lag3000_site_area",
+      "lag500_fsi",
+      "lag1000_fsi",
+      "lag2000_fsi",
+      "lag3000_fsi",
+      "lag500_gsi",
+      "lag1000_gsi",
+      "lag2000_gsi",
+      "lag3000_gsi",
+      "lag500_mxi",
+      "lag1000_mxi",
+      "lag2000_mxi",
+      "lag3000_mxi",
+      "lag500_l",
+      "lag1000_l",
+      "lag2000_l",
+      "lag3000_l",
+      "lag500_area_accessibility",
+      "lag1000_area_accessibility",
+      "lag2000_area_accessibility",
+      "lag3000_area_accessibility",
+      "n_neighbors_500",
+      "n_neighbors_1000",
+      "n_neighbors_2000",
+      "n_neighbors_3000"
+    ],
+    "categorical": [
+      "land_use",
+      "morphotype"
+    ],
+    "categorical_encoding": "CBM CTR verified: uppercase land_use RESIDENTIAL/BUSINESS; lowercase Strelka; missing for null. LandUse.* and uppercase morphotype unseen.",
+    "target": "log1p(total land value RUB)",
+    "inverse": "expm1; unit=total/site_area",
+    "radii_m": [
+      500,
+      1000,
+      2000,
+      3000
+    ]
+  },
+  "training_reference": {
+    "path": "/home/mfthesun/Workspace/ИИ, анализ данных и моделирование в урбанистике/Данные/blocks_agg_with_indicators.geojson",
+    "sha256": "6b348106cd5c7d19e0fea09ee25b3a648491e4dcb4946dc0ca6340b774d9d5bb",
+    "rows": 351
+  },
+  "urbanomy_commit": "1f3ec003890524e557f56d7778d2393410dadd2e",
+  "accessibility": "BlocksNet area_accessibility, outgoing area-weighted mean walking OD minutes",
+  "limits": [
+    "Учебная модель; перенос на Приморск не валидирован рыночными сделками.",
+    "Прогноз не является кадастровой/рыночной оценкой и инвестиционной рекомендацией.",
+    "Нет доверительных интервалов, калибровки по Приморску и причинной интерпретации дельты.",
+    "Абсолютная цена не сопоставляется напрямую с кадастровой стоимостью участков: единица модели — квартал.",
+    "Файл модели и обучающий пример внешние, права на распространение не установлены.",
+    "Числовая конвенция площадей обучения CBM не подтверждена; sensitivity отдельная гипотеза, не исправленная цена."
+  ],
+  "inputs": {
+    "today": {
+      "blocks_sha256": "ec5ae535f4d1ef0bff94a9d7df3422a03144324f721c1b679c073675e914c2f7",
+      "walk_od_sha256": "4aef5ebea17b183315fbcd2958ef393d9828e9c170a222b5e271aefcac27dafa",
+      "ranges": {
+        "residential": {
+          "project_min": 0.0,
+          "project_max": 0.8982488714246494,
+          "training_min": 0.0,
+          "training_max": 1.000043245161607,
+          "outside_training_range": 0
+        },
+        "business": {
+          "project_min": 0.0,
+          "project_max": 0.6368324880595269,
+          "training_min": 0.0,
+          "training_max": 1.0,
+          "outside_training_range": 0
+        },
+        "recreation": {
+          "project_min": 0.0,
+          "project_max": 1.0000000000000004,
+          "training_min": 0.0,
+          "training_max": 1.0000000000132918,
+          "outside_training_range": 0
+        },
+        "industrial": {
+          "project_min": 0.0,
+          "project_max": 0.5528009386608029,
+          "training_min": 0.0,
+          "training_max": 0.9995429654591654,
+          "outside_training_range": 0
+        },
+        "transport": {
+          "project_min": 0.0,
+          "project_max": 1.0000000000000027,
+          "training_min": 0.0,
+          "training_max": 1.000000000017533,
+          "outside_training_range": 0
+        },
+        "special": {
+          "project_min": 0.0,
+          "project_max": 1.0,
+          "training_min": 0.0,
+          "training_max": 1.0,
+          "outside_training_range": 0
+        },
+        "agriculture": {
+          "project_min": 0.0,
+          "project_max": 1.0000000000000007,
+          "training_min": 0.0,
+          "training_max": 0.0,
+          "outside_training_range": 213
+        },
+        "share": {
+          "project_min": 0.0,
+          "project_max": 1.0000000000000027,
+          "training_min": 0.07492278109514926,
+          "training_max": 1.000043245161607,
+          "outside_training_range": 61
+        },
+        "footprint_area": {
+          "project_min": 0.0,
+          "project_max": 106968.51,
+          "training_min": 0.0,
+          "training_max": 114626.80954209817,
+          "outside_training_range": 0
+        },
+        "build_floor_area": {
+          "project_min": 0.0,
+          "project_max": 106976.19,
+          "training_min": 0.0,
+          "training_max": 505928.4784681185,
+          "outside_training_range": 0
+        },
+        "living_area": {
+          "project_min": 0.0,
+          "project_max": 63503.79,
+          "training_min": 0.0,
+          "training_max": 352307.6736592177,
+          "outside_training_range": 0
+        },
+        "non_living_area": {
+          "project_min": 0.0,
+          "project_max": 101735.35,
+          "training_min": 0.0,
+          "training_max": 338965.5467692465,
+          "outside_training_range": 0
+        },
+        "population": {
+          "project_min": 0.0,
+          "project_max": 1437.0,
+          "training_min": 0.0,
+          "training_max": 11087.0,
+          "outside_training_range": 0
+        },
+        "site_area": {
+          "project_min": 195.8360044369633,
+          "project_max": 43330605.3159109,
+          "training_min": 0.0,
+          "training_max": 23881150.696081184,
+          "outside_training_range": 4
+        },
+        "fsi": {
+          "project_min": 0.0,
+          "project_max": 0.7114051109669162,
+          "training_min": 0.0,
+          "training_max": 0.31477811112291826,
+          "outside_training_range": 5
+        },
+        "gsi": {
+          "project_min": 0.0,
+          "project_max": 0.2680197332142687,
+          "training_min": 0.0,
+          "training_max": 0.1276401693093771,
+          "outside_training_range": 6
+        },
+        "mxi": {
+          "project_min": 0.0,
+          "project_max": 0.7000237525351264,
+          "training_min": 0.0,
+          "training_max": 0.8,
+          "outside_training_range": 0
+        },
+        "l": {
+          "project_min": 0.0,
+          "project_max": 5.005694008617766,
+          "training_min": 0.0,
+          "training_max": 8.077887144160918,
+          "outside_training_range": 0
+        },
+        "area_accessibility": {
+          "project_min": 210.14611002382776,
+          "project_max": 509.99548819313793,
+          "training_min": 6.650790263396075,
+          "training_max": 26.64789819316976,
+          "outside_training_range": 526
+        }
+      }
+    },
+    "s1": {
+      "blocks_sha256": "4bcd31cc8155939e99966885403dda0b93fc6380ec3fa8c28035836dbc6927eb",
+      "walk_od_sha256": "3c5e8ee606dfb790e6bbbd70de3187b454de2b8d444e9635f6d0a9306edeb013",
+      "ranges": {
+        "residential": {
+          "project_min": 0.0,
+          "project_max": 0.8982488714246494,
+          "training_min": 0.0,
+          "training_max": 1.000043245161607,
+          "outside_training_range": 0
+        },
+        "business": {
+          "project_min": 0.0,
+          "project_max": 0.6368324880595269,
+          "training_min": 0.0,
+          "training_max": 1.0,
+          "outside_training_range": 0
+        },
+        "recreation": {
+          "project_min": 0.0,
+          "project_max": 1.0000000000000004,
+          "training_min": 0.0,
+          "training_max": 1.0000000000132918,
+          "outside_training_range": 0
+        },
+        "industrial": {
+          "project_min": 0.0,
+          "project_max": 0.5528009386608029,
+          "training_min": 0.0,
+          "training_max": 0.9995429654591654,
+          "outside_training_range": 0
+        },
+        "transport": {
+          "project_min": 0.0,
+          "project_max": 1.0000000000000027,
+          "training_min": 0.0,
+          "training_max": 1.000000000017533,
+          "outside_training_range": 0
+        },
+        "special": {
+          "project_min": 0.0,
+          "project_max": 1.0,
+          "training_min": 0.0,
+          "training_max": 1.0,
+          "outside_training_range": 0
+        },
+        "agriculture": {
+          "project_min": 0.0,
+          "project_max": 1.0000000000000007,
+          "training_min": 0.0,
+          "training_max": 0.0,
+          "outside_training_range": 213
+        },
+        "share": {
+          "project_min": 0.0,
+          "project_max": 1.0000000000000027,
+          "training_min": 0.07492278109514926,
+          "training_max": 1.000043245161607,
+          "outside_training_range": 61
+        },
+        "footprint_area": {
+          "project_min": 0.0,
+          "project_max": 109173.77,
+          "training_min": 0.0,
+          "training_max": 114626.80954209817,
+          "outside_training_range": 0
+        },
+        "build_floor_area": {
+          "project_min": 0.0,
+          "project_max": 125722.09,
+          "training_min": 0.0,
+          "training_max": 505928.4784681185,
+          "outside_training_range": 0
+        },
+        "living_area": {
+          "project_min": 0.0,
+          "project_max": 63503.79,
+          "training_min": 0.0,
+          "training_max": 352307.6736592177,
+          "outside_training_range": 0
+        },
+        "non_living_area": {
+          "project_min": 0.0,
+          "project_max": 118731.25,
+          "training_min": 0.0,
+          "training_max": 338965.5467692465,
+          "outside_training_range": 0
+        },
+        "population": {
+          "project_min": 0.0,
+          "project_max": 1437.0,
+          "training_min": 0.0,
+          "training_max": 11087.0,
+          "outside_training_range": 0
+        },
+        "site_area": {
+          "project_min": 195.8360044369633,
+          "project_max": 43330605.3159109,
+          "training_min": 0.0,
+          "training_max": 23881150.696081184,
+          "outside_training_range": 4
+        },
+        "fsi": {
+          "project_min": 0.0,
+          "project_max": 0.7114051109669162,
+          "training_min": 0.0,
+          "training_max": 0.31477811112291826,
+          "outside_training_range": 5
+        },
+        "gsi": {
+          "project_min": 0.0,
+          "project_max": 0.2680197332142687,
+          "training_min": 0.0,
+          "training_max": 0.1276401693093771,
+          "outside_training_range": 6
+        },
+        "mxi": {
+          "project_min": 0.0,
+          "project_max": 0.7000237525351264,
+          "training_min": 0.0,
+          "training_max": 0.8,
+          "outside_training_range": 0
+        },
+        "l": {
+          "project_min": 0.0,
+          "project_max": 5.005694008617766,
+          "training_min": 0.0,
+          "training_max": 8.077887144160918,
+          "outside_training_range": 0
+        },
+        "area_accessibility": {
+          "project_min": 210.13867357738349,
+          "project_max": 510.0057372832648,
+          "training_min": 6.650790263396075,
+          "training_max": 26.64789819316976,
+          "outside_training_range": 526
+        }
+      }
+    },
+    "s2": {
+      "blocks_sha256": "bdc1843092cb20b89e4355b5a99c41b9902445180c93fe5a441e3ddfa3c0e3c5",
+      "walk_od_sha256": "3c5e8ee606dfb790e6bbbd70de3187b454de2b8d444e9635f6d0a9306edeb013",
+      "ranges": {
+        "residential": {
+          "project_min": 0.0,
+          "project_max": 0.8982488714246494,
+          "training_min": 0.0,
+          "training_max": 1.000043245161607,
+          "outside_training_range": 0
+        },
+        "business": {
+          "project_min": 0.0,
+          "project_max": 0.6368324880595269,
+          "training_min": 0.0,
+          "training_max": 1.0,
+          "outside_training_range": 0
+        },
+        "recreation": {
+          "project_min": 0.0,
+          "project_max": 1.0000000000000004,
+          "training_min": 0.0,
+          "training_max": 1.0000000000132918,
+          "outside_training_range": 0
+        },
+        "industrial": {
+          "project_min": 0.0,
+          "project_max": 0.5528009386608029,
+          "training_min": 0.0,
+          "training_max": 0.9995429654591654,
+          "outside_training_range": 0
+        },
+        "transport": {
+          "project_min": 0.0,
+          "project_max": 1.0000000000000027,
+          "training_min": 0.0,
+          "training_max": 1.000000000017533,
+          "outside_training_range": 0
+        },
+        "special": {
+          "project_min": 0.0,
+          "project_max": 1.0,
+          "training_min": 0.0,
+          "training_max": 1.0,
+          "outside_training_range": 0
+        },
+        "agriculture": {
+          "project_min": 0.0,
+          "project_max": 1.0000000000000007,
+          "training_min": 0.0,
+          "training_max": 0.0,
+          "outside_training_range": 213
+        },
+        "share": {
+          "project_min": 0.0,
+          "project_max": 1.0000000000000027,
+          "training_min": 0.07492278109514926,
+          "training_max": 1.000043245161607,
+          "outside_training_range": 61
+        },
+        "footprint_area": {
+          "project_min": 0.0,
+          "project_max": 114629.99,
+          "training_min": 0.0,
+          "training_max": 114626.80954209817,
+          "outside_training_range": 1
+        },
+        "build_floor_area": {
+          "project_min": 0.0,
+          "project_max": 159382.15,
+          "training_min": 0.0,
+          "training_max": 505928.4784681185,
+          "outside_training_range": 0
+        },
+        "living_area": {
+          "project_min": 0.0,
+          "project_max": 63503.79,
+          "training_min": 0.0,
+          "training_max": 352307.6736592177,
+          "outside_training_range": 0
+        },
+        "non_living_area": {
+          "project_min": 0.0,
+          "project_max": 152391.31,
+          "training_min": 0.0,
+          "training_max": 338965.5467692465,
+          "outside_training_range": 0
+        },
+        "population": {
+          "project_min": 0.0,
+          "project_max": 1437.0,
+          "training_min": 0.0,
+          "training_max": 11087.0,
+          "outside_training_range": 0
+        },
+        "site_area": {
+          "project_min": 195.8360044369633,
+          "project_max": 43330605.3159109,
+          "training_min": 0.0,
+          "training_max": 23881150.696081184,
+          "outside_training_range": 4
+        },
+        "fsi": {
+          "project_min": 0.0,
+          "project_max": 0.7114051109669162,
+          "training_min": 0.0,
+          "training_max": 0.31477811112291826,
+          "outside_training_range": 5
+        },
+        "gsi": {
+          "project_min": 0.0,
+          "project_max": 0.2680197332142687,
+          "training_min": 0.0,
+          "training_max": 0.1276401693093771,
+          "outside_training_range": 6
+        },
+        "mxi": {
+          "project_min": 0.0,
+          "project_max": 0.7000237525351264,
+          "training_min": 0.0,
+          "training_max": 0.8,
+          "outside_training_range": 0
+        },
+        "l": {
+          "project_min": 0.0,
+          "project_max": 5.005694008617766,
+          "training_min": 0.0,
+          "training_max": 8.077887144160918,
+          "outside_training_range": 0
+        },
+        "area_accessibility": {
+          "project_min": 210.13867357738349,
+          "project_max": 510.0057372832648,
+          "training_min": 6.650790263396075,
+          "training_max": 26.64789819316976,
+          "outside_training_range": 526
+        }
+      }
+    }
+  },
+  "numeric_convention": {
+    "primary": "physical_utm EPSG32635 all physical areas",
+    "verification": "CBM numeric training area convention unverified: reference differs from CBM categories; no complete training provenance",
+    "sensitivity": "hypothesis only: reference_webmercator_site replaces site_area by EPSG3857 area and recomputes fsi/gsi, Strelka morphotype, area-weighted accessibility and their lags; other building areas, physical geometry/constraints and NPV unchanged",
+    "reference_evidence": "reference.site_area / geometry.area(EPSG3857) median1; /UTM32636area median3.88474835. Does not prove CBM convention."
+  }
+}
