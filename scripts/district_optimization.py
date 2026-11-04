@@ -22,10 +22,13 @@ def physical_floor_constraint(gfa_factor,footprint_factor,gfa,footprint,max_floo
 def project_blocks():
     blocks=prepare('s2')
     sites=gpd.read_file(ROOT/'data/processed/scenario/boundary.geojson').to_crs(blocks.crs)
-    names=['campus','marina','sailing_school']
+    # Парусная школа — функция марины (решение 04.11.2026, docs/implementation-ledger.md):
+    # отдельной программы застройки нет, территория школы в оптимизацию не входит.
+    names={'Кампус ИНТЦ «Приморская долина»':'campus','Марина, рыбный рынок, клубный дом':'marina'}
+    sites=sites[sites['name'].isin(names)]
     kinder=gpd.read_file(ROOT/'data/raw/scenario_design/kindergarten_site.geojson').to_crs(blocks.crs)
     rows=[]
-    for name,geom in list(zip(names,sites.geometry))+[('kindergarten',kinder.union_all())]:
+    for name,geom in list(zip(sites['name'].map(names),sites.geometry))+[('kindergarten',kinder.union_all())]:
         for idx in blocks.index[blocks.geometry.intersects(geom)]:
             area=blocks.at[idx,'geometry'].intersection(geom).area
             if area>1e-8:
@@ -182,12 +185,6 @@ def main():
     for _,project in projects.iterrows():
         name=project.project;pid=int(project.id)
         print('PROJECT',name,'quarter',pid,flush=True)
-        if name=='sailing_school':
-            # Source geometry contains no project building: no fabricated programme or NPV.
-            for seed in [42,43,44]:
-                runs.append({'project':name,'block_id':pid,'seed':seed,'population':64,'generations':0,'generations_requested':100,'generations_executed':0,'evaluations':0,'feasible_front':False,'seconds':0.,'original_feasible':None,'max_floor_limit':None,'status':'blocked_missing_project_geometry','skipped_reason':'На площадке парусной школы и в квартале205 нет проектных зданий; ближайшие здания марины более чем в670м.'})
-            site_proofs.append({'project':name,'block_id':pid,'site_area_m2':float(project.site_area),'status':'blocked_missing_project_geometry'})
-            continue
         problem=FixedProgrammeProblem(blocks,model,project,estimator)
         site_proofs.append(problem.site_capacity_proof)
         diag=problem.buildings[['id','build_floor_area','footprint_area','number_of_floors']].copy()
@@ -259,7 +256,7 @@ def main():
     return pd.DataFrame(runs)
 
 def plot_results(runs,selected):
-    names={'campus':'Кампус','marina':'Марина','sailing_school':'Парусная школа','kindergarten':'Детский сад'}
+    names={'campus':'Кампус','marina':'Марина','kindergarten':'Детский сад'}
     import matplotlib.pyplot as plt
     from matplotlib.ticker import FuncFormatter
     fig,ax=plt.subplots(figsize=(12,9))
@@ -270,14 +267,14 @@ def plot_results(runs,selected):
     ax.set_xlabel('Полная стоимость земли поселения, млрд ₽');ax.set_ylabel('NPV проекта, млн ₽')
     ax.legend(facecolor='white');ax.grid(alpha=.25);fig.tight_layout();fig.savefig(REPORT/'optimization_pareto.png',dpi=150);plt.close(fig)
     fig,axes=plt.subplots(2,2,figsize=(12,9))
-    for ax,name in zip(axes.ravel(),sorted({r['project'] for r in runs})):
-        if name=='sailing_school':
-            ax.text(.5,.5,'Парусная школа: нет проектной геометрии\nОптимизация не запускалась',ha='center',va='center',transform=ax.transAxes)
-            ax.set_axis_off();continue
+    done=sorted({r['project'] for r in runs})
+    for ax,name in zip(axes.ravel(),done):
         for seed in [42,43,44]:
             f=pd.read_csv(REPORT/f'optimization_history_{name}_{seed}.csv')
-            ax.plot(f.generation,f.min_cv if name=='campus' else f.max_npv_rub/1e6,label=str(seed))
-        ax.set_xlabel('Поколение');ax.set_ylabel(f'{names[name]}: '+('нарушение ограничения' if name=='campus' else 'макс. NPV, млн ₽'));ax.legend(facecolor='white');ax.grid(alpha=.25)
+            ax.plot(f.generation,f.max_npv_rub/1e6,label=str(seed))
+        ax.set_xlabel('Поколение');ax.set_ylabel(f'{names[name]}: макс. NPV, млн ₽');ax.legend(facecolor='white');ax.grid(alpha=.25)
+    for ax in axes.ravel()[len(done):]:
+        ax.set_axis_off()
     fig.tight_layout();fig.savefig(REPORT/'optimization_convergence.png',dpi=150);plt.close(fig)
 if __name__=='__main__':
     import argparse

@@ -6,11 +6,11 @@
   "generations": 100,
   "evaluations": 6400,
   "feasible_front": true,
-  "seconds": 42.38615072099856,
+  "seconds": 43.57512741199753,
   "original_feasible": true,
   "max_floor_limit": 3.0,
   "generations_requested": 100,
   "generations_executed": 100,
   "status": "completed",
-  "input_signature": "81748a9b62296bbbd1eb92e56a349b51f019ad332d64c87a3f9ca9927c39ee92"
+  "input_signature": "7a5431627fc15017aad2cf6a1c5ffdc630955032ecb76a45e1887cc8bb535130"
 }

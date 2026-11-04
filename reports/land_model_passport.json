@@ -275,7 +275,7 @@
       }
     },
     "s1": {
-      "blocks_sha256": "4bcd31cc8155939e99966885403dda0b93fc6380ec3fa8c28035836dbc6927eb",
+      "blocks_sha256": "56d27d850ec842df84a6b320e42c29371e3a43358bc9df1a45a560cc024198db",
       "walk_od_sha256": "3c5e8ee606dfb790e6bbbd70de3187b454de2b8d444e9635f6d0a9306edeb013",
       "ranges": {
         "residential": {
@@ -343,7 +343,7 @@
         },
         "build_floor_area": {
           "project_min": 0.0,
-          "project_max": 125722.09,
+          "project_max": 114633.85,
           "training_min": 0.0,
           "training_max": 505928.4784681185,
           "outside_training_range": 0
@@ -357,7 +357,7 @@
         },
         "non_living_area": {
           "project_min": 0.0,
-          "project_max": 118731.25,
+          "project_max": 107643.01,
           "training_min": 0.0,
           "training_max": 338965.5467692465,
           "outside_training_range": 0
@@ -414,7 +414,7 @@
       }
     },
     "s2": {
-      "blocks_sha256": "bdc1843092cb20b89e4355b5a99c41b9902445180c93fe5a441e3ddfa3c0e3c5",
+      "blocks_sha256": "9b5224e6daefbbb6c22800c7468c4805650de18830ed33f2743537fc49029a33",
       "walk_od_sha256": "3c5e8ee606dfb790e6bbbd70de3187b454de2b8d444e9635f6d0a9306edeb013",
       "ranges": {
         "residential": {
@@ -482,7 +482,7 @@
         },
         "build_floor_area": {
           "project_min": 0.0,
-          "project_max": 159382.15,
+          "project_max": 128383.79,
           "training_min": 0.0,
           "training_max": 505928.4784681185,
           "outside_training_range": 0
@@ -496,7 +496,7 @@
         },
         "non_living_area": {
           "project_min": 0.0,
-          "project_max": 152391.31,
+          "project_max": 121392.95,
           "training_min": 0.0,
           "training_max": 338965.5467692465,
           "outside_training_range": 0

@@ -179,6 +179,51 @@ def km_len(gdf: gpd.GeoDataFrame) -> float:
     return float(gdf.to_crs(MCRS).geometry.length.sum() / 1000)
 
 
+# ---- график NSGA-II для слайда оптимизации (стиль презентации) ------------------
+PARETO_STYLE = {
+    "campus": dict(label="Кампус", color="#e8590c", marker="o"),
+    "kindergarten": dict(label="Детский сад", color="#9474ac", marker="^"),
+    "marina": dict(label="Марина", color="#4dabf7", marker="s"),
+}
+
+
+def pareto() -> None:
+    """Допустимые фронты NSGA-II (reports/optimization_front_*.csv) и выбранные варианты
+    (optimization_selected.csv) — Inter, палитра презентации, млрд/млн ₽ без смещения осей.
+    Канонический график расчёта остаётся reports/optimization_pareto.png."""
+    fig, ax = plt.subplots(figsize=(10.13, 7.6), dpi=150)
+    fig.subplots_adjust(left=0.11, right=0.97, top=0.95, bottom=0.11)
+    for name, st in PARETO_STYLE.items():
+        front = pd.read_csv(ROOT / "reports" / f"optimization_front_{name}.csv")
+        sel = pd.read_csv(ROOT / "reports" / "optimization_selected.csv")
+        sel = sel[sel["project"] == name]
+        ax.scatter(front["land_value_total_rub"] / 1e9, front["investor_npv_rub"] / 1e6,
+                   s=30, alpha=0.4, linewidths=0, color=st["color"], marker=st["marker"])
+        ax.scatter(sel["land_value_total_rub"] / 1e9, sel["investor_npv_rub"] / 1e6,
+                   s=150, color=st["color"], marker=st["marker"], edgecolor="white",
+                   linewidth=1.8, zorder=3, label=st["label"])
+    ax.set_xlim(215.23, 215.275)
+    ax.set_xticks(np.arange(215.23, 215.2801, 0.01))
+    ax.xaxis.set_major_formatter(plt.FuncFormatter(lambda v, _: f"{v:.2f}"))
+    ax.set_ylim(-5, 125)
+    ax.set_yticks(np.arange(0, 121, 20))
+    ax.grid(axis="y", color="#dee5e2", linewidth=0.8)
+    ax.set_axisbelow(True)
+    for side in ("top", "right"):
+        ax.spines[side].set_visible(False)
+    for side in ("left", "bottom"):
+        ax.spines[side].set_color("#adb5bd")
+    ax.tick_params(labelsize=12.5, colors="#343a40")
+    ax.set_xlabel("Полная стоимость земли поселения, млрд ₽", fontsize=14, color="#343a40")
+    ax.set_ylabel("NPV проекта, млн ₽", fontsize=14, color="#343a40")
+    ax.legend(loc="upper right", frameon=False, fontsize=13.5, handletextpad=0.4,
+              scatterpoints=1, markerscale=1.1)
+    OUT.mkdir(exist_ok=True)
+    fig.savefig(OUT / "optimization_pareto.png", facecolor="white")
+    plt.close(fig)
+    print("  maps/optimization_pareto.png")
+
+
 def main() -> None:
     print("Карты →", OUT)
     bnd = gpd.read_file(DATA / "boundary.geojson")

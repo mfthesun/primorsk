@@ -3,7 +3,7 @@
  "name": "Сценарий 2 — полная реализация (до 2031)",
  "population": 13734,
  "buildings": 9181,
- "build_floor_area_m2": 1868594.98,
+ "build_floor_area_m2": 1836636.31,
  "living_area_m2": 472063.21,
  "living_area_per_capita": 34.37186617154507,
  "median_acc_drive": 40.681352816868234,
@@ -131,8 +131,8 @@
    "drive": 0.245
   },
   "extra_education": {
-   "walk": 0.3,
-   "transit": 0.3,
+   "walk": 0.264,
+   "transit": 0.264,
    "drive": 0.771
   },
   "convenience": {

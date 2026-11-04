@@ -6,44 +6,44 @@
    "by_use": [
     {
      "land_use": "BUSINESS",
-     "land_area": 4423.65,
-     "built_area": 2340.54,
-     "land_cost": 707784.4,
-     "construction_cost": 128729700.0,
-     "investment_need": 129437484.4,
-     "NPV": 152668610.2,
+     "land_area": 4423.7,
+     "built_area": 956.11,
+     "land_cost": 707791.72,
+     "construction_cost": 52586050.0,
+     "investment_need": 53293841.72,
+     "NPV": 61946426.81,
      "IRR": 0.4,
-     "ROI": 19.09,
-     "PP_years": 5.74,
+     "ROI": 18.65,
+     "PP_years": 5.77,
      "EI": 100.0,
      "spatial_potential": 0.0,
      "INV": 57.27
     },
     {
      "land_use": "RECREATION",
-     "land_area": 5160.74,
-     "built_area": 2730.53,
-     "land_cost": 825718.23,
-     "construction_cost": 54610600.0,
-     "investment_need": 55436318.23,
-     "NPV": 27355829.51,
-     "IRR": 0.28,
-     "ROI": 14.23,
-     "PP_years": 8.28,
-     "EI": 46.62,
+     "land_area": 5160.7,
+     "built_area": 1115.4,
+     "land_cost": 825711.36,
+     "construction_cost": 22308000.0,
+     "investment_need": 23133711.36,
+     "NPV": 10686228.94,
+     "IRR": 0.27,
+     "ROI": 13.39,
+     "PP_years": 8.5,
+     "EI": 39.91,
      "spatial_potential": 0.0,
-     "INV": 26.7
+     "INV": 22.86
     },
     {
      "land_use": "RESIDENTIAL",
-     "land_area": 17336.53,
-     "built_area": 9172.7,
-     "land_cost": 2773844.48,
-     "construction_cost": 412771500.0,
-     "investment_need": 415545344.48,
-     "NPV": -80739581.12,
+     "land_area": 17336.73,
+     "built_area": 3747.05,
+     "land_cost": 2773876.4,
+     "construction_cost": 168617250.0,
+     "investment_need": 171391126.4,
+     "NPV": -34622897.25,
      "IRR": 0.13,
-     "ROI": 6.08,
+     "ROI": 5.91,
      "PP_years": NaN,
      "EI": 0.0,
      "spatial_potential": 0.0,
@@ -51,34 +51,34 @@
     },
     {
      "land_use": "SPECIAL",
-     "land_area": 72127.06,
-     "built_area": 38162.19,
-     "land_cost": 11540329.46,
-     "construction_cost": 1335676650.0,
-     "investment_need": 1347216979.46,
-     "NPV": 171870236.56,
-     "IRR": 0.21,
-     "ROI": 9.96,
-     "PP_years": 12.67,
-     "EI": 46.0,
+     "land_area": 72126.86,
+     "built_area": 15589.04,
+     "land_cost": 11540297.09,
+     "construction_cost": 545616400.0,
+     "investment_need": 557156697.09,
+     "NPV": 63381887.68,
+     "IRR": 0.2,
+     "ROI": 9.6,
+     "PP_years": 13.01,
+     "EI": 25.33,
      "spatial_potential": 0.0,
-     "INV": 26.35
+     "INV": 14.5
     }
    ],
    "total": {
     "land_use": "project",
     "land_area": 99047.98,
-    "built_area": 52405.96,
+    "built_area": 21407.6,
     "land_cost": 15847676.57,
-    "construction_cost": 1931788450.0,
-    "investment_need": 1947636126.57,
-    "NPV": 271155095.14,
+    "construction_cost": 789127700.0,
+    "investment_need": 804975376.57,
+    "NPV": 101391646.18,
     "IRR": 0.21,
-    "ROI": 9.86,
-    "PP_years": 12.21,
-    "EI": 56.11,
+    "ROI": 9.53,
+    "PP_years": 12.52,
+    "EI": 34.53,
     "spatial_potential": 0.0,
-    "INV": 32.13
+    "INV": 19.78
    }
   },
   "kindergarten": {
@@ -119,95 +119,95 @@
    "by_use": [
     {
      "land_use": "BUSINESS",
-     "land_area": 5438.72,
-     "built_area": 855.9,
-     "land_cost": 5726915.53,
-     "construction_cost": 47074500.0,
-     "investment_need": 52801415.53,
-     "NPV": 50360507.09,
-     "IRR": 0.36,
-     "ROI": 14.22,
-     "PP_years": 6.22,
-     "EI": 86.02,
+     "land_area": 5438.66,
+     "built_area": 738.93,
+     "land_cost": 5726859.89,
+     "construction_cost": 40641150.0,
+     "investment_need": 46368009.89,
+     "NPV": 42695478.22,
+     "IRR": 0.35,
+     "ROI": 13.64,
+     "PP_years": 6.31,
+     "EI": 81.68,
      "spatial_potential": 0.0,
-     "INV": 49.27
+     "INV": 46.78
     },
     {
      "land_use": "RECREATION",
-     "land_area": 39215.24,
-     "built_area": 6171.37,
-     "land_cost": 41293275.7,
-     "construction_cost": 123427400.0,
-     "investment_need": 164720675.7,
-     "NPV": 22400863.61,
-     "IRR": 0.21,
-     "ROI": 7.42,
-     "PP_years": 12.6,
-     "EI": 16.6,
+     "land_area": 39215.3,
+     "built_area": 5328.03,
+     "land_cost": 41293331.34,
+     "construction_cost": 106560600.0,
+     "investment_need": 147853931.34,
+     "NPV": 13696773.79,
+     "IRR": 0.2,
+     "ROI": 6.88,
+     "PP_years": 13.74,
+     "EI": 10.95,
      "spatial_potential": 0.0,
-     "INV": 9.51
+     "INV": 6.27
     }
    ],
    "total": {
     "land_use": "project",
     "land_area": 44653.96,
-    "built_area": 7027.27,
+    "built_area": 6066.96,
     "land_cost": 47020191.23,
-    "construction_cost": 170501900.0,
-    "investment_need": 217522091.23,
-    "NPV": 72761370.7,
+    "construction_cost": 147201750.0,
+    "investment_need": 194221941.23,
+    "NPV": 56392252.02,
     "IRR": 0.24,
-    "ROI": 8.82,
-    "PP_years": 9.37,
-    "EI": 44.29,
+    "ROI": 8.23,
+    "PP_years": 9.82,
+    "EI": 37.1,
     "spatial_potential": 0.0,
-    "INV": 25.37
+    "INV": 21.25
    }
   }
  },
  "ser": [
   {
    "indicator": "Объём инвестиций в основной капитал на душу населения",
-   "delta_build_year": 165894.8837982283,
+   "delta_build_year": 80532.78554799035,
    "delta_ops_year": NaN
   },
   {
    "indicator": "Валовый региональный продукт на душу населения",
-   "delta_build_year": 27142.10024345365,
-   "delta_ops_year": 25184.714107914195
+   "delta_build_year": 13213.000038558215,
+   "delta_ops_year": 11502.881616516583
   },
   {
    "indicator": "Доходы бюджета территории",
-   "delta_build_year": 300994783.2644333,
-   "delta_ops_year": 235164618.8212
+   "delta_build_year": 146116310.38110003,
+   "delta_ops_year": 109335142.03286666
   },
   {
    "indicator": "Средний уровень заработной платы",
    "delta_build_year": NaN,
-   "delta_ops_year": -8561.234040875803
+   "delta_ops_year": -4336.155441280687
   },
   {
    "indicator": "Износ основного фонда (тыс. руб.)",
    "delta_build_year": NaN,
-   "delta_ops_year": 78335.97051217
+   "delta_ops_year": 37600.512179655
   }
  ],
  "jobs": {
-  "BUSINESS": 177.57999999999998,
+  "BUSINESS": 94.16888888888889,
   "RECREATION": 0.0,
   "RESIDENTIAL": 0.0,
-  "SPECIAL": 1368.073
+  "SPECIAL": 615.6346666666667
  },
  "jobs_by_project": {
-  "campus": 1402.103,
+  "campus": 572.751888888889,
   "kindergarten": 96.0,
-  "marina": 47.55
+  "marina": 41.05166666666666
  },
  "investment_by_project": {
-  "campus": 1947636126.5700002,
+  "campus": 804975376.57,
   "kindergarten": 100800000.0,
-  "marina": 217522091.23
+  "marina": 194221941.23000002
  },
- "jobs_total": 1545.653,
- "investment_need_total": 2265958217.8
+ "jobs_total": 709.8035555555556,
+ "investment_need_total": 1099997317.8
 }

@@ -13,3 +13,4 @@ data/cache/
 data/processed/analysis/graph_*.geojson
 data/results/*.pkl
 .claude/chat-exports/
+.mimosa/
