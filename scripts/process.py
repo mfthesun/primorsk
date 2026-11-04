@@ -539,6 +539,9 @@ MARINA_SERVICES = [
 ]
 DESIGN = RAW / "scenario_design"     # трассировка транспортных слоёв и причалов (scripts/scenario_design.py)
 KG_BUILDING_ID = 29                  # детский сад сценария 2 (data/raw/scenario_design/kindergarten_building.geojson)
+SCHOOL_BUILDING_ID = 6               # парусная школа — функция марины, точка сервиса на клубном доме;
+                                     # отдельного капитального здания школы нет (решение 04.11.2026,
+                                     # квартал 205 без проектной застройки — docs/implementation-ledger.md)
 
 
 def scenario_design(dst: Path, sb: gpd.GeoDataFrame) -> None:
@@ -594,6 +597,12 @@ def scenario(bld: gpd.GeoDataFrame) -> None:
     # в исходнике два здания с id = 23 — второму даём следующий свободный номер
     dup = sb["id"].duplicated()
     sb.loc[dup, "id"] = np.arange(sb["id"].max() + 1, sb["id"].max() + 1 + dup.sum(), dtype="int32")
+    # объёмные ТЭП — по конвенции проекта (как у базовых зданий и детсада): GFA = пятно × этажность.
+    # В исходнике GFA-атрибут был равен «пятну источника» × этажность, а пятно источника отличается
+    # от нарисованной геометрии в 1,158 раза (марина) и 2,448 раза (кампус) — противоречие ТЭП, пятна
+    # и этажности устранено пересчётом, решением команды 04.11.2026 (docs/implementation-ledger.md)
+    sb["build_floor_area"] = (sb["footprint_area"] * sb["number_of_floors"]).round(2)
+    sb["non_living_area"] = (sb["build_floor_area"] - sb["living_area"]).round(2)
     # общежитие кампуса: часть корпуса DORM_BUILDING_ID
     d = sb["id"] == DORM_BUILDING_ID
     sb.loc[d, "is_living"] = True
@@ -651,6 +660,10 @@ def scenario(bld: gpd.GeoDataFrame) -> None:
                                                 "capacity": pd.array([0] * len(st), dtype="Int32"),
                                                 "name": st["name"].values}, geometry=st.geometry.values, crs=CRS)],
                           ignore_index=True)
+        if svc == "extra_education":
+            # решение 04.11.2026: парусная школа — функция марины, точка сервиса на клубном доме
+            pt = sb.set_index("id").loc[[SCHOOL_BUILDING_ID]].to_crs(MCRS).representative_point().to_crs(CRS).iloc[0]
+            s["geometry"] = [pt] * len(s)
         s = snap_to_buildings(s, all_bld, svc, log)
         write(s, dst / f"{svc}.geojson")
         if svc == "extra_education":
@@ -662,7 +675,7 @@ def scenario(bld: gpd.GeoDataFrame) -> None:
         if bid is not None:
             geom = sbm.loc[[bid]].to_crs(MCRS).representative_point().to_crs(CRS).iloc[0]
         else:
-            # рядом с парусной школой: прокат — в том же здании, каток — на берегу в 40 м
+            # рядом с парусной школой (клубный дом): прокат — в том же здании, каток — на берегу в 40 м
             geom = sail if svc != "ice_rink" else \
                 gpd.GeoSeries([sail], crs=CRS).to_crs(MCRS).translate(0, -40).to_crs(CRS).iloc[0]
         x = gpd.GeoDataFrame({"service_id": pd.array([sid], dtype="Int32"), "service_name": [sname],

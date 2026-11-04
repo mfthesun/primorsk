@@ -20,7 +20,7 @@
 | 12 | Транспортная доступность | scripts/analysis.py | `reports/analysis_today.md`<br>`reports/analysis_s2.md` | артефакты есть | median_accessibility и время до опорных точек; не путать с area_accessibility модели стоимости |
 | 13 | Конкурентная обеспеченность | scripts/analysis.py | `reports/provision_today.csv`<br>`reports/provision_s2.csv` | артефакты есть | Фактическая вместимость школ/детсадов; норматив и недоступность раздельно |
 | 14 | Стоимость земли | scripts/land_value.py | `data/processed/urbanomy/land_today.geojson`<br>`reports/land_model_passport.json` | эксперимент; числовая подготовка обучения полностью не восстановлена | CatBoost курса; независимая проверка точности для Приморска отсутствует |
-| 15 | Оптимизация кварталов | scripts/district_optimization.py | `reports/optimization_runs.csv` | частично: фронты марины/детсада; кампус невыполним; школа без геометрии | DistrictProblem+NSGA2; невыполнимость также результат, исследовательские пределы не регламент |
+| 15 | Оптимизация кварталов | scripts/district_optimization.py | `reports/optimization_runs.csv` | артефакты есть: фронты кампуса/марины/детсада; школа — функция марины, отдельная программа не задаётся | DistrictProblem+NSGA2; исследовательские пределы не регламент |
 | 16 | Инвестиционная привлекательность | scripts/urbanomy_analysis.py | `reports/urbanomy.md` | артефакты есть | Демо-бенчмарки СПб, кадастровая земля; не банковское ТЭО |
 | 17 | Стоимость до/после | scripts/land_value.py | `data/processed/urbanomy/land_s1.geojson`<br>`data/processed/urbanomy/land_s2.geojson`<br>`reports/land_summary.csv` | эксперимент; числовая подготовка обучения полностью не восстановлена | Одинаковая геометрия; обратное log1p, общая стоимость и руб./м² раздельно |
 

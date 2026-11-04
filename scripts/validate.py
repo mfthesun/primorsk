@@ -91,6 +91,21 @@ def check_schema(layer, path, schema, no_id=False):
             add("ERROR", layer, f"атрибут {f}: тип {flds[f]}, нужен {'/'.join(sorted(types))}")
 
 
+def scenario_tep_issues(sb) -> list[str]:
+    """Физическая согласованность ТЭП сценарных зданий: GFA = пятно × этажность (конвенция проекта,
+    решение команды 04.11.2026 — docs/implementation-ledger.md). Порог 5 % на допуски округления."""
+    out: list[str] = []
+    for _, r in sb.iterrows():
+        fp, fl, bfa = float(r["footprint_area"]), int(r["number_of_floors"]), float(r["build_floor_area"])
+        if fp <= 0 or fl <= 0 or bfa <= 0:
+            out.append(f"id {int(r['id'])}: нулевые пятно/этажность/общая площадь")
+            continue
+        ratio = bfa / (fp * fl)
+        if abs(ratio - 1) > 0.05:
+            out.append(f"id {int(r['id'])}: GFA/(пятно×этажность)={ratio:.3f}")
+    return out
+
+
 def main():
     bnd = gpd.read_file(DATA / "boundary.geojson")
     bnd_geom = bnd.union_all()
@@ -126,6 +141,13 @@ def main():
         add("WARN", "building", f"общая площадь меньше пятна застройки: {(bld['build_floor_area']+0.01<bld['footprint_area']).sum()}")
     if abs(bld["population"].sum() - int(bnd["population"].iloc[0])) > 0:
         add("ERROR", "building", f"сумма населения {bld['population'].sum()} ≠ population границы {bnd['population'].iloc[0]}")
+
+    # сценарные здания: физическая согласованность объёмных ТЭП (GFA / пятно / этажность)
+    sb_path = DATA / "scenario" / "building.geojson"
+    if sb_path.exists():
+        bad = scenario_tep_issues(gpd.read_file(sb_path))
+        if bad:
+            add("WARN", "scenario/building", "; ".join(bad))
 
     # кварталы — наложения
     bl = gpd.read_file(DATA / "blocks.geojson").to_crs(MCRS)

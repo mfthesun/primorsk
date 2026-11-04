@@ -1,13 +1,10 @@
-project,block_id,seed,population,generations,evaluations,feasible_front,seconds,original_feasible,max_floor_limit,generations_requested,generations_executed,status,input_signature,skipped_reason
-campus,157,42,64,100,6400,False,43.55188080300286,False,6.0,100,100,infeasible,81748a9b62296bbbd1eb92e56a349b51f019ad332d64c87a3f9ca9927c39ee92,
-campus,157,43,64,100,6400,False,44.940659226002026,False,6.0,100,100,infeasible,81748a9b62296bbbd1eb92e56a349b51f019ad332d64c87a3f9ca9927c39ee92,
-campus,157,44,64,100,6400,False,47.04705289100093,False,6.0,100,100,infeasible,81748a9b62296bbbd1eb92e56a349b51f019ad332d64c87a3f9ca9927c39ee92,
-marina,227,42,64,100,6400,True,45.14877218900074,True,4.0,100,100,completed,81748a9b62296bbbd1eb92e56a349b51f019ad332d64c87a3f9ca9927c39ee92,
-marina,227,43,64,100,6400,True,45.07007055500071,True,4.0,100,100,completed,81748a9b62296bbbd1eb92e56a349b51f019ad332d64c87a3f9ca9927c39ee92,
-marina,227,44,64,100,6400,True,46.157001087001845,True,4.0,100,100,completed,81748a9b62296bbbd1eb92e56a349b51f019ad332d64c87a3f9ca9927c39ee92,
-sailing_school,205,42,64,0,0,False,0.0,,,100,0,blocked_missing_project_geometry,,На площадке парусной школы и в квартале205 нет проектных зданий; ближайшие здания марины более чем в670м.
-sailing_school,205,43,64,0,0,False,0.0,,,100,0,blocked_missing_project_geometry,,На площадке парусной школы и в квартале205 нет проектных зданий; ближайшие здания марины более чем в670м.
-sailing_school,205,44,64,0,0,False,0.0,,,100,0,blocked_missing_project_geometry,,На площадке парусной школы и в квартале205 нет проектных зданий; ближайшие здания марины более чем в670м.
-kindergarten,232,42,64,100,6400,True,45.16830918499909,True,3.0,100,100,completed,81748a9b62296bbbd1eb92e56a349b51f019ad332d64c87a3f9ca9927c39ee92,
-kindergarten,232,43,64,100,6400,True,42.38615072099856,True,3.0,100,100,completed,81748a9b62296bbbd1eb92e56a349b51f019ad332d64c87a3f9ca9927c39ee92,
-kindergarten,232,44,64,100,6400,True,44.02964204900127,True,3.0,100,100,completed,81748a9b62296bbbd1eb92e56a349b51f019ad332d64c87a3f9ca9927c39ee92,
+project,block_id,seed,population,generations,evaluations,feasible_front,seconds,original_feasible,max_floor_limit,generations_requested,generations_executed,status,input_signature
+campus,157,42,64,100,6400,True,44.09474638500251,True,6.0,100,100,completed,7a5431627fc15017aad2cf6a1c5ffdc630955032ecb76a45e1887cc8bb535130
+campus,157,43,64,100,6400,True,44.827944606004166,True,6.0,100,100,completed,7a5431627fc15017aad2cf6a1c5ffdc630955032ecb76a45e1887cc8bb535130
+campus,157,44,64,100,6400,True,44.79980697800056,True,6.0,100,100,completed,7a5431627fc15017aad2cf6a1c5ffdc630955032ecb76a45e1887cc8bb535130
+marina,227,42,64,100,6400,True,45.29824872400059,True,4.0,100,100,completed,7a5431627fc15017aad2cf6a1c5ffdc630955032ecb76a45e1887cc8bb535130
+marina,227,43,64,100,6400,True,45.691289940004935,True,4.0,100,100,completed,7a5431627fc15017aad2cf6a1c5ffdc630955032ecb76a45e1887cc8bb535130
+marina,227,44,64,100,6400,True,44.68484713699581,True,4.0,100,100,completed,7a5431627fc15017aad2cf6a1c5ffdc630955032ecb76a45e1887cc8bb535130
+kindergarten,232,42,64,100,6400,True,44.3769973189992,True,3.0,100,100,completed,7a5431627fc15017aad2cf6a1c5ffdc630955032ecb76a45e1887cc8bb535130
+kindergarten,232,43,64,100,6400,True,43.57512741199753,True,3.0,100,100,completed,7a5431627fc15017aad2cf6a1c5ffdc630955032ecb76a45e1887cc8bb535130
+kindergarten,232,44,64,100,6400,True,42.830946775000484,True,3.0,100,100,completed,7a5431627fc15017aad2cf6a1c5ffdc630955032ecb76a45e1887cc8bb535130
