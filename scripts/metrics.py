@@ -86,6 +86,24 @@ def iso(on: dict, origin: str, mode: str) -> float | None:
     return None
 
 
+def land_value_rows(path: Path = REP / "land_summary.csv") -> list[dict]:
+    """Read model totals and unit prices without conflating them with NSPD land costs."""
+    if not path.exists():
+        return []
+    summary = pd.read_csv(path).set_index("scenario")
+    result = []
+    for name, unit, column, scale in [
+        ("Расчётная полная стоимость земли всех кварталов", "млн ₽", "total_rub", 1e6),
+        ("Медианная расчётная удельная стоимость земли", "₽/м²", "unit_median_rub_m2", 1),
+    ]:
+        values = {t: (float(summary.at[t, column]) / scale if t in summary.index else None) for t in TAGS}
+        result.append({"group": "5. Экономика и туризм", "indicator": name, "unit": unit,
+                       **values, "tool": "Urbanomy LandPriceEstimator + CatBoost",
+                       "goal": "Экспериментальный перенос; числовая схема обучения не полностью подтверждена; не кадастровая/рыночная оценка",
+                       "fmt": "{:,.2f}", "src": "reports/land_model_passport.json"})
+    return result
+
+
 def rows() -> list[dict]:
     B = {t: base(t) for t in TAGS}
     N = {t: load("blocksnet", t) for t in TAGS}
@@ -208,6 +226,7 @@ def rows() -> list[dict]:
         "ветровой комфорт набережной")
     add(g, "Максимальный порыв за 10 лет", "м/с", lambda t: C["gust_max_ms"], "ERA5", "ветровая нагрузка на причалы",
         fmt="{:.1f}")
+    R.extend(land_value_rows())
     return R
 
 
@@ -215,8 +234,7 @@ NOT_COUNTED = [
     ("Возрастная структура поселения, очередь в детсады, СКР", "Росстат публикует возраст только по районам (взята "
      "доля детей Выборгского р-на); данных об очереди нет", "проверка норматива; национальная цель «Сохранение населения» "
      "(СКР 1,6 к 2030)"),
-    ("Стоимость земли «после»", "есть только кадастровая «до» (НСПД: кампус 160, марина 1 053 руб./м²); для «после» "
-     "нет обученной модели CatBoost (Urbanomy LandPriceEstimator)", "KPI ТЭП «было / стало»"),
+    ("Точность прогноза стоимости земли в Приморске", "CatBoost курса подключён; нет независимой локальной выборки для проверки ошибки", "KPI ТЭП «было / стало», ограничения переноса модели"),
     ("ВГП / ВРП «стало» в абсолютных значениях", "нет базового ВРП поселения; SEREstimator дает только приросты",
      "концепция: ВГП ×2,0–2,1"),
     ("Турпоток", "нет статистики размещения / посещений", "концепция: 75 тыс. чел./год, +400–700 %"),

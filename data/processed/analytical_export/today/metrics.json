@@ -1,0 +1,133 @@
+{
+  "scenario": "today",
+  "graphs": {
+    "walk": {
+      "nodes": 8596,
+      "edges": 10172,
+      "time_min_min": 0.012046472491766307,
+      "length_meter_sum": 1410116.7371591409
+    },
+    "drive": {
+      "nodes": 7974,
+      "edges": 9086,
+      "time_min_min": 0.01,
+      "length_meter_sum": 1223661.1466935275
+    },
+    "transit": {
+      "nodes": 8596,
+      "edges": 10172,
+      "time_min_min": 0.012046472491766307,
+      "length_meter_sum": 1410116.7371591409
+    }
+  },
+  "source_graph_info": {
+    "walk": {
+      "nodes": 9032,
+      "edges": 10587,
+      "km": 1481.4,
+      "components": 67,
+      "largest_share": 0.952,
+      "gap_links": 2066,
+      "km_by_source": {
+        "roads": 387.9,
+        "gap": 29.1,
+        "osm": 1064.4
+      }
+    },
+    "drive": {
+      "nodes": 8527,
+      "edges": 9561,
+      "km": 1303.9,
+      "components": 117,
+      "largest_share": 0.935,
+      "gap_links": 2050,
+      "km_by_source": {
+        "roads": 388.0,
+        "gap": 29.0,
+        "osm": 886.9
+      }
+    }
+  },
+  "coverage": {
+    "school": {
+      "sources": 6,
+      "zones": 6,
+      "union_area_ha": 807.6518507496496,
+      "threshold_min": 15
+    },
+    "kindergarten": {
+      "sources": 4,
+      "zones": 4,
+      "union_area_ha": 150.38544663540125,
+      "threshold_min": 7
+    },
+    "polyclinic": {
+      "sources": 5,
+      "zones": 5,
+      "union_area_ha": 764.5012533957171,
+      "threshold_min": 15
+    }
+  },
+  "provision": {
+    "kindergarten": {
+      "buildings": 2832,
+      "services": 4,
+      "links": 71,
+      "allocated": 230.0,
+      "source_demand": 680.6759999999999,
+      "library_integer_demand": 256,
+      "supplied_within": 202,
+      "supplied_outside": 28,
+      "unallocated_library_demand": 26,
+      "source_capacity": 470.0,
+      "threshold_min": 7,
+      "seed": 0,
+      "demand_columns": [
+        "demand",
+        "demand_left",
+        "supplied_demands_within",
+        "supplied_demands_without",
+        "min_dist",
+        "avg_dist",
+        "provision_value"
+      ],
+      "capacity_columns": [
+        "capacity",
+        "capacity_left",
+        "carried_capacity_within",
+        "carried_capacity_without",
+        "service_load"
+      ]
+    },
+    "school": {
+      "buildings": 2832,
+      "services": 6,
+      "links": 107,
+      "allocated": 409.0,
+      "source_demand": 1025.079,
+      "library_integer_demand": 429,
+      "supplied_within": 384,
+      "supplied_outside": 25,
+      "unallocated_library_demand": 20,
+      "source_capacity": 1847.0,
+      "threshold_min": 15,
+      "seed": 0,
+      "demand_columns": [
+        "demand",
+        "demand_left",
+        "supplied_demands_within",
+        "supplied_demands_without",
+        "min_dist",
+        "avg_dist",
+        "provision_value"
+      ],
+      "capacity_columns": [
+        "capacity",
+        "capacity_left",
+        "carried_capacity_within",
+        "carried_capacity_without",
+        "service_load"
+      ]
+    }
+  }
+}

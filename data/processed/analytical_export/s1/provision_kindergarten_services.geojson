@@ -1,0 +1,11 @@
+{
+"type": "FeatureCollection",
+"name": "provision_kindergarten_services",
+"crs": { "type": "name", "properties": { "name": "urn:ogc:def:crs:OGC:1.3:CRS84" } },
+"features": [
+{ "type": "Feature", "properties": { "service_id": 21, "service_name": "Детский сад", "address": "Глебычево", "is_scenario": false, "object_id": "kindergarten:existing:0", "capacity_status": "source_reported", "capacity": 160, "capacity_left": 75, "carried_capacity_within": 76, "carried_capacity_without": 9, "service_load": 85, "scenario": "s1", "service_type": "kindergarten", "mode": "walk", "threshold_min": 7 }, "geometry": { "type": "Point", "coordinates": [ 28.720053707568763, 60.452076308505085 ] } },
+{ "type": "Feature", "properties": { "service_id": 21, "service_name": "Детский сад", "address": "Приморск", "is_scenario": false, "object_id": "kindergarten:existing:1", "capacity_status": "source_reported", "capacity": 110, "capacity_left": 40, "carried_capacity_within": 60, "carried_capacity_without": 10, "service_load": 70, "scenario": "s1", "service_type": "kindergarten", "mode": "walk", "threshold_min": 7 }, "geometry": { "type": "Point", "coordinates": [ 28.613856996054736, 60.367847723053799 ] } },
+{ "type": "Feature", "properties": { "service_id": 21, "service_name": "Детский сад", "address": "Приморск", "is_scenario": false, "object_id": "kindergarten:existing:2", "capacity_status": "source_reported", "capacity": 100, "capacity_left": 43, "carried_capacity_within": 48, "carried_capacity_without": 9, "service_load": 57, "scenario": "s1", "service_type": "kindergarten", "mode": "walk", "threshold_min": 7 }, "geometry": { "type": "Point", "coordinates": [ 28.609747565145259, 60.367505879152546 ] } },
+{ "type": "Feature", "properties": { "service_id": 21, "service_name": "Детский сад", "address": "Пос. Красная Долина, Центральное шоссе, д. 8", "is_scenario": false, "object_id": "kindergarten:existing:3", "capacity_status": "source_reported", "capacity": 100, "capacity_left": 82, "carried_capacity_within": 18, "carried_capacity_without": 0, "service_load": 18, "scenario": "s1", "service_type": "kindergarten", "mode": "walk", "threshold_min": 7 }, "geometry": { "type": "Point", "coordinates": [ 28.992556879690969, 60.359285493868114 ] } }
+]
+}

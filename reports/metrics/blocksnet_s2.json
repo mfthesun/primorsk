@@ -78,10 +78,10 @@
   "kindergarten_drive": {
    "need": 686,
    "capacity": 630,
-   "within": 579,
-   "deficit": 107,
+   "within": 580,
+   "deficit": 106,
    "excess": 0,
-   "strong": 0.844,
+   "strong": 0.845,
    "weak": 0.918
   },
   "college_drive": {
@@ -240,17 +240,17 @@
    "catering": 0.09737711689384551
   },
   "general": {
-   "area": 649.5925653052835,
-   "urbanization": 0.01694382553943866
+   "area": 649.5925653052834,
+   "urbanization": 0.016943825539438673
   },
   "demographic": {
    "population": 13734.0,
-   "density": 21.142483355771702
+   "density": 21.142483355771706
   },
   "transport": {
-   "road_network_density": 1.8753775420532723,
+   "road_network_density": 1.875377542053278,
    "settlements_connectivity": 0.4900946319103241,
-   "road_network_length": 1218.2313084583025,
+   "road_network_length": 1218.2313084583059,
    "fuel_stations_count": 1.0,
    "average_fuel_station_accessibility": 22.09047508239746,
    "railway_stops_count": 5.0,
@@ -298,7 +298,7 @@
     "roads": 386.9,
     "gap": 28.6,
     "scenario": 3.0,
-    "osm": 1062.9
+    "osm": 1062.8
    }
   },
   "drive": {
@@ -325,7 +325,7 @@
     "roads": 377.8,
     "gap": 27.6,
     "scenario": 32.3,
-    "osm": 1001.7
+    "osm": 1001.6
    },
    "stops": 4
   },

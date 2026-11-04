@@ -1,163 +1,144 @@
-"""
-Интерактивная карта «Цифровой мастер-план» (HTML, folium/Leaflet) — reports/master_plan.html.
+"""Воспроизводимый 2D/3D цифровой мастер-план, без изменения canonical layers.
 
-Структура по мастер-плану:
-- «Поселение — существующее положение»: кварталы (население, обеспеченность детсадами и школами, время до
-  станции), здания (жилые / нежилые / сезонный фонд), сервисы;
-- «Сценарии»: для каждого — сегодня / сценарий 1 / сценарий 2 — объекты сценария, транспортные слои,
-  изохроны «пешком + шаттл» 30 мин, шум (ObjectNat); переключаются в панели слоёв.
-Подложки Esri (World Light Gray Canvas, World Imagery), не CARTO.
-
-Запуск: python scripts/webmap.py   (после analysis.py и objectnat_analysis.py)
+Методическая основа: КИГС 2026, учебная 3D-тетрадь (MapLibre 5.6.0,
+extrusion, вложенные services/provision, фильтры, оценки). Интерфейс адаптирован
+для трёх очередей Приморска; Colab upload заменён чтением pipeline outputs.
+https://drive.google.com/file/d/1TdS3F5_QrdaliM-XNf0Fw68-eD4l_IHh/view
+Присоединение сервисов: https://drive.google.com/file/d/1ZxsRmrc_C3oV4gx2vlSJXTXgvtqWmq1q/view
 """
 from __future__ import annotations
-
 import json
-import sys
+import gzip
+import base64
 from pathlib import Path
+import pandas as pd
+from visualization_data import ROOT, clean, feature_collection, prepare_buildings, read
 
-import folium
-import geopandas as gpd
-from branca.colormap import StepColormap
+OUT=ROOT/'reports/master_plan.html'
+COLORS=['#ba6c43','#467e91','#65965b','#9474ac','#c59a3c','#be667e','#507b68','#717bb3']
 
-sys.path.insert(0, str(Path(__file__).resolve().parent))
-from scenarios import SCENARIOS  # noqa: E402
+def build_payload():
+    proc=ROOT/'data/processed'
+    buildings,services,audits=prepare_buildings()
+    layers=[]
+    def add(path,title,tag='all',color='#467e91',field=None,unit='',default=False):
+        if not path.exists():return
+        frame=read(path)
+        if path.stem.startswith('optimization_') and 'is_project_target' in frame:
+            frame=frame[frame.is_project_target==True].copy()
+        if not len(frame):return
+        # Метрическое упрощение только производных площадных/линейных слоёв.
+        if not frame.geom_type.isin(['Point','MultiPoint']).all():
+            frame.geometry=frame.to_crs(32635).simplify(2,preserve_topology=True).to_crs(4326)
+        meta={'id':'layer_'+str(len(layers)),'title':title,'scenario':tag,'color':color,'default':default,
+              'data':feature_collection(frame),'source':str(path.relative_to(ROOT)),'field':field,'unit':unit}
+        if field and field in frame:
+            nums=pd.to_numeric(frame[field],errors='coerce').dropna()
+            meta['range']=[float(nums.min()),float(nums.max())] if len(nums) else None
+        if path.stem=='landuse' and 'name' in frame:
+            names=sorted(str(n) for n in frame.name.dropna().unique());meta['categories']={n:COLORS[i%len(COLORS)] for i,n in enumerate(names)}
+        layers.append(meta)
+    add(proc/'boundary.geojson','Граница поселения',color='#385566',default=True)
+    add(proc/'landuse.geojson','Функциональные зоны генплана (включая планируемые)',color='#c59a3c')
+    add(proc/'forest.geojson','Леса',color='#65965b')
+    add(proc/'roads.geojson','Улично-дорожная сеть (включая планируемую по ГП)',color='#78818a')
+    add(proc/'railways.geojson','Железная дорога',color='#343b43')
+    add(proc/'blockgen'/'blocks_generated.geojson','Независимая нарезка кварталов (контроль канонической сетки)',color='#9064a2')
+    for tag in ['today','s1','s2']:
+        add(proc/'analysis'/f'blocks_{tag}.geojson','Кварталы: обеспеченность детсадами с подвозом',tag,field='kindergarten_drive_provision_strong',unit='доля')
+        add(proc/'analysis'/f'blocks_{tag}.geojson','Кварталы: обеспеченность школами с подвозом',tag,field='school_drive_provision_strong',unit='доля')
+        add(proc/'objectnat'/f'noise_{tag}.geojson','Модель шума ObjectNat',tag,field='noise_level',unit='дБА')
+        add(proc/'objectnat'/f'visibility_{tag}.geojson','Зоны видимости ObjectNat',tag,color='#9e6ab1')
+        add(proc/'objectnat'/f'isochrones_{tag}.geojson','Изохроны: пешком / авто / ОТ, интервалы в карточке',tag,color='#3987bd')
+        for svc,title in [('kindergarten','Детсады'),('school','Школы')]:
+            add(proc/'objectnat'/f'provision_{svc}_{tag}.geojson',title+': обеспеченность зданий ObjectNat',tag,field=svc+'_provision_value',unit='доля')
+    for name,title,color in [('boundary','Проектные территории','#d49a29'),('landuse','Проектное зонирование','#c59a3c'),('shuttle_route','Шаттл','#1265b5'),('cycleway','Велодорожки','#2c934c'),('footway','Пешеходные маршруты','#c54b86'),('pier','Причалы','#277e88')]:
+        add(proc/'scenario'/f'{name}.geojson',title,'project',color,default=True)
+    for directory in ['urbanomy','analytical_export']:
+        for path in sorted((proc/directory).rglob('*.geojson')):
+            # Плотные точки графа не нужны в UI, рёбра переключаются отдельно.
+            if path.name.startswith('graph_'):continue
+            frame=read(path);tag=next((t for t in ['today','s1','s2'] if t in path.parts or t in path.stem),'all')
+            candidates=['land_value_delta','land_value_after','land_value','predicted_value','priority','score','provision_value','noise_level']
+            field=next((c for c in candidates if c in frame),None)
+            if path.stem.startswith('optimization_'):
+                tag='s2'
+                title='Эксперимент: '+path.stem.replace('optimization_','').replace('sailing_school','парусная школа').replace('kindergarten','детсад').replace('marina','марина').replace('land_extreme','максимум стоимости').replace('npv_extreme','максимум NPV').replace('compromise','компромисс').replace('_',' · ')
+            elif 'land_' in path.stem: title='Изменение стоимости земли' if field=='land_value_delta' else 'Стоимость земли'
+            else: title=path.stem.replace('coverage_', 'Охват ').replace('provision_','Распределение ').replace('kindergarten','детсады').replace('school','школы').replace('polyclinic','поликлиники').replace('_walk',' · пешком').replace('_buildings',' · здания').replace('_services',' · сервисы').replace('_links',' · связи')
+            prefix='Экономика / оптимизация' if directory=='urbanomy' else 'Граф / охват / связи'
+            add(path,prefix+': '+title,tag,'#985db0' if directory=='urbanomy' else '#2a8f85',field,unit='руб.' if field and field.startswith('land_value') else 'доля' if field=='provision_value' else '')
+    metrics=ROOT/'reports/metrics_scenarios.csv'
+    return {'buildings':feature_collection(buildings),'services':feature_collection(services),'layers':layers,
+            'graphs':[str(p.relative_to(ROOT)) for p in sorted((proc/'analytical_export').rglob('graph_*.geojson'))],
+            'assignment':audits,'metrics':clean(pd.read_csv(metrics).to_dict('records')) if metrics.exists() else [],
+            'optional':{'Стоимость земли':any((proc/'urbanomy').glob('land_*.geojson')),'Эксперимент оптимизации':any((proc/'urbanomy').glob('optimization_*.geojson')),'Экспорт охвата и потоков':any((proc/'analytical_export').rglob('*.geojson'))}}
 
-ROOT = Path(__file__).resolve().parents[1]
-PROC = ROOT / "data" / "processed"
-OUT = ROOT / "reports" / "master_plan.html"
-SIMPLIFY = 3.0   # м — упрощение геометрии для размера HTML
+HTML=r'''<!doctype html><html lang="ru"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Приморск — цифровой мастер-план</title>
+<link href="https://unpkg.com/maplibre-gl@5.6.0/dist/maplibre-gl.css" rel="stylesheet">
+<script src="https://unpkg.com/maplibre-gl@5.6.0/dist/maplibre-gl.js"></script>
+<style>
+*{box-sizing:border-box}body{margin:0;font:14px/1.45 system-ui,sans-serif;color:#253641;background:#eef1ee}#map{position:absolute;inset:0}aside{position:absolute;top:14px;left:14px;width:330px;max-height:calc(100dvh - 28px);overflow:auto;background:white;padding:20px;border-radius:12px;box-shadow:0 4px 24px #20323a25}h1{font-size:23px;line-height:1.15;margin:8px 0}h2{font-size:15px;margin:16px 0 8px}p{margin:8px 0}.eyebrow{letter-spacing:.12em;color:#657c79;font-size:10px;font-weight:700}select,input[type=search],input[type=number]{width:100%;padding:8px;border:1px solid #cdd6d3;border-radius:5px;background:#fff;color:#253641}label{display:block;margin:7px 0}label:has(input[type=checkbox]){font-size:12px}button{padding:8px 12px;border:1px solid #cdd6d3;border-radius:5px;background:#f2f5f1;color:#253641;cursor:pointer}.row{display:flex;gap:8px}.row>*{flex:1}.muted{font-size:11px;color:#63716f}details{border-top:1px solid #e3e8e4;padding-top:10px;margin-top:12px}summary{cursor:pointer;font-weight:650}.legend{background:#fff;border:1px solid #dce4de;padding:10px;border-radius:5px;margin:10px 0;font-size:11px}.chip{display:inline-block;width:14px;height:10px;margin-right:7px;border:1px solid #0002}.gradient{height:12px;background:linear-gradient(90deg,#cf514b,#f3df8d,#398e72);margin:6px 0}.ticks{display:flex;justify-content:space-between}.card{max-height:330px;overflow:auto;font-size:12px}.card h3{margin:0 0 8px}.card table{border-collapse:collapse;width:100%}.card td{border-bottom:1px solid #eee;padding:4px;vertical-align:top}.card td:first-child{color:#65726e}#status{padding:8px;background:#f0f5ef;border-radius:5px;font-size:12px}#legends{position:absolute;right:12px;bottom:40px;max-width:270px;max-height:45vh;overflow:auto}#legends .legend{margin:4px 0}#north{position:absolute;right:70px;top:18px;background:white;padding:4px 9px;border-radius:5px;font-size:12px}#toggle-panel{display:none}.metric-table{font-size:10px;overflow:auto;max-height:260px}.metric-table td,.metric-table th{padding:4px;border-bottom:1px solid #ddd;text-align:left}#toggle-panel{display:block;position:absolute;top:14px;left:355px;z-index:2}body.panel-hidden #panel{display:none}body.panel-hidden #toggle-panel{left:14px}@media(max-width:700px){aside{width:280px;top:55px;max-height:65dvh;display:none}aside.open{display:block}#toggle-panel{display:block;position:absolute;top:12px;left:12px}#legends{max-width:200px;max-height:25dvh}}
+</style></head><body><div id="map" aria-label="Интерактивная карта Приморска"></div><button id="toggle-panel">Параметры карты</button><div id="north">↑ С</div>
+<aside id="panel"><div class="eyebrow">ПРИМОРСКОЕ ГОРОДСКОЕ ПОСЕЛЕНИЕ</div><h1>Цифровой<br>мастер-план</h1><p class="muted">Существующее положение → первая очередь → полная реализация</p>
+<label>Сценарий<select id="scenario"><option value="today">Сегодня · 2026</option><option value="s1">Очередь 1 · до 2029</option><option value="s2">Очередь 2 · до 2031</option></select></label>
+<div class="row"><button id="mode">Включить 3D</button><button id="home">Вся территория</button></div>
+<label>Подложка<select id="basemap"><option value="none">Без подложки</option><option value="esri">Esri · спутник</option><option value="osm">OpenStreetMap</option></select></label>
+<h2>Здания</h2><label>Окраска<select id="color"><option value="type">Назначение</option><option value="floors">Этажность</option><option value="population">Население</option><option value="services">Наличие сервисов</option><option value="zones">Функциональная зона</option><option value="kindergarten">Обеспеченность детсадами</option><option value="school">Обеспеченность школами</option></select></label><div id="building-legend" class="legend"></div>
+<details><summary>Фильтры и поиск сервисов</summary><label>Тип здания<select id="kind"><option value="all">Все</option><option value="living">Жилые</option><option value="seasonal">Сезонные</option><option value="other">Нежилые</option></select></label><label>Сервис<select id="service-type"><option value="all">Любой тип</option></select></label><label>Название сервиса<input id="search" type="search" placeholder="Например, школа"></label><label>Минимум этажей<input id="floors" type="number" min="0" placeholder="Без ограничения"></label><label>Функциональная зона<select id="zone"><option value="all">Все</option></select></label><button id="reset">Сбросить фильтры</button></details>
+<details open><summary>Слои мастер-плана</summary><label><input type="checkbox" id="buildings-on" checked> Здания</label><label><input type="checkbox" id="services-on"> Сервисы (включая вне зданий)</label><div id="layers"></div></details>
+<details><summary>Скачать рассчитанные графы</summary><div id="graphs" class="muted"></div><p class="muted">Узлы и рёбра доступны отдельными GIS-файлами. Для покрытия сервисов включите соответствующий слой.</p></details><details><summary>ТЭП и показатели до / после</summary><div id="metrics" class="metric-table"></div><p class="muted">Показатели из reports/metrics_scenarios.csv; единицы и методика сохранены в исходной таблице.</p></details>
+<details><summary>Методика, данные и ограничения</summary><p class="muted">Высота — условная: этажность × 3 м. Обеспеченность: ObjectNat, доля; серый означает отсутствие значения. ObjectNat округляет спрос каждого здания вниз: эти доли нельзя напрямую сравнивать с нормативным дефицитом BlocksNet. Охват сервисов показывает достижимость по графу, а не гарантированную вместимость. Оптимизация — эксперимент на фоне s2, не утверждённое решение. Сервисы присоединены только по пересечению; при нескольких зданиях выбрано наименьшее. Отсутствие сервиса в данных не доказывает отсутствие в действительности.</p><div id="audit" class="muted"></div><p class="muted"><a href="https://drive.google.com/file/d/1TdS3F5_QrdaliM-XNf0Fw68-eD4l_IHh/view" target="_blank" rel="noopener">Учебная 3D-тетрадь КИГС 2026</a> · <a href="https://drive.google.com/file/d/1ZxsRmrc_C3oV4gx2vlSJXTXgvtqWmq1q/view" target="_blank" rel="noopener">Присоединение сервисов</a>. Адаптация подхода MapLibre 5.6.0: extrusion, карточки, фильтры, полигональные оценки. Исходники и расчётные слои: репозиторий primorsk.</p><p class="muted">Данные встроены в HTML (gzip без потерь); библиотека MapLibre и выбранные тайлы требуют подключения к интернету. Esri: © Esri и поставщики снимков; OSM: © OpenStreetMap contributors.</p></details><p id="status" role="status">Загрузка карты…</p></aside><div id="legends"></div>
+<script id="payload" type="application/octet-stream">__PAYLOAD__</script><script>
+'use strict';
+(async()=>{
+const packed=Uint8Array.from(atob(document.getElementById('payload').textContent),c=>c.charCodeAt(0));
+const DATA=JSON.parse(await new Response(new Blob([packed]).stream().pipeThrough(new DecompressionStream('gzip'))).text()),$=id=>document.getElementById(id),esc=v=>String(v??'Нет данных').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const fmt=v=>v===null||v===undefined?'Нет данных':typeof v==='number'?v.toLocaleString('ru-RU',{maximumFractionDigits:2}):String(v);
+const phase=()=>({today:0,s1:1,s2:2}[$('scenario').value]);let threeD=false,ready=false,currentBuildings=[],activeLayers=[];
+const originalById=new Map(DATA.buildings.features.map(f=>[f.properties.stable_id,f]));
+const palette=['#ba6c43','#467e91','#65965b','#9474ac','#c59a3c','#be667e','#507b68','#717bb3'];
+const zones=[...new Set(DATA.buildings.features.map(f=>f.properties.zone_name).filter(Boolean))].sort(),zonePalette=Object.fromEntries(zones.map((z,i)=>[z,palette[i%palette.length]]));
+for(const z of zones){const o=document.createElement('option');o.value=z;o.textContent=z;$('zone').append(o)}
+const types=[...new Set(DATA.services.features.map(f=>f.properties.service_type))].sort();for(const t of types){const f=DATA.services.features.find(f=>f.properties.service_type===t),o=document.createElement('option');o.value=t;o.textContent=f.properties.service_name||t;$('service-type').append(o)}
+for(const layer of DATA.layers){let label=document.createElement('label'),cb=document.createElement('input');cb.type='checkbox';cb.id=layer.id;cb.checked=layer.default;cb.onchange=refresh;label.append(cb,document.createTextNode(' '+layer.title));label.title=layer.source;$('layers').append(label)}
+$('audit').innerHTML=Object.entries(DATA.assignment).map(([k,a])=>`${k==='today'?'Существующие':'Сценарные'} сервисы: назначено ${a.assigned}; неоднозначно ${a.ambiguous}; без здания ${a.unmatched}; уличные исключения ${a.outdoor}.`).join('<br>')+'<br>'+Object.entries(DATA.optional).map(([k,v])=>`${esc(k)}: ${v?'слои подключены':'результаты отсутствуют, не равны нулю'}`).join('<br>');
+$('graphs').innerHTML=(DATA.graphs||[]).map(p=>'<p><a href="../'+encodeURI(p)+'" download>'+esc(p.replace('data/processed/analytical_export/',''))+'</a></p>').join('');
+$('audit').innerHTML+='<details><summary>Сервисы без здания</summary>'+Object.entries(DATA.assignment).flatMap(([scenario,a])=>a.records.filter(r=>r.status==='unmatched').map(r=>'<p>'+esc(scenario)+' · '+esc(r.name||r.service_type)+' · '+esc(r.source)+' · строка '+esc(r.service_index)+'</p>')).join('')+'</details>';
+if(DATA.metrics.length){const keys=Object.keys(DATA.metrics[0]);$('metrics').innerHTML='<table><thead><tr>'+keys.map(k=>'<th>'+esc(k)+'</th>').join('')+'</tr></thead><tbody>'+DATA.metrics.map(r=>'<tr>'+keys.map(k=>'<td>'+esc(fmt(r[k]))+'</td>').join('')+'</tr>').join('')+'</tbody></table>'}
+if(typeof maplibregl==='undefined'){$('status').textContent='MapLibre не загрузился. Проверьте доступ к unpkg.com и откройте HTML повторно.';throw new Error('MapLibre unavailable')}
+const map=new maplibregl.Map({container:'map',center:[28.64,60.36],zoom:11,pitch:0,bearing:0,style:{version:8,sources:{},layers:[{id:'background',type:'background',paint:{'background-color':'#eef1e8'}}]},attributionControl:true});window.masterPlan={map,DATA,getCurrentBuildings:()=>currentBuildings};
+map.addControl(new maplibregl.NavigationControl(),'top-right');map.addControl(new maplibregl.ScaleControl({unit:'metric'}));
+map.on('rotate',()=>{$('north').style.transform=`rotate(${-map.getBearing()}deg)`});
+function chip(text,color){return `<div><i class="chip" style="background:${color}"></i>${esc(text)}</div>`}
+function rampLegend(title,min,max,unit,reverse=false){return `<b>${esc(title)}</b><div class="gradient" style="background:${reverse?'linear-gradient(90deg,#398e72,#f3df8d,#cf514b)':'linear-gradient(90deg,#cf514b,#f3df8d,#398e72)'}"></div><div class="ticks"><span>${esc(fmt(min))}</span><span>${esc(fmt(max))} ${esc(unit)}</span></div>`+chip('Нет данных','#b9c2c6')}
+function buildingLegend(){let mode=$('color').value;if(mode==='type')return chip('Жилые','#ba6c43')+chip('Сезонные','#d6b579')+chip('Нежилые','#87989c');if(mode==='services')return chip('Есть сервисы','#8157aa')+chip('Сервисы не указаны','#b9c2c6');if(mode==='zones')return Object.entries(zonePalette).map(([n,c])=>chip(n,c)).join('');if(['school','kindergarten'].includes(mode))return rampLegend('Обеспеченность ObjectNat',0,100,'%');let key=mode==='floors'?'number_of_floors':'population',vals=currentBuildings.map(f=>f.properties[key]).filter(v=>v!==null&&v!==undefined);return vals.length?rampLegend(mode==='floors'?'Этажность':'Население',Math.min(...vals),Math.max(...vals),mode==='floors'?'этажей':'чел.'):'Нет данных'}
+function numericColor(field,min,max,reverse=false){if(min===max)return ['case',['==',['get',field],null],'#b9c2c6','#398e72'];return ['case',['==',['get',field],null],'#b9c2c6',['interpolate',['linear'],['to-number',['get',field],min],min,reverse?'#398e72':'#cf514b',(min+max)/2,'#f3df8d',max,reverse?'#cf514b':'#398e72']]}
+function buildingColor(){const mode=$('color').value;if(mode==='type')return ['case',['==',['get','is_living'],true],'#ba6c43',['==',['get','is_seasonal'],true],'#d6b579','#87989c'];if(mode==='services')return ['case',['==',['get','visible_service'],true],'#8157aa','#b9c2c6'];if(mode==='zones'){let exp=['match',['get','zone_name']];for(const [z,c] of Object.entries(zonePalette))exp.push(z,c);exp.push('#b9c2c6');return exp.length>3?exp:'#b9c2c6'}const key=['school','kindergarten'].includes(mode)?'selected_provision':mode==='floors'?'number_of_floors':'population',vals=currentBuildings.map(f=>f.properties[key]).filter(v=>typeof v==='number');return vals.length?numericColor(key,...(['school','kindergarten'].includes(mode)?[0,1]:[Math.min(...vals),Math.max(...vals)])):'#b9c2c6'}
+function matches(p){const kind=$('kind').value,ss=p.services.filter(s=>Number(s.phase||0)<=phase());if(kind==='living'&&!p.is_living||kind==='seasonal'&&!p.is_seasonal||kind==='other'&&(p.is_living||p.is_seasonal))return false;if($('floors').value!==''&&p.number_of_floors<Number($('floors').value))return false;if($('zone').value!=='all'&&p.zone_name!==$('zone').value)return false;const query=$('search').value.trim().toLocaleLowerCase('ru');return ($('service-type').value==='all'&&!query)||ss.some(s=>($('service-type').value==='all'||s.type===$('service-type').value)&&(!query||String(s.name).toLocaleLowerCase('ru').includes(query)))}
+function refresh(){if(!ready)return;const tag=$('scenario').value;currentBuildings=DATA.buildings.features.filter(f=>Number(f.properties.phase)<=phase()&&matches(f.properties)).map(f=>({...f,properties:{...f.properties,visible_service:f.properties.services.some(s=>Number(s.phase||0)<=phase()),selected_provision:f.properties.provision[tag+'_'+$('color').value]??null}}));map.getSource('buildings').setData({type:'FeatureCollection',features:currentBuildings});map.getSource('services').setData({type:'FeatureCollection',features:DATA.services.features.filter(f=>Number(f.properties.phase||0)<=phase())});const color=buildingColor();map.setPaintProperty('buildings2d','fill-color',color);map.setPaintProperty('buildings3d','fill-extrusion-color',color);map.setLayoutProperty('buildings2d','visibility',$('buildings-on').checked&&!threeD?'visible':'none');map.setLayoutProperty('buildings3d','visibility',$('buildings-on').checked&&threeD?'visible':'none');map.setLayoutProperty('services','visibility',$('services-on').checked?'visible':'none');$('building-legend').innerHTML=buildingLegend();$('legends').replaceChildren();activeLayers=[];for(const l of DATA.layers){const applies=l.scenario==='all'||l.scenario===tag||l.scenario==='project'&&phase()>0,show=$(l.id).checked&&applies;$(l.id).parentElement.style.display=applies?'block':'none';for(const suffix of ['-fill','-line','-point'])if(map.getLayer(l.id+suffix))map.setLayoutProperty(l.id+suffix,'visibility',show?'visible':'none');if(l.scenario==='project'){const filter=['<=',['to-number',['get','phase'],1],phase()];for(const suffix of ['-fill','-line','-point'])if(map.getLayer(l.id+suffix))map.setFilter(l.id+suffix,filter)}if(show){activeLayers.push(l);let el=document.createElement('div');el.className='legend';el.innerHTML=l.range?rampLegend(l.title,...l.range,l.unit,l.field==='noise_level'):l.categories?'<b>'+esc(l.title)+'</b>'+Object.entries(l.categories).map(([n,c])=>chip(n,c)).join(''):chip(l.title,l.color);$('legends').append(el)}}$('status').textContent=`${$('scenario').selectedOptions[0].text} · зданий после фильтров ${currentBuildings.length.toLocaleString('ru')} · 3D: этажи × 3 м`;}
+map.on('load',()=>{for(const l of DATA.layers){map.addSource(l.id,{type:'geojson',data:l.data});const geometries=new Set(l.data.features.map(f=>f.geometry.type)),paint=l.range?numericColor(l.field,...l.range,l.field==='noise_level'):l.categories?['match',['get','name'],...Object.entries(l.categories).flat(),'#b9c2c6']:l.color;if([...geometries].some(t=>t.includes('Polygon'))&&!l.title.startsWith('Граница'))map.addLayer({id:l.id+'-fill',source:l.id,type:'fill',paint:{'fill-color':paint,'fill-opacity':.45},layout:{visibility:'none'}});if([...geometries].some(t=>t.includes('Line')||t.includes('Polygon')))map.addLayer({id:l.id+'-line',source:l.id,type:'line',paint:{'line-color':l.color,'line-width':l.title.startsWith('Граница')?2:1.4},layout:{visibility:'none'}});if([...geometries].some(t=>t.includes('Point')))map.addLayer({id:l.id+'-point',source:l.id,type:'circle',paint:{'circle-color':paint,'circle-radius':4},layout:{visibility:'none'}})}map.addSource('buildings',{type:'geojson',data:DATA.buildings});map.addLayer({id:'buildings2d',type:'fill',source:'buildings',paint:{'fill-color':'#ba6c43','fill-opacity':.9}});map.addLayer({id:'buildings3d',type:'fill-extrusion',source:'buildings',paint:{'fill-extrusion-height':['get','height_m'],'fill-extrusion-color':'#ba6c43','fill-extrusion-opacity':.95},layout:{visibility:'none'}});map.addSource('services',{type:'geojson',data:DATA.services});map.addLayer({id:'services',type:'circle',source:'services',paint:{'circle-color':'#8157aa','circle-radius':5,'circle-stroke-color':'#fff','circle-stroke-width':1},layout:{visibility:'none'}});ready=true;refresh();});
+const aliases={population:'Жителей',number_of_floors:'Этажей',height_m:'Условная высота, м',zone_name:'Функциональная зона',build_floor_area:'Поэтажная площадь, м²',living_area:'Жилая площадь, м²',non_living_area:'Нежилая площадь, м²',footprint_area:'Пятно застройки, м²',name:'Название',mode:'Режим',minutes:'Минут',area_ha:'Площадь, га',noise_level:'Шум, дБА',sea_ha:'Море в зоне видимости, га',phase:'Очередь',capacity:'Вместимость',service_name:'Тип сервиса',allocated:'Назначено спроса',time_min:'Время пути, мин',within_threshold:'В пределах норматива',building_id:'ID здания',service_object_id:'ID сервиса',provision_value:'Обеспеченность, доля',source_demand:'Исходный спрос',demand:'Спрос',demand_left:'Необеспеченный спрос',supplied_demands_within:'Обеспечено в пределах норматива',min_dist:'Минимальный путь, мин',threshold_min:'Норматив, мин',land_value:'Стоимость земли, руб.',land_value_delta:'Изменение стоимости, руб.',land_value_per_sqm:'Стоимость, руб./м²'};
+function table(p,keys=Object.keys(p)){return '<table>'+keys.filter(k=>p[k]!==undefined&&!['services','provision'].includes(k)).map(k=>'<tr><td>'+esc(aliases[k]||k)+'</td><td>'+esc(k==='capacity'&&p[k]===0?'не задана (0 в исходнике)':fmt(p[k]))+'</td></tr>').join('')+'</table>'}
+map.on('click',e=>{const ids=map.getStyle().layers.filter(l=>l.id!=='background'&&map.getLayoutProperty(l.id,'visibility')!=='none'&&l.id!=='basemap').map(l=>l.id);const hits=map.queryRenderedFeatures(e.point,{layers:ids});if(!hits.length)return;let hit=hits.find(f=>f.layer.id.startsWith('buildings'))||hits[0],p=hit.properties,content='';if(hit.layer.id.startsWith('buildings')){p=originalById.get(p.stable_id).properties;content='<h3>Здание '+esc(p.stable_id)+'</h3>'+table(p,['number_of_floors','height_m','population','zone_name','build_floor_area','living_area','non_living_area','footprint_area','phase']);content+='<h4>Сервисы в здании</h4>'+ (p.services.filter(s=>Number(s.phase||0)<=phase()).map(s=>'<p>'+esc(s.name)+' · '+esc(s.type)+'<br>Вместимость: '+esc(s.capacity===0?'не задана (0 в исходнике)':fmt(s.capacity))+'</p>').join('')||'<p>Не указаны</p>');content+='<h4>Обеспеченность ObjectNat</h4>'+['kindergarten','school'].map(k=>{let v=p.provision[$('scenario').value+'_'+k];return '<p>'+(k==='school'?'Школы':'Детсады')+': '+(typeof v==='number'?fmt(v*100)+'%':'Нет данных / неприменимо')+'</p>'}).join('')}else content='<h3>'+esc(DATA.layers.find(l=>hit.layer.id.startsWith(l.id+'-'))?.title||'Сервис')+'</h3>'+table(p);new maplibregl.Popup({maxWidth:'370px'}).setLngLat(e.lngLat).setHTML('<div class="card">'+content+'</div>').addTo(map)});
+for(const id of ['scenario','color','kind','service-type','zone','buildings-on','services-on'])$(id).onchange=refresh;for(const id of ['search','floors'])$(id).oninput=refresh;
+$('reset').onclick=()=>{for(const id of ['kind','service-type','zone'])$(id).value='all';$('search').value='';$('floors').value='';refresh()};
+$('mode').onclick=()=>{threeD=!threeD;$('mode').textContent=threeD?'Включить 2D':'Включить 3D';map.easeTo({pitch:threeD?55:0,duration:600});refresh()};
+$('home').onclick=()=>map.fitBounds([[28.4,60.15],[29.08,60.57]],{padding:{left:window.innerWidth>700?350:30,right:30,top:30,bottom:30}});
+$('toggle-panel').onclick=()=>{if(window.innerWidth<=700){document.body.classList.remove('panel-hidden');$('panel').classList.toggle('open')}else document.body.classList.toggle('panel-hidden')};
+$('basemap').onchange=()=>{if(map.getLayer('basemap'))map.removeLayer('basemap');if(map.getSource('basemap'))map.removeSource('basemap');const key=$('basemap').value;if(key==='none')return;map.addSource('basemap',{type:'raster',tiles:[key==='esri'?'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}':'https://tile.openstreetmap.org/{z}/{x}/{y}.png'],tileSize:256,attribution:key==='esri'?'© Esri, Maxar, Earthstar Geographics':'© OpenStreetMap contributors'});map.addLayer({id:'basemap',type:'raster',source:'basemap'},map.getStyle().layers[1]?.id)};
+map.on('error',e=>{console.warn(e.error);if(!ready)$('status').textContent='Ошибка загрузки карты: '+String(e.error?.message||e.error).slice(0,100)});
+})().catch(error=>{document.getElementById('status').textContent='Ошибка карты: '+error.message;console.error(error)});
+</script></body></html>'''
 
-# подложки без собственных подписей (все подписи на карте — наши, по-русски); светлая Esri на мелких масштабах
-# подписывает объекты латиницей — оставлена последней опцией
-ESRI = {
-    "Esri — рельеф": "https://server.arcgisonline.com/ArcGIS/rest/services/Elevation/World_Hillshade/MapServer/tile/{z}/{y}/{x}",
-    "Esri — снимки": "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
-    "Esri — светлая (подписи не на русском)": "https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Light_Gray_Base/MapServer/tile/{z}/{y}/{x}",
-}
-PHASE = {t: v["phase"] for t, v in SCENARIOS.items()}
-
-
-def read(p: Path, cols: list[str] | None = None, simplify: bool = True) -> gpd.GeoDataFrame:
-    g = gpd.read_file(p)
-    if cols:
-        g = g[[c for c in cols if c in g.columns] + ["geometry"]]
-    if simplify:
-        g["geometry"] = g.to_crs(32635).simplify(SIMPLIFY).to_crs(4326)
-    return g.to_crs(4326)
-
-
-def gj(g: gpd.GeoDataFrame, name: str, style, tooltip: list[str] | None = None, aliases: list[str] | None = None,
-       show: bool = False) -> folium.FeatureGroup:
-    fg = folium.FeatureGroup(name=name, show=show)
-    kw = {}
-    if tooltip:
-        kw["tooltip"] = folium.GeoJsonTooltip(fields=tooltip, aliases=aliases or tooltip, localize=True)
-    folium.GeoJson(json.loads(g.to_json()), style_function=style, **kw).add_to(fg)
-    return fg
-
-
-def points(g: gpd.GeoDataFrame, name: str, color: str, label: str, show: bool = False) -> folium.FeatureGroup:
-    fg = folium.FeatureGroup(name=name, show=show)
-    for _, r in g.iterrows():
-        p = r.geometry.representative_point()
-        txt = label + (f": {r['name']}" if "name" in r and isinstance(r.get("name"), str) else "")
-        if "capacity" in r and r["capacity"]:
-            txt += f" — {int(r['capacity'])} мест"
-        folium.CircleMarker([p.y, p.x], radius=5, color="white", weight=1.5, fill=True, fill_color=color,
-                            fill_opacity=1, tooltip=txt).add_to(fg)
-    return fg
-
-
-def main() -> None:
-    m = folium.Map(location=[60.36, 28.75], zoom_start=11, tiles=None, control_scale=True)
-    for i, (n, u) in enumerate(ESRI.items()):
-        folium.TileLayer(u, name=n, attr="© Esri", overlay=False, control=True, show=(i == 0)).add_to(m)
-
-    # --- поселение: существующее положение ---
-    bl = read(PROC / "analysis" / "blocks_today.geojson",
-              ["id", "locality", "population", "pop_density", "land_use", "morphotype", "t_drive_station",
-               "kindergarten_drive_provision_strong", "school_drive_provision_strong", "median_acc_drive"])
-    bl["kg"] = (bl["kindergarten_drive_provision_strong"] * 100).round(0)
-    bl["sc"] = (bl["school_drive_provision_strong"] * 100).round(0)
-    prov_cm = StepColormap(["#d73027", "#fc8d59", "#fee08b", "#91cf60", "#1a9850"], index=[0, 20, 50, 80, 99.9, 100.1],
-                           vmin=0, vmax=100, caption="Обеспеченность, %")
-    t_cm = StepColormap(["#1a9850", "#91cf60", "#fee08b", "#fc8d59", "#d73027"], index=[0, 10, 20, 30, 45, 300],
-                        vmin=0, vmax=60, caption="Время до станции на авто, мин")
-    tip = ["locality", "population", "kg", "sc", "t_drive_station", "morphotype"]
-    ali = ["Населённый пункт", "Жителей", "Детсады, %", "Школы, %", "До станции, мин", "Морфотип"]
-    pop_bl = bl[bl["population"] > 0]
-
-    def st(col, cm):
-        return lambda f: {"fillColor": cm(f["properties"][col]) if f["properties"][col] is not None else "#eee",
-                          "color": "white", "weight": 0.3, "fillOpacity": 0.7}
-    gj(pop_bl, "Поселение: обеспеченность детсадами (с подвозом)", st("kg", prov_cm), tip, ali, show=True).add_to(m)
-    gj(pop_bl, "Поселение: обеспеченность школами (с подвозом)", st("sc", prov_cm), tip, ali).add_to(m)
-    gj(pop_bl, "Поселение: время до ж/д станции на авто", st("t_drive_station", t_cm), tip, ali).add_to(m)
-
-    b = read(PROC / "building.geojson", ["is_living", "is_seasonal", "population", "number_of_floors"])
-    b["тип"] = b.apply(lambda r: "жилое" if r.is_living else ("сезонное (дача)" if r.is_seasonal else "нежилое"), axis=1)
-    col = {"жилое": "#d9480f", "сезонное (дача)": "#f2b880", "нежилое": "#9a9a9a"}
-    gj(b, "Поселение: здания (жилые / дачи / нежилые)",
-       lambda f: {"fillColor": col[f["properties"]["тип"]], "color": col[f["properties"]["тип"]], "weight": 0.2,
-                  "fillOpacity": 0.85},
-       ["тип", "population", "number_of_floors"], ["Тип", "Жителей", "Этажей"]).add_to(m)
-    for svc, nm, c in (("kindergarten", "Детские сады", "#7b2cbf"), ("school", "Школы", "#1864ab"),
-                       ("polyclinic", "Поликлиника / ФАП", "#c2255c"), ("train_station", "Ж/д станции", "#000")):
-        points(read(PROC / "services" / f"{svc}.geojson", simplify=False), f"Сервисы: {nm}", c, nm).add_to(m)
-
-    # --- сценарии ---
-    sb = read(PROC / "scenario" / "building.geojson", ["id", "build_floor_area", "population", "phase"])
-    terr = read(PROC / "scenario" / "boundary.geojson", ["name", "population"])
-    for tag, ph in PHASE.items():
-        short = SCENARIOS[tag]["short"]
-        fg = folium.FeatureGroup(name=f"{short}: объекты и транспорт", show=False)
-        if ph:
-            folium.GeoJson(json.loads(terr.to_json()), style_function=lambda f: {
-                "fillColor": "#ffe8a3", "color": "#d4a017", "weight": 1.5, "fillOpacity": 0.4},
-                tooltip=folium.GeoJsonTooltip(["name", "population"], ["Территория", "Жителей"])).add_to(fg)
-            s = sb[sb["phase"] <= ph]
-            folium.GeoJson(json.loads(s.to_json()), style_function=lambda f: {
-                "fillColor": "#e8590c", "color": "#e8590c", "weight": 0.5, "fillOpacity": 0.9},
-                tooltip=folium.GeoJsonTooltip(["build_floor_area", "population", "phase"],
-                                              ["Площадь, м²", "Жителей", "Очередь"])).add_to(fg)
-            for lay, color, dash in (("shuttle_route", "#1864ab", None), ("cycleway", "#2b8a3e", None),
-                                     ("footway", "#c2255c", "4 4"), ("pier", "#0b7285", None)):
-                g = read(PROC / "scenario" / f"{lay}.geojson")
-                g = g[g["phase"] <= ph]
-                if len(g):
-                    folium.GeoJson(json.loads(g.to_json()), style_function=lambda f, c=color, d=dash: {
-                        "color": c, "weight": 4, "dashArray": d}, tooltip=lay).add_to(fg)
-        fg.add_to(m)
-        on = PROC / "objectnat" / f"isochrones_{tag}.geojson"
-        if on.exists():
-            iso = read(on)
-            iso = iso[(iso["mode"] == "transit") & iso["name"].isin(["станция", "порт"])]
-            gj(iso, f"{short}: 30 мин пешком{' + шаттл' if ph else ''} от станции и порта",
-               lambda f: {"fillColor": "#2a78d6" if f["properties"]["name"] == "станция" else "#eb6834",
-                          "color": "#2a78d6" if f["properties"]["name"] == "станция" else "#eb6834",
-                          "weight": 1, "fillOpacity": 0.25},
-               ["name", "population", "area_ha"], ["Откуда", "Жителей", "Площадь, га"]).add_to(m)
-        nz = PROC / "objectnat" / f"noise_{tag}.geojson"
-        if nz.exists():
-            n = read(nz)
-            ncm = StepColormap(["#fff1a8", "#fdd27a", "#fca95a", "#f67b43", "#e14d35", "#b8262e", "#7f0e24"],
-                               index=[50, 55, 60, 65, 70, 75, 80, 200], vmin=50, vmax=85)
-            gj(n.sort_values("noise_level"), f"{short}: шум, дБА",
-               lambda f: {"fillColor": ncm(f["properties"]["noise_level"]), "color": "none", "fillOpacity": 0.6},
-               ["noise_level"], ["дБА"]).add_to(m)
-
-    prov_cm.add_to(m)
-    folium.LayerControl(collapsed=False).add_to(m)
-    title = ("<div style='position:fixed;top:10px;left:50px;z-index:9999;background:white;padding:6px 10px;"
-             "border-radius:4px;font:14px sans-serif;box-shadow:0 1px 4px rgba(0,0,0,.3)'>"
-             "<b>Цифровой мастер-план: Приморское городское поселение</b><br>"
-             "<span style='font-size:12px;color:#555'>слои «Поселение» — существующее положение; "
-             "«Сегодня / Сценарий 1 / Сценарий 2» — до / после</span></div>")
-    m.get_root().html.add_child(folium.Element(title))
-    m.save(str(OUT))
-    print(OUT, round(OUT.stat().st_size / 1e6, 1), "МБ")
-
-
-if __name__ == "__main__":
-    main()
+def main():
+    payload=build_payload()
+    encoded=json.dumps(payload,ensure_ascii=False,separators=(',',':'),allow_nan=False).replace('<','\\u003c')
+    OUT.parent.mkdir(exist_ok=True)
+    packed=base64.b64encode(gzip.compress(encoded.encode('utf-8'),mtime=0)).decode('ascii')
+    OUT.write_text(HTML.replace('__PAYLOAD__',packed),encoding='utf-8')
+    print(f'{OUT}: {OUT.stat().st_size/1e6:.1f} МБ; зданий {len(payload["buildings"]["features"])}; слоёв {len(payload["layers"])}')
+    for label,audit in payload['assignment'].items():print(label,{k:v for k,v in audit.items() if k!='records'})
+    return payload
+if __name__=='__main__':main()
